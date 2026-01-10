@@ -61,7 +61,8 @@ export default withAuth(
           pathname.startsWith('/u/') ||
           pathname.startsWith('/drydown') ||
           pathname.startsWith('/_next') ||
-          pathname.startsWith('/static')
+          pathname.startsWith('/static') ||
+          pathname.startsWith('/contact')
         ) {
           return true;
         }
@@ -75,6 +76,14 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/((?!api/public|_next/static|_next/image|favicon.ico|logo|public).*)',
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files (images, etc.)
+     * - Static assets (.svg, .png, .jpg, .jpeg, .gif, .webp, .ico)
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 };

@@ -13,7 +13,7 @@ export default function SubmitHubPage() {
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl font-bold text-gray-900 mb-6 font-serif">Contribute to FragView</h1>
         <p className="text-lg text-gray-600 mb-16 max-w-2xl mx-auto">
-          Help us build the world's most comprehensive fragrance database. Whether you're an enthusiast or a brand owner, your contribution matters.
+          Help us build the world&apos;s most comprehensive fragrance database. Whether you&apos;re an enthusiast or a brand owner, your contribution matters.
         </p>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -24,7 +24,7 @@ export default function SubmitHubPage() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Community Suggestion</h2>
             <p className="text-gray-600 mb-8 flex-1">
-              Did you find a missing perfume or brand? Let us know! You'll earn <span className="font-bold text-green-600">+5 XP</span> if your suggestion is approved.
+              Did you find a missing perfume or brand? Let us know! You&apos;ll earn <span className="font-bold text-green-600">+5 XP</span> if your suggestion is approved.
             </p>
             <Link 
               href="/submit/community" 
@@ -44,7 +44,7 @@ export default function SubmitHubPage() {
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Brand Owner</h2>
             <p className="text-gray-600 mb-8 flex-1">
-              Are you the owner or representative of a fragrance brand? Claim your profile, manage your catalog, and get the "Verified Brand" badge.
+              Are you the owner or representative of a fragrance brand? Claim your profile, manage your catalog, and get the &quot;Verified Brand&quot; badge.
             </p>
             <Link 
               href="/submit/brand" 

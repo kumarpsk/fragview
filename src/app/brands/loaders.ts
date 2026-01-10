@@ -28,8 +28,11 @@ export async function loadBrands(searchParams: Record<string, string | string[] 
   // Use Typesense only when q provided (and optionally letter)
   if (q) {
     const filterParts: string[] = [];
-    if (letter && letter !== 'All') {
-      filterParts.push(`first_letter:=${escapeFacet(letter)}`);
+    const letterValues = lettersFromFilter(letter);
+    if (letterValues.length === 1) {
+      filterParts.push(`first_letter:=${escapeFacet(letterValues[0])}`);
+    } else if (letterValues.length > 1) {
+      filterParts.push(`first_letter:=[${letterValues.map(escapeFacet).join(',')}]`);
     }
     const filter_by = filterParts.join(' && ');
     const sortMap = {
@@ -87,4 +90,20 @@ export async function loadBrands(searchParams: Record<string, string | string[] 
 
 function escapeFacet(v: string) {
   return v.replace(/([\\":])/g, '\\$1');
+}
+
+function lettersFromFilter(letter: string) {
+  const trimmed = (letter || '').trim().toUpperCase();
+  if (!trimmed || trimmed === 'ALL') return [] as string[];
+  if (/^[A-Z]$/.test(trimmed)) return [trimmed];
+
+  const m = trimmed.match(/^([A-Z])\s*-\s*([A-Z])$/);
+  if (!m) return [] as string[];
+  const start = m[1].charCodeAt(0);
+  const end = m[2].charCodeAt(0);
+  if (start > end) return [] as string[];
+
+  const letters: string[] = [];
+  for (let c = start; c <= end; c += 1) letters.push(String.fromCharCode(c));
+  return letters;
 }

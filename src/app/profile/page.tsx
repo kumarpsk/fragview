@@ -81,7 +81,7 @@ const ProfilePage = () => {
                     <Star className="w-3 h-3 fill-current mr-1" /> {activity.rating}
                   </div>
                 )}
-                {activity.preview && <span className="text-xs text-gray-500 italic truncate max-w-[200px]">"{activity.preview}"</span>}
+                {activity.preview && <span className="text-xs text-gray-500 italic truncate max-w-[200px]">&quot;{activity.preview}&quot;</span>}
               </>
             ) : (
               <>

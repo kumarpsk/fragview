@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Newspaper, Clock, User, ArrowRight, Sparkles, Leaf, Edit, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, User, ArrowRight, Edit, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getArticles } from '@/app/actions/drydown';
 import { auth } from '@/lib/auth';
 import ApplyButton from '@/components/drydown/ApplyButton';
@@ -43,231 +43,278 @@ export default async function DrydownPage({
   const canManage = session?.user?.role === 'ADMIN' || session?.user?.role === 'EDITOR';
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#FAFFF5] text-gray-800">
-      {/* Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-green-100/40 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-100/40 rounded-full blur-3xl" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold uppercase tracking-wider mb-4">
-            <Newspaper size={14} /> Editorial
-          </div>
-          <h1 className="text-5xl md:text-7xl font-serif font-bold text-gray-900 mb-4 tracking-tight">
+    <div className="min-h-screen bg-[#FFF9EF]">
+      {/* Hero Section */}
+      <section className="w-full bg-[#FFF9EF] px-6 lg:px-[72px] py-10 lg:py-14">
+        <div className="mx-auto max-w-[1296px] flex flex-col items-center gap-4 lg:gap-8">
+          {/* Title - Mobile: 48px, Desktop: 88px */}
+          <h1 className="font-hedvig font-normal text-[48px] leading-[56px] lg:text-[88px] lg:leading-[96px] text-center text-[#211F1C]">
             The Drydown
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-light mb-6">
-            Deep dives, industry news, and curated stories from the world of fragrance. 
-          </p>
 
           {/* Admin/Editor Manage Link */}
           {canManage && (
             <Link
               href="/admin/drydown"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#211F1C] text-white font-inter font-medium rounded-lg hover:bg-[#211F1C]/90 transition-colors"
             >
               <Edit className="w-4 h-4" />
               Manage Articles
             </Link>
           )}
-        </div>
 
-        {/* Category Filter */}
-        <div className="flex items-center justify-center gap-2 mb-12 flex-wrap">
-          {categories.map((cat) => {
-            const params = new URLSearchParams();
-            if (cat !== 'All') params.set('category', cat);
-            const href = params.toString() ? `/drydown?${params.toString()}` : '/drydown';
+          {/* Category Tabs - Mobile: scrollable with arrow, Desktop: full width */}
+          <div className="w-full relative">
+            <div className="flex items-center border border-[#E2E1E1] rounded-full overflow-x-auto scrollbar-hide lg:overflow-visible">
+              {categories.map((cat) => {
+                const params = new URLSearchParams();
+                if (cat !== 'All') params.set('category', cat);
+                const href = params.toString() ? `/drydown?${params.toString()}` : '/drydown';
+                const isActive = (!selectedCategory && cat === 'All') || selectedCategory === cat;
 
-            return (
-              <Link
-                key={cat}
-                href={href}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  (!selectedCategory && cat === 'All') || selectedCategory === cat
-                    ? 'bg-green-600 text-white shadow-lg'
-                    : 'bg-white/60 backdrop-blur-md text-gray-700 hover:bg-white hover:shadow-md'
-                }`}
-              >
-                {cat}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Empty State */}
-        {articles.length === 0 ?  (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 mx-auto mb-6 bg-green-100 rounded-full flex items-center justify-center">
-              <Newspaper className="w-12 h-12 text-green-600" />
+                return (
+                  <Link
+                    key={cat}
+                    href={href}
+                    className={`flex-shrink-0 lg:flex-1 h-9 lg:h-12 flex items-center justify-center px-6 lg:px-8 font-inter font-medium text-sm lg:text-xl leading-5 lg:leading-7 rounded-full whitespace-nowrap transition-colors ${isActive
+                        ? 'bg-[#211F1C] text-white'
+                        : 'bg-transparent text-[#211F1C] hover:bg-[#E2E1E1]/50'
+                      }`}
+                  >
+                    {cat}
+                  </Link>
+                );
+              })}
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">No Articles Yet</h2>
-            <p className="text-gray-600 mb-6">
-              {selectedCategory && selectedCategory !== 'All'
-                ? `No articles in "${selectedCategory}" category yet. `
-                : 'Our editors are working on exciting content.  Check back soon!'}
-            </p>
-            {canManage && (
-              <Link
-                href="/admin/drydown/new"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+            {/* Scroll indicator arrow - mobile only */}
+            <div className="lg:hidden absolute right-0 top-0 h-9 flex items-center bg-gradient-to-l from-[#FFF9EF] via-[#FFF9EF] to-transparent pl-6 pr-1">
+              <button
+                type="button"
+                className="w-8 h-8 flex items-center justify-center bg-[#211F1C] rounded-full"
+                aria-label="Scroll tabs"
               >
-                <Edit className="w-5 h-5" />
-                Write First Article
-              </Link>
-            )}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M9 6L15 12L9 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
           </div>
-        ) : (
-          <>
-            {/* Featured Article */}
-            {featured && (
-              <Link href={`/drydown/${featured.slug}`} className="mb-16 group block cursor-pointer">
-                <div className="relative h-[500px] w-full rounded-3xl overflow-hidden shadow-xl">
+
+          {/* Featured Article or Empty State */}
+          {articles.length === 0 ? (
+            /* Empty State */
+            <div className="w-full flex flex-col items-center justify-center py-16 gap-6">
+              {/* Document Icon */}
+              <div className="w-16 h-16 flex items-center justify-center">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <rect x="8" y="4" width="32" height="40" rx="4" stroke="#737270" strokeWidth="2" />
+                  <path d="M16 16H32M16 24H32M16 32H24" stroke="#737270" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </div>
+              <div className="text-center max-w-md">
+                <h2 className="font-hedvig font-normal text-2xl leading-8 text-[#211F1C] mb-2">
+                  No posts yet but plenty to come
+                </h2>
+                <p className="font-inter font-normal text-base leading-6 text-[#737270]">
+                  We haven&apos;t published anything here yet — but exciting content is on the way. Want to be one of the first voices featured here? Join us and contribute.
+                </p>
+              </div>
+              {/* Join as Editor Button */}
+              <Link
+                href={canManage ? '/admin/drydown/new' : '/drydown'}
+                className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 bg-[#211F1C] rounded-xl font-inter font-medium text-lg leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+              >
+                {canManage ? 'Write First Article' : 'Join as an Editor'}
+                <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg ml-3">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </Link>
+            </div>
+          ) : (
+            /* Featured Article */
+            featured && (
+              <div className="w-full flex flex-col lg:flex-row items-stretch gap-6">
+                {/* Left Side - Content */}
+                <div className="flex-1 flex flex-col justify-center gap-5">
+                  {/* Badges */}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-4 lg:gap-6">
+                      {/* Category Badge */}
+                      <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-sm leading-5 text-[#695129]">
+                        {featured.category || 'Guide'}
+                      </span>
+                      {/* Date Badge */}
+                      <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-sm leading-5 text-[#695129]">
+                        {new Date(featured.publishedAt || featured.createdAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    </div>
+
+                    {/* Title - Mobile: 40px, Desktop: 48px */}
+                    <h2 className="font-hedvig font-normal text-[40px] leading-[48px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                      {featured.title}
+                    </h2>
+
+                    {/* Read More Link - Mobile: 16px, Desktop: 20px */}
+                    <Link
+                      href={`/drydown/${featured.slug}`}
+                      className="inline-flex items-center gap-2 w-fit font-inter font-medium text-base lg:text-xl leading-6 lg:leading-7 text-[#211F1C] underline hover:text-[#8A6A35] transition-colors"
+                    >
+                      Read More
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </Link>
+                  </div>
+
+                  {/* Divider + Meta */}
+                  <div className="flex flex-col gap-4">
+                    <div className="w-full h-px bg-[#E2E1E1]" />
+                    <div className="flex items-center gap-4 lg:gap-6 flex-wrap">
+                      {/* Author */}
+                      <div className="flex items-center gap-[3px]">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <circle cx="12" cy="8" r="4" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                          <path d="M4 20C4 17 8 14 12 14C16 14 20 17 20 20" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                        <span className="font-inter font-normal text-sm lg:text-base leading-5 lg:leading-6 text-[#4A4946]">
+                          {featured.author?.name || 'Fragview'}
+                        </span>
+                      </div>
+                      {/* Read Time */}
+                      <div className="flex items-center gap-[3px]">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9" stroke="#4A4946" strokeWidth="2" />
+                          <path d="M12 7V12L15 15" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span className="font-inter font-normal text-sm lg:text-base leading-5 lg:leading-6 text-[#4A4946]">
+                          {featured.readTime || '5 min read'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side - Image - Mobile: below content, Desktop: right side */}
+                <div className="w-full lg:flex-1 h-[352px] rounded-xl overflow-hidden">
                   {featured.coverImage ? (
                     <img
                       src={featured.coverImage}
                       alt={featured.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-                      <Sparkles className="w-24 h-24 text-white/30" />
+                    <div className="w-full h-full bg-[#ECE0CF] flex items-center justify-center">
+                      <span className="font-hedvig text-2xl text-[#695129]">Fragview</span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                </div>
+              </div>
+            )
+          )}
+        </div>
+      </section>
 
-                  <div className="absolute bottom-0 left-0 p-8 md:p-12 text-white">
-                    <span className="px-3 py-1 bg-orange-500 text-xs font-bold uppercase tracking-widest rounded-md mb-4 inline-block">
-                      {featured.category}
-                    </span>
-                    <h2 className="text-3xl md:text-5xl font-bold mb-4 font-serif leading-tight">
-                      {featured.title}
-                    </h2>
-                    <p className="text-gray-200 text-lg mb-6 max-w-2xl line-clamp-2">
-                      {featured.excerpt}
-                    </p>
-
-                    <div className="flex items-center gap-4 text-sm text-gray-300">
-                      <div className="flex items-center gap-2">
-                        {featured.author. image ? (
-                          <img
-                            src={featured.author.image}
-                            className="w-8 h-8 rounded-full object-cover"
-                            alt={featured.author.name}
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-xs font-bold">
-                            {featured.author.name.charAt(0)}
-                          </div>
-                        )}
-                        <span>{featured.author.name}</span>
-                      </div>
-                      <span>•</span>
-                      <span>{new Date(featured.publishedAt || featured.createdAt).toLocaleDateString()}</span>
-                      <span>•</span>
-                      <span className="flex items-center gap-1">
-                        <Clock size={14} /> {featured.readTime}
-                      </span>
-                      {featured.commentCount > 0 && (
-                        <>
-                          <span>•</span>
-                          <span className="flex items-center gap-1">
-                            <MessageCircle size={14} /> {featured.commentCount}
-                          </span>
-                        </>
+      {/* Recent Articles Grid */}
+      {articles.length > 0 && recent.length > 0 && (
+        <section className="w-full bg-[#FFF9EF] px-6 lg:px-[72px] py-12">
+          <div className="mx-auto max-w-[1296px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {recent.map((article) => (
+                <Link href={`/drydown/${article.slug}`} key={article.id} className="group">
+                  <div className="bg-[#FFF4E3] rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+                    {/* Image */}
+                    <div className="relative h-[200px] lg:h-[240px] overflow-hidden">
+                      {article.coverImage ? (
+                        <img
+                          src={article.coverImage}
+                          alt={article.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[#ECE0CF] flex items-center justify-center">
+                          <span className="font-hedvig text-xl text-[#695129]">Fragview</span>
+                        </div>
                       )}
+                      {/* Badges */}
+                      <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+                        <span className="px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-sm leading-5 text-[#695129]">
+                          {article.category}
+                        </span>
+                        <span className="px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-sm leading-5 text-[#695129]">
+                          {new Date(article.publishedAt || article.createdAt).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric'
+                          })}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6 flex-1 flex flex-col gap-4">
+                      <h3 className="font-averia font-normal text-xl lg:text-2xl leading-8 text-[#211F1C] group-hover:text-[#8A6A35] transition-colors line-clamp-2">
+                        {article.title}
+                      </h3>
+
+                      <p className="font-inter font-normal text-base leading-6 text-[#4A4946] line-clamp-3 flex-1">
+                        {article.excerpt}
+                      </p>
+
+                      {/* Divider + Meta */}
+                      <div className="mt-auto flex flex-col gap-4">
+                        <div className="w-full h-px bg-[#E2E1E1]" />
+                        <div className="flex items-center justify-between">
+                          {/* Author */}
+                          <div className="flex items-center gap-[3px]">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                              <circle cx="12" cy="8" r="4" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                              <path d="M4 20C4 17 8 14 12 14C16 14 20 17 20 20" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                            <span className="font-inter font-normal text-base leading-6 text-[#4A4946]">
+                              {article.author?.name || 'Fragview'}
+                            </span>
+                          </div>
+                          {/* Read Time */}
+                          <div className="flex items-center gap-[3px]">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                              <circle cx="12" cy="12" r="9" stroke="#4A4946" strokeWidth="2" />
+                              <path d="M12 7V12L15 15" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                            <span className="font-inter font-normal text-base leading-6 text-[#4A4946]">
+                              {article.readTime || '5 min read'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            )}
-
-            {/* Recent Articles Grid */}
-            {recent.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                {recent.map((article) => (
-                  <Link href={`/drydown/${article.slug}`} key={article.id} className="group">
-                    <div className="bg-white/60 backdrop-blur-md rounded-2xl border border-green-100 overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-                      <div className="h-48 overflow-hidden relative">
-                        {article.coverImage ? (
-                          <img
-                            src={article.coverImage}
-                            alt={article.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-green-50 flex items-center justify-center">
-                            <Sparkles className="text-green-200 w-12 h-12" />
-                          </div>
-                        )}
-                        <div className="absolute top-3 left-3">
-                          <span className="px-2 py-1 bg-white/90 backdrop-blur text-gray-800 text-[10px] font-bold uppercase tracking-wider rounded">
-                            {article.category}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="p-6 flex-1 flex flex-col">
-                        <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                          <span>{new Date(article.publishedAt || article.createdAt).toLocaleDateString()}</span>
-                          <span>•</span>
-                          <span>{article.readTime}</span>
-                          {article.commentCount > 0 && (
-                            <>
-                              <span>•</span>
-                              <span className="flex items-center gap-1">
-                                <MessageCircle size={12} />
-                                {article.commentCount}
-                              </span>
-                            </>
-                          )}
-                        </div>
-
-                        <h3 className="text-xl font-bold text-gray-900 mb-3 font-serif group-hover:text-green-700 transition-colors line-clamp-2">
-                          {article.title}
-                        </h3>
-
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-1">
-                          {article.excerpt}
-                        </p>
-
-                        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                          <div className="flex items-center gap-2 text-xs font-medium text-gray-700">
-                            <User size={14} />
-                            {article.author.name}
-                          </div>
-                          <span className="text-green-600 text-xs font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                            Read <ArrowRight size={12} />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
+                </Link>
+              ))}
+            </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 mb-16">
+              <div className="flex items-center justify-center gap-2 mt-12">
                 {/* Previous Button */}
                 <Link
                   href={
                     currentPage > 1
                       ? `/drydown?${new URLSearchParams({
-                          ...(selectedCategory && selectedCategory !== 'All' && { category: selectedCategory }),
-                          page: (currentPage - 1).toString(),
-                        }).toString()}`
+                        ...(selectedCategory && selectedCategory !== 'All' && { category: selectedCategory }),
+                        page: (currentPage - 1).toString(),
+                      }).toString()}`
                       : '/drydown'
                   }
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                    currentPage > 1
-                      ? 'bg-white/60 backdrop-blur-md text-gray-700 hover:bg-white hover:shadow-md'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full font-inter font-medium text-base transition-all ${currentPage > 1
+                      ? 'border border-[#E2E1E1] text-[#211F1C] hover:bg-[#E2E1E1]/50'
+                      : 'border border-[#E2E1E1] text-[#C4C4C3] cursor-not-allowed pointer-events-none'
+                    }`}
                 >
                   <ChevronLeft size={16} />
                   Previous
@@ -276,7 +323,6 @@ export default async function DrydownPage({
                 {/* Page Numbers */}
                 <div className="flex items-center gap-2">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                    // Show first page, last page, current page, and pages around current
                     if (
                       page === 1 ||
                       page === totalPages ||
@@ -289,18 +335,17 @@ export default async function DrydownPage({
                             ...(selectedCategory && selectedCategory !== 'All' && { category: selectedCategory }),
                             page: page.toString(),
                           }).toString()}`}
-                          className={`w-10 h-10 flex items-center justify-center rounded-lg font-medium transition-all ${
-                            page === currentPage
-                              ? 'bg-green-600 text-white shadow-lg'
-                              : 'bg-white/60 backdrop-blur-md text-gray-700 hover:bg-white hover:shadow-md'
-                          }`}
+                          className={`w-10 h-10 flex items-center justify-center rounded-full font-inter font-medium text-base transition-all ${page === currentPage
+                              ? 'bg-[#211F1C] text-white'
+                              : 'border border-[#E2E1E1] text-[#211F1C] hover:bg-[#E2E1E1]/50'
+                            }`}
                         >
                           {page}
                         </Link>
                       );
                     } else if (page === currentPage - 2 || page === currentPage + 2) {
                       return (
-                        <span key={page} className="text-gray-400">
+                        <span key={page} className="text-[#737270]">
                           ...
                         </span>
                       );
@@ -314,16 +359,15 @@ export default async function DrydownPage({
                   href={
                     currentPage < totalPages
                       ? `/drydown?${new URLSearchParams({
-                          ...(selectedCategory && selectedCategory !== 'All' && { category: selectedCategory }),
-                          page: (currentPage + 1).toString(),
-                        }).toString()}`
+                        ...(selectedCategory && selectedCategory !== 'All' && { category: selectedCategory }),
+                        page: (currentPage + 1).toString(),
+                      }).toString()}`
                       : '/drydown'
                   }
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                    currentPage < totalPages
-                      ? 'bg-white/60 backdrop-blur-md text-gray-700 hover:bg-white hover:shadow-md'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none'
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full font-inter font-medium text-base transition-all ${currentPage < totalPages
+                      ? 'border border-[#E2E1E1] text-[#211F1C] hover:bg-[#E2E1E1]/50'
+                      : 'border border-[#E2E1E1] text-[#C4C4C3] cursor-not-allowed pointer-events-none'
+                    }`}
                 >
                   Next
                   <ChevronRight size={16} />
@@ -333,31 +377,252 @@ export default async function DrydownPage({
 
             {/* Page Info */}
             {totalPages > 1 && (
-              <div className="text-center text-sm text-gray-600 mb-16">
+              <div className="text-center font-inter text-sm text-[#737270] mt-4">
                 Showing {(currentPage - 1) * 9 + 1} - {Math.min(currentPage * 9, total)} of {total} articles
               </div>
             )}
-          </>
-        )}
+          </div>
+        </section>
+      )}
 
-        {/* Become Editor CTA */}
-        <div className="flex justify-center w-full">
-          <div className="max-w-3xl w-full">
-            <div className="bg-gradient-to-br from-green-600 to-emerald-800 rounded-2xl p-12 flex flex-col justify-center items-center text-center text-white relative overflow-hidden shadow-2xl transform hover:scale-[1.01] transition-transform duration-300">
-              <div className="absolute inset-0 opacity-20">
-                <Leaf size={200} className="-right-10 -bottom-10 absolute" />
+      {/* Read & explore (The Drydown) - Figma style */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+          {/* Header */}
+          <div className="flex flex-col gap-1">
+            {/* Pre-title */}
+            <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+              Read &amp; explore
+            </span>
+            {/* Title */}
+            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+              Notes on perfume, style, and how we wear scent
+            </h2>
+          </div>
+
+          {/* Article Cards Grid */}
+          <div className="mt-10 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {articles.slice(0, 3).length > 0 ? (
+              articles.slice(0, 3).map((article) => (
+                <Link
+                  key={article.id}
+                  href={`/drydown/${article.slug}`}
+                  className="group flex flex-col bg-[#FFF4E3] rounded-[16px] overflow-hidden isolate"
+                >
+                  {/* Image Area */}
+                  <div className="relative h-[280px] lg:h-[365px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px]">
+                    {article.coverImage ? (
+                      <img
+                        src={article.coverImage}
+                        alt={article.title}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-[#ECE0CF]" />
+                    )}
+                    {/* Badges - Category & Date */}
+                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                      {/* Category Badge */}
+                      <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                        {article.category || 'News'}
+                      </span>
+                      {/* Date Badge */}
+                      <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                        {new Date(article.publishedAt || article.createdAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content Area */}
+                  <div className="flex flex-col flex-1 p-6 gap-6">
+                    <div className="flex flex-col gap-3">
+                      {/* Title */}
+                      <h3 className="font-averia font-normal text-[24px] leading-[32px] text-[#211F1C] line-clamp-2">
+                        {article.title}
+                      </h3>
+                      {/* Excerpt */}
+                      <p className="font-inter font-normal text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#4A4946] line-clamp-4">
+                        {article.excerpt}
+                      </p>
+                    </div>
+
+                    {/* Divider + Meta */}
+                    <div className="mt-auto flex flex-col gap-6">
+                      {/* Divider */}
+                      <div className="w-full h-px bg-[#E2E1E1]" />
+
+                      {/* Author & Read Time */}
+                      <div className="flex items-center justify-between">
+                        {/* Author */}
+                        <div className="flex items-center gap-[3px]">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                            <path d="M4 20C4 17 8 14 12 14C16 14 20 17 20 20" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                          </svg>
+                          <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
+                            {article.author?.name || 'Fragview'}
+                          </span>
+                        </div>
+                        {/* Read Time */}
+                        <div className="flex items-center gap-[3px]">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9" stroke="#4A4946" strokeWidth="2" />
+                            <path d="M12 7V12L15 15" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
+                            {article.readTime || '5 min read'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="md:col-span-3 text-center text-[#737270] py-8 font-inter">
+                No articles available at the moment.
               </div>
-              <Sparkles size={48} className="mb-6 text-yellow-300 animate-pulse relative z-10" />
-              <h3 className="text-3xl md:text-4xl font-bold mb-4 font-serif relative z-10">Write for Us</h3>
-              <p className="text-green-100 text-lg mb-8 max-w-lg leading-relaxed relative z-10">
-                Are you a Master badge holder? Share your expertise with the FragView community. 
-              </p>
+            )}
+          </div>
 
-              <ApplyButton />
+          {/* View More Button */}
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/drydown"
+              className="inline-flex items-center justify-between w-[164px] h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-[12px] font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+            >
+              View More
+              <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Join our team - CTA Section */}
+      <section className="relative overflow-hidden bg-[#FFF9EF]">
+        {/* Decorative background pattern */}
+        <div className="absolute -left-[338px] -top-[398px] w-[567px] h-[651px] pointer-events-none" aria-hidden="true">
+          <div className="absolute w-[200px] h-[330px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '2%', top: '-1%' }} />
+          <div className="absolute w-[230px] h-[270px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '7%', top: '-31%' }} />
+          <div className="absolute w-[200px] h-[270px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '-10%', top: '8%' }} />
+          <div className="absolute w-[220px] h-[280px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '-14%', top: '-47%' }} />
+          <div className="absolute w-[190px] h-[210px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '2%', top: '-51%' }} />
+          <div className="absolute w-[210px] h-[220px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '-18%', top: '-8%' }} />
+          <div className="absolute w-[160px] h-[200px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '-1%', top: '-27%' }} />
+          <div className="absolute w-[170px] h-[180px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '-7%', top: '-15%' }} />
+          <div className="absolute w-[140px] h-[160px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '3%', top: '-1%' }} />
+          <div className="absolute w-[120px] h-[130px] border border-[#ECE0CF] rounded-full" style={{ transform: 'rotate(-42deg)', left: '7%', top: '-5%' }} />
+        </div>
+        <img
+          src="/Logo_vector.webp"
+          alt=""
+          aria-hidden="true"
+          className="absolute"
+        />
+
+        <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16 relative">
+          <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
+            {/* Left Content */}
+            <div className="flex flex-col gap-8 w-full lg:w-auto lg:flex-1 lg:max-w-[724px]">
+              {/* Header Text */}
+              <div className="flex flex-col gap-4 lg:gap-6">
+                {/* Pre-title + Title */}
+                <div className="flex flex-col gap-1">
+                  <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+                    Join our team
+                  </span>
+                  <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                    Write for us, share your expertise
+                  </h2>
+                </div>
+
+                {/* Description */}
+                <p className="font-inter font-normal text-[18px] leading-[26px] lg:text-[24px] lg:leading-[32px] text-[#4A4946]">
+                  We&apos;re looking for writers, reviewers, and industry insiders to contribute to The Fragview Blog. Share your unique perspective with our community of scent enthusiasts.
+                </p>
+              </div>
+
+              {/* Feature Cards */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                {/* Write what you love */}
+                <div className="flex flex-col gap-1 p-4 lg:py-2 lg:px-4 bg-[#FFF4E3] rounded-2xl flex-1">
+                  <div className="flex items-center gap-3">
+                    {/* Pencil Icon */}
+                    <div className="flex items-center justify-center w-10 h-10 bg-[#FDE2B6] rounded-lg">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" stroke="#695129" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M15 5l4 4" stroke="#695129" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
+                      Write what you love
+                    </span>
+                  </div>
+                  <p className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#4A4946]">
+                    Cover topics you&apos;re passionate about, from niche discoveries to industry trends.
+                  </p>
+                </div>
+
+                {/* Reach thousands */}
+                <div className="flex flex-col gap-1 p-4 lg:py-2 lg:px-4 bg-[#FFF4E3] rounded-2xl flex-1">
+                  <div className="flex items-center gap-3">
+                    {/* Users Icon */}
+                    <div className="flex items-center justify-center w-10 h-10 bg-[#FDE2B6] rounded-lg">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <circle cx="9" cy="7" r="4" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
+                        <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
+                        <circle cx="17" cy="7" r="3" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
+                        <path d="M21 21v-2a3 3 0 0 0-3-3h-1" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    </div>
+                    <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
+                      Reach thousands
+                    </span>
+                  </div>
+                  <p className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#4A4946]">
+                    Connect with a dedicated audience of fragrance enthusiasts worldwide.
+                  </p>
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <div>
+                <Link
+                  href="/drydown"
+                  className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                >
+                  Join as an Editor
+                  <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right Image - Mobile: below content, Desktop: right side */}
+            <div className="w-full lg:w-[524px] h-[280px] sm:h-[350px] lg:h-[418px] rounded-xl overflow-hidden flex-shrink-0">
+              <img
+                src="/join-team-drydown.webp"
+                alt="Join our team"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
     </div>
   );
 }

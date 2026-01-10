@@ -9,7 +9,24 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        hedvig: ['var(--font-hedvig)'],
+        inter: ['var(--font-inter)'],
+        averia: ['var(--font-averia)'],
+      },
       colors: {
+        // Figma header palette primitives (Home page)
+        'fv-ink': '#211F1C',
+        'fv-parchment': '#FFF9EF',
+        'fv-parchment-border': '#ECE0CF',
+        'fv-sand-border': '#D9CDB9',
+        'fv-gold': '#B28845',
+        'fv-gold-dark': '#9E7127',
+        'fv-olive': '#8A6A35',
+        'fv-border': '#E2E1E1',
+        'fv-border-strong': '#C4C4C3',
+        'fv-text-muted': '#4A4946',
+
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',

@@ -1,31 +1,35 @@
 import React from 'react';
 import Link from 'next/link';
-import { Star, Sparkles, Leaf, Flower2, Trees, Wind, Droplets } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Star, Droplets } from 'lucide-react';
 import AccordTags from '@/components/ui/AccordTags';
 import { getMongoDb } from '@/lib/mongodb';
 import prisma from '@/lib/prisma';
 import { ObjectId } from 'mongodb';
 import Image from 'next/image';
+import PopularPicksSection from '@/components/home/PopularPicksSection';
+import BrandPerfumesSection from '@/components/home/BrandPerfumesSection';
+import { getArticles } from '@/app/actions/drydown';
 
 // Server Component - fetch data at build time
 async function getHomePageData() {
   try {
     const db = await getMongoDb();
-    
+
     // Get total counts
-    const [perfumesCount, brandsCount] = await Promise.all([
+    const [perfumesCount, brandsCount, reviewsCount] = await Promise.all([
       db.collection('perfumes').countDocuments(),
       db.collection('brands').countDocuments(),
+      prisma.review.count(),
     ]);
 
     // Get MANUALLY SELECTED featured perfumes from PostgreSQL
     const manualFeatured = await prisma.featuredPerfume.findMany({
       orderBy: { position: 'asc' },
-      take: 3
+      take: 24
     });
 
     let featuredPerfumes = [];
-    
+
     if (manualFeatured.length > 0) {
       // Use manually selected perfumes
       const perfumeIds = manualFeatured.map(f => {
@@ -43,14 +47,14 @@ async function getHomePageData() {
           .toArray();
       }
     }
-    
+
     // Fallback to random if no manual selections
     if (featuredPerfumes.length === 0) {
       featuredPerfumes = await db
         .collection('perfumes')
         .aggregate([
           { $match: { $or: [{ featured: true }, { rating: { $gte: 4.0 } }] } },
-          { $sample: { size: 3 } },
+          { $sample: { size: 24 } },
         ])
         .toArray();
     }
@@ -58,11 +62,11 @@ async function getHomePageData() {
     // Get MANUALLY SELECTED trending brands from PostgreSQL
     const manualTrending = await prisma.trendingBrand.findMany({
       orderBy: { position: 'asc' },
-      take: 4
+      take: 12
     });
 
     let trendingBrands = [];
-    
+
     if (manualTrending.length > 0) {
       // Use manually selected brands
       const brandIds = manualTrending.map(b => {
@@ -80,7 +84,7 @@ async function getHomePageData() {
           .toArray();
       }
     }
-    
+
     // Fallback to random if no manual selections
     if (trendingBrands.length === 0) {
       trendingBrands = await db
@@ -91,22 +95,32 @@ async function getHomePageData() {
               perfumes_count: { $ifNull: ['$perfumes_count', { $size: { $ifNull: ['$perfumes', []] } }] }
             }
           },
-          { 
-            $match: { 
+          {
+            $match: {
               $or: [
                 { trending: true },
                 { perfumes_count: { $gte: 10 } }
               ]
-            } 
+            }
           },
-          { $sample: { size: 4 } },
+          { $sample: { size: 12 } },
         ])
         .toArray();
+    }
+
+    let latestArticles: any[] = [];
+    try {
+      const { articles } = await getArticles(undefined, 1, 3);
+      latestArticles = articles;
+    } catch (e) {
+      console.error('Error fetching latest articles for homepage:', e);
+      latestArticles = [];
     }
 
     return {
       perfumesCount: perfumesCount || 10000,
       brandsCount: brandsCount || 500,
+      reviewsCount: reviewsCount || 0,
       featuredPerfumes: featuredPerfumes.map((p: any) => ({
         _id: p._id.toString(),
         name: p.variant_name || p.name,
@@ -114,6 +128,7 @@ async function getHomePageData() {
         slug: p.slug || p._id.toString(),
         image: p.image || p.perfume_image,
         rating: p.rating || 0,
+        gender: p.gender,
         accords: (p.accords || []).slice(0, 3).map((a: any) => ({ name: a.name || a })),
       })),
       trendingBrands: trendingBrands.map((b: any) => ({
@@ -122,14 +137,30 @@ async function getHomePageData() {
         slug: b.slug || b._id.toString(),
         perfumesCount: b.perfumes_count || b.perfumes?.length || 0,
       })),
+      latestArticles: latestArticles.map((a: any) => ({
+        id: a.id,
+        slug: a.slug,
+        title: a.title,
+        excerpt: a.excerpt,
+        coverImage: a.coverImage,
+        category: a.category,
+        readTime: a.readTime,
+        publishedAt: a.publishedAt,
+        createdAt: a.createdAt,
+        author: {
+          name: a.author?.name ?? 'Fragview',
+        },
+      })),
     };
   } catch (error) {
     console.error('Error fetching homepage data:', error);
     return {
       perfumesCount: 10000,
       brandsCount: 500,
+      reviewsCount: 0,
       featuredPerfumes: [],
       trendingBrands: [],
+      latestArticles: [],
     };
   }
 }
@@ -140,233 +171,455 @@ export default async function HomePage() {
   const data = await getHomePageData();
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ backgroundColor: '#FAFFF5' }}>
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 pointer-events-none">
-        {/* Gradient Blobs */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-green-200/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-200/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-yellow-200/10 rounded-full blur-3xl" />
-        
-        {/* Floating Leaves Pattern */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.03]" xmlns="http://www.w3.org/2000/svg">
-          <pattern id="leaves" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
-            <path d="M50 30 Q 30 50 50 70 Q 70 50 50 30" fill="#D4E4BC" />
-            <path d="M150 80 Q 130 100 150 120 Q 170 100 150 80" fill="#E8F3E8" />
-            <circle cx="100" cy="50" r="3" fill="#F2C6A0" />
-            <circle cx="30" cy="150" r="2" fill="#D4E4BC" />
-          </pattern>
-          <rect width="100%" height="100%" fill="url(#leaves)" />
-        </svg>
+    <div className="min-h-screen bg-white text-fv-ink">
+      {/* Hero Section - Figma style */}
+      {/* Hero Section */}
+      <section className="relative bg-fv-parchment overflow-hidden">
+        <img
+          src="/Logo_vector.webp" 
+          alt=""
+          aria-hidden="true"
+          className="absolute"
+        />
+        <div className="mx-auto max-w-[1440px] px-6 lg:px-[72px] py-12 lg:py-[64px] relative">
 
-        {/* Animated Floating Icons */}
-        <div className="absolute top-10 left-20">
-          <Leaf size={24} className="text-green-300/30" />
-        </div>
-        <div className="absolute top-40 right-32">
-          <Flower2 size={20} className="text-orange-300/25" />
-        </div>
-        <div className="absolute bottom-32 left-40">
-          <Trees size={28} className="text-green-400/20" />
-        </div>
-      </div>
 
-      {/* Hero Section - Reduced padding, removed FragView button */}
-      <section className="relative py-12 px-4">
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <div 
-            className="rounded-2xl p-10 shadow-xl backdrop-blur-sm relative overflow-hidden"
-            style={{ 
-              background: 'linear-gradient(135deg, rgba(232, 243, 232, 0.7) 0%, rgba(242, 198, 160, 0.7) 100%)',
-              border: '1px solid rgba(255,255,255,0.5)'
-            }}
-          >
-            {/* Decorative Elements */}
-            <div className="absolute top-5 right-5 opacity-10">
-              <Flower2 size={60} />
-            </div>
-            <div className="absolute bottom-5 left-5 opacity-10">
-              <Leaf size={80} style={{ transform: 'rotate(-30deg)' }} />
-            </div>
+          <div className="mx-auto max-w-[1296px]">
 
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 relative z-10">
-              Discover Your
-              <span className="bg-gradient-to-r from-green-600 to-orange-500 bg-clip-text text-transparent">
-                {' '}Perfect Scent
-              </span>
-            </h1>
-            <p className="text-lg text-gray-700 mb-6 max-w-2xl mx-auto relative z-10">
-              Explore thousands of fragrances, read authentic reviews, and build your personal scent wardrobe with FragView
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center relative z-10">
-              <Link href="/search" className="glass-button-primary">
-                Start Exploring
-              </Link>
-              <Link href="/brands" className="glass-button-secondary">
-                Browse Brands
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+            {/* FLEX LAYOUT */}
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
 
-      {/* Stats Section - Reduced padding */}
-      <section className="py-8 relative z-10">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-center gap-8 md:gap-16">
-            <div className="text-center space-y-2 glass-card p-4 rounded-xl">
-              <Droplets className="w-6 h-6 mx-auto mb-1 text-green-600" />
-              <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-orange-500 bg-clip-text text-transparent">
-                {data.perfumesCount.toLocaleString()}+
-              </div>
-              <div className="text-gray-700 text-sm">Fragrances</div>
-            </div>
-            <div className="text-center space-y-2 glass-card p-4 rounded-xl">
-              <Sparkles className="w-6 h-6 mx-auto mb-1 text-orange-600" />
-              <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-orange-500 bg-clip-text text-transparent">
-                {data.brandsCount.toLocaleString()}+
-              </div>
-              <div className="text-gray-700 text-sm">Brands</div>
-            </div>
-          </div>
-        </div>
-      </section>
+              {/* LEFT COLUMN */}
+              <div className="flex flex-col lg:w-[686px]">
 
-      {/* Featured Fragrances - Reduced padding */}
-      <section className="py-12 px-4 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-              <Flower2 className="text-orange-400" size={24} />
-              Featured Fragrances
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm">
-              Discover the most loved and highly rated fragrances by our community
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.featuredPerfumes.length > 0 ? (
-              data.featuredPerfumes.map((perfume: any, i: number) => (
-                <div key={perfume._id} className="glass-card rounded-xl hover:shadow-lg transition-all duration-300 overflow-hidden group hover:scale-[1.02]">
-                  <div className="aspect-w-3 aspect-h-4 relative h-56 overflow-hidden flex items-center justify-center bg-gradient-to-br from-green-50/50 to-orange-50/50">
-                    {perfume.image ? (
-                      <div className="relative w-full h-full p-4 group-hover:scale-110 transition-transform duration-500">
-                      <Image
-                        src={perfume.image}
-                        alt={perfume.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="object-contain"
-                        priority={i < 6}  
-                      />
+                {/* TEXT */}
+                <h1 className="max-w-[520px] font-hedvig text-[36px] sm:text-[44px] lg:text-[56px] leading-[1.14] text-fv-ink">
+                  Discover perfumes worth your time and liking
+                </h1>
+
+                <p
+                  className="
+              mt-5 max-w-[570px]
+              font-[var(--font-inter)]
+              text-[#4A4946]
+              text-[18px] leading-[26px]
+              sm:text-[20px] sm:leading-[28px]
+              lg:text-[24px] lg:leading-[32px]
+            "
+                >
+                  You can browse scents, understand how they feel, and keep track of the
+                  fragrances that catch your attention with personal wardrobe to save
+                  perfumes you like, want to try or remember.
+                </p>
+
+                {/* TWO SMALL CARDS */}
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* Explore by brands */}
+                  <Link
+                    href="/brands"
+                    className="group relative h-[260px] md:h-[300px] overflow-hidden rounded-2xl"
+                  >
+                    <Image
+                      src="/brands_home.webp"
+                      alt="Explore by brands"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+
+                    <div className="absolute bottom-0 inset-x-0 p-4 flex items-center justify-between">
+                      <span className="text-white font-[var(--font-inter)] text-lg font-medium">
+                        Explore by brands
+                      </span>
+                      <ArrowUpRight className="h-6 w-6 text-white" />
                     </div>
-                    ) : (
-                      <Droplets size={48} className="text-green-300" />
-                    )}
-                  </div>
-                  
-      
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
-                        {perfume.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm">{perfume.brand}</p>
-                    </div>
-                    
-                    <div className="flex items-center mb-3">
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 text-orange-400 fill-current" />
-                        <span className="ml-1 text-sm font-medium text-gray-700">
-                          {perfume.rating.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
+                  </Link>
 
-                    <div className="mb-3 min-h-[32px]">
-                      {perfume.accords.length > 0 && (
-                        <AccordTags accords={perfume.accords} />
-                      )}
+                  {/* Drydown */}
+                  <Link
+                    href="/drydown"
+                    className="group relative h-[260px] md:h-[300px] overflow-hidden rounded-2xl"
+                  >
+                    <Image
+                      src="/drydown_home.webp"
+                      alt="Drydown"
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+
+                    <div className="absolute bottom-0 inset-x-0 p-4 flex items-center justify-between">
+                      <span className="text-white font-[var(--font-inter)] text-lg font-medium">
+                        Drydown
+                      </span>
+                      <ArrowUpRight className="h-6 w-6 text-white" />
                     </div>
-                    
-                    <Link 
-                      href={`/perfumes/${perfume.slug}`} 
-                      className="block w-full bg-gradient-to-r from-green-500 to-orange-500 text-white text-center py-2 rounded-lg font-medium hover:shadow-md transition-all mt-auto text-sm"
-                    >
-                      View Details
-                    </Link>
-                  </div>
+                  </Link>
                 </div>
-              ))
-            ) : (
-              <div className="col-span-3 text-center text-gray-500 py-8">
-                No featured perfumes available at the moment
               </div>
-            )}
+
+              {/* BIG CARD – MOVES BELOW ON TABLET */}
+          <Link
+  href="/perfumes"
+  className="
+    group relative
+    w-full
+    h-[360px]
+    md:h-[420px]
+    lg:w-[570px]
+    lg:h-[665px]
+    rounded-2xl
+    overflow-hidden
+    pt-4 pb-4 pl-5 pr-5
+  "
+>
+  <Image
+    src="/perfumes_home.webp"
+    alt="View Perfumes"
+    fill
+    priority
+    className="object-cover transition-transform duration-500 group-hover:scale-105"
+  />
+
+  {/* Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-2xl" />
+
+  {/* Content */}
+  <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between gap-2">
+    <span className="text-white font-[var(--font-inter)] text-xl sm:text-2xl font-medium">
+      View Perfumes
+    </span>
+    <ArrowUpRight className="h-8 w-8 text-white" />
+  </div>
+</Link>
+
+
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Trending Brands - Reduced padding */}
-      <section className="py-12 px-4 relative z-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
-              <Trees className="text-green-600" size={24} />
-              Trending Brands
-            </h2>
-            <p className="text-gray-600 text-sm">Explore the most popular fragrance houses</p>
+
+
+      {/* Statistics Cards - Responsive */}
+      <section className="bg-white">
+        <div
+          className="
+      mx-auto
+      w-full
+      max-w-[1440px]
+      px-4
+      sm:px-8
+      md:px-12
+      lg:px-[72px]        
+      py-8
+      sm:py-12
+      md:py-16
+      lg:py-[64px]
+      min-h-[466px]
+      lg:h-[466px]
+    "
+        >
+          {/* Content wrapper */}
+          <div className="mx-auto max-w-[1296px] flex flex-col gap-6 lg:gap-10">
+
+            {/* Section Text */}
+            <div className="flex flex-col gap-0.5">
+              {/* Pre-title */}
+              <div className="font-hedvig text-lg sm:text-xl md:text-[24px] leading-tight sm:leading-[32px] font-normal text-[#8A6A35]">
+                The scale of Fragview
+              </div>
+
+              {/* Title */}
+              <h2 className="font-hedvig text-3xl sm:text-4xl md:text-[48px] leading-tight sm:leading-[56px] font-normal text-fv-ink">
+                A lot to explore, in one place
+              </h2>
+            </div>
+
+            {/* Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              {/* Card 01 */}
+              <div className="rounded-xl border border-[#E2E1E1] bg-white p-5 sm:p-6">
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-hedvig text-lg sm:text-[20px] leading-[28px] font-normal text-[#737270]">
+                      Fragrances
+                    </div>
+                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[56px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
+                      {data.perfumesCount >= 1000
+                        ? `${Math.floor(data.perfumesCount / 1000)}k+`
+                        : `${data.perfumesCount}+`}
+                    </div>
+                  </div>
+                  <p className="font-[var(--font-inter)] text-base sm:text-[18px] leading-relaxed sm:leading-[26px] text-[#737270]">
+                    From niche houses to heritage classics, all mapped by notes, mood and seasonality.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 02 */}
+              <div className="rounded-xl border border-[#E2E1E1] bg-white p-5 sm:p-6">
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-hedvig text-lg sm:text-[20px] leading-[28px] font-normal text-[#737270]">
+                      Brands
+                    </div>
+                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[56px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
+                      {data.brandsCount >= 1000
+                        ? `${Math.floor(data.brandsCount / 1000)}k+`
+                        : `${data.brandsCount}+`}
+                    </div>
+                  </div>
+                  <p className="font-[var(--font-inter)] text-base sm:text-[18px] leading-relaxed sm:leading-[26px] text-[#737270]">
+                    Thousands of perfume brands, with a vast collection of their perfumes.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 03 */}
+              <div className="rounded-xl border border-[#E2E1E1] bg-white p-5 sm:p-6">
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1">
+                    <div className="font-hedvig text-lg sm:text-[20px] leading-[28px] font-normal text-[#737270]">
+                      Reviews
+                    </div>
+                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[56px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
+                      {data.reviewsCount >= 1000
+                        ? `${Math.floor(data.reviewsCount / 1000)}k+`
+                        : `${data.reviewsCount}+`}
+                    </div>
+                  </div>
+                  <p className="font-[var(--font-inter)] text-base sm:text-[18px] leading-relaxed sm:leading-[26px] text-[#737270]">
+                    Honest reviews, not just star ratings — so you understand how a scent truly wears.
+                  </p>
+                </div>
+              </div>
+
+            </div>
           </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        </div>
+      </section>
+
+
+      {/* Popular picks (Figma-style tabs + grid) */}
+      <PopularPicksSection perfumes={data.featuredPerfumes} />
+
+      {/* Perfumes by brand (Figma-style with brand tabs and perfume cards) */}
+      <BrandPerfumesSection brands={data.trendingBrands} perfumes={data.featuredPerfumes} />
+
+      {/* OLD Perfumes by brand section - commented out
+      <section className="bg-white">
+        <div className="mx-auto max-w-[1296px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <div className="text-lg sm:text-xl text-fv-olive">Perfumes by brand</div>
+              <h2 className="mt-2 text-3xl sm:text-4xl lg:text-[48px] leading-tight font-semibold">
+                Explore fragrance houses
+              </h2>
+            </div>
+            <Link
+              href="/brands"
+              className="hidden sm:inline-flex items-center gap-2 rounded-lg border border-fv-border-strong bg-white px-4 py-2 text-sm font-medium text-fv-ink hover:bg-fv-parchment/60"
+            >
+              View all
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6">
             {data.trendingBrands.length > 0 ? (
               data.trendingBrands.map((brand: any) => (
-                <Link key={brand._id} href={`/brands/${brand.slug}`}>
-                  <div className="text-center p-5 rounded-xl glass-card hover:scale-105 transition-all group">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-orange-400 rounded-full mx-auto mb-3 flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
-                      <span className="text-white font-bold text-xl">{brand.name[0]}</span>
+                <Link key={brand._id} href={`/brands/${brand.slug}`} className="group">
+                  <div className="rounded-xl border border-fv-border bg-white p-5 text-center transition-colors group-hover:bg-fv-parchment/40">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-fv-border bg-fv-parchment text-fv-ink font-semibold">
+                      {brand.name?.[0] ?? 'B'}
                     </div>
-                    <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors text-sm">
-                      {brand.name}
-                    </h3>
-                    <p className="text-xs text-gray-600">
-                      {brand.perfumesCount} fragrances
-                    </p>
+                    <div className="mt-3 font-semibold">{brand.name}</div>
+                    <div className="mt-1 text-xs text-fv-text-muted">{brand.perfumesCount} fragrances</div>
                   </div>
                 </Link>
               ))
             ) : (
-              <div className="col-span-4 text-center text-gray-500 py-8">
+              <div className="col-span-4 text-center text-fv-text-muted py-8">
                 No trending brands available at the moment
               </div>
             )}
           </div>
+
+          <div className="mt-8 sm:hidden">
+            <Link
+              href="/brands"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-fv-border-strong bg-white px-4 py-3 text-sm font-medium text-fv-ink hover:bg-fv-parchment/60"
+            >
+              View all
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+      </section>
+      */}
+
+      {/* Read & explore (The Drydown) - Figma style */}
+      <section className="bg-[#FFF9EF]">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+          {/* Header */}
+          <div className="flex flex-col gap-1">
+            {/* Pre-title */}
+            <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+              Read &amp; explore
+            </span>
+            {/* Title */}
+            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+              Notes on perfume, style, and how we wear scent
+            </h2>
+          </div>
+
+          {/* Article Cards Grid */}
+          <div className="mt-10 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {data.latestArticles?.length ? (
+              data.latestArticles.map((a: any) => (
+                <Link
+                  key={a.id}
+                  href={`/drydown/${a.slug}`}
+                  className="group flex flex-col bg-[#FFF4E3] rounded-[16px] overflow-hidden isolate"
+                >
+                  {/* Image Area */}
+                  <div className="relative h-[280px] lg:h-[365px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px]">
+                    {a.coverImage ? (
+                      <img
+                        src={a.coverImage}
+                        alt={a.title}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="h-full w-full bg-[#ECE0CF]" />
+                    )}
+                    {/* Badges - Category & Date */}
+                    <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                      {/* Category Badge */}
+                      <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                        {a.category || 'News'}
+                      </span>
+                      {/* Date Badge */}
+                      <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                        {new Date(a.publishedAt || a.createdAt).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content Area */}
+                  <div className="flex flex-col flex-1 p-6 gap-6">
+                    <div className="flex flex-col gap-3">
+                      {/* Title */}
+                      <h3 className="font-averia font-normal text-[24px] leading-[32px] text-[#211F1C] line-clamp-2">
+                        {a.title}
+                      </h3>
+                      {/* Excerpt */}
+                      <p className="font-inter font-normal text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#4A4946] line-clamp-4">
+                        {a.excerpt}
+                      </p>
+                    </div>
+
+                    {/* Divider + Meta */}
+                    <div className="mt-auto flex flex-col gap-6">
+                      {/* Divider */}
+                      <div className="w-full h-px bg-[#E2E1E1]" />
+
+                      {/* Author & Read Time */}
+                      <div className="flex items-center justify-between">
+                        {/* Author */}
+                        <div className="flex items-center gap-[3px]">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="12" cy="8" r="4" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                            <path d="M4 20C4 17 8 14 12 14C16 14 20 17 20 20" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                          </svg>
+                          <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
+                            {a.author?.name || 'Fragview'}
+                          </span>
+                        </div>
+                        {/* Read Time */}
+                        <div className="flex items-center gap-[3px]">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9" stroke="#4A4946" strokeWidth="2" />
+                            <path d="M12 7V12L15 15" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
+                            {a.readTime || '5 min read'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <div className="md:col-span-3 text-center text-[#737270] py-8 font-inter">
+                No articles available at the moment.
+              </div>
+            )}
+          </div>
+
+          {/* View More Button */}
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/drydown"
+              className="inline-flex items-center justify-between w-[164px] h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-[12px] font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+            >
+              View More
+              <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* CTA Section - UPDATED WITH BOTANICAL BACKGROUND */}
-      <section className="py-12 px-4 relative z-10 bg-gradient-to-br from-green-50/50 to-orange-50/30">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-10 relative overflow-hidden shadow-lg border border-green-100/50">
-            <div className="absolute top-0 right-0 opacity-10">
-              <Wind size={120} />
+
+
+      {/* OLD CTA - Commented out, replaced by NewFooter Pre-Footer section
+      <section className="bg-fv-parchment border-t border-fv-parchment-border">
+        <div className="mx-auto max-w-[1296px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+          <div className="rounded-2xl border border-fv-border bg-white p-8 sm:p-10">
+            <div className="max-w-2xl">
+              <h2 className="text-2xl sm:text-3xl font-semibold">Ready to Find Your Signature Scent?</h2>
+              <p className="mt-3 text-fv-text-muted">
+                Join thousands of fragrance enthusiasts on FragView and start building your scent wardrobe today
+              </p>
             </div>
-            <h2 className="text-3xl font-bold mb-4 relative z-10 text-gray-900">Ready to Find Your Signature Scent?</h2>
-            <p className="text-lg mb-6 text-gray-700 relative z-10">
-              Join thousands of fragrance enthusiasts on FragView and start building your scent wardrobe today
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center relative z-10">
-              <button className="px-8 py-3 rounded-full font-semibold bg-gradient-to-r from-green-500 to-orange-500 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                Sign Up Free
-              </button>
-              <Link href="/search" className="px-8 py-3 rounded-full font-semibold border-2 border-green-600/50 text-gray-800 hover:bg-green-50/50 transition-all duration-300 transform hover:scale-105">
+
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Link
+                href="/signup"
+                className="inline-flex items-center justify-between gap-3 rounded-xl bg-fv-ink px-4 py-3 text-base font-medium text-white transition-colors hover:bg-fv-ink/90"
+              >
+                <span className="px-2">Get Started</span>
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white text-fv-ink">
+                  <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
+                </span>
+              </Link>
+
+              <Link
+                href="/search"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-fv-border-strong bg-white px-6 py-3 text-base font-medium text-fv-ink hover:bg-fv-parchment/60"
+              >
                 Explore Now
+                <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </Link>
             </div>
           </div>
         </div>
       </section>
+      */}
     </div>
   );
 }

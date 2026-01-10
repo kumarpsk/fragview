@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { Search, Loader2, Sparkles } from 'lucide-react';
+import { Search, Loader2, X } from 'lucide-react';
 
 interface AutocompleteProps {
   placeholder?: string;
@@ -10,18 +10,21 @@ interface AutocompleteProps {
 }
 
 export default function SearchAutocomplete({
-  placeholder = 'Search fragrances, brands...',
+  placeholder = 'Search',
   onSelect,
   className = '',
 }: AutocompleteProps) {
   const [query, setQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'brands' | 'perfumes'>('brands');
   const [results, setResults] = useState<{ brands: any[]; perfumes: any[] }>({
     brands: [],
     perfumes: [],
   });
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   // Close dropdown when clicking outside
@@ -95,84 +98,176 @@ export default function SearchAutocomplete({
 
   const hasResults = results.brands.length > 0 || results.perfumes.length > 0;
 
+  const clearSearch = useCallback(() => {
+    setQuery('');
+    setIsOpen(false);
+    inputRef.current?.focus();
+  }, []);
+
+  // Determine border color based on state
+  const borderColor = isFocused || query.length > 0 ? 'border-[#B28845]' : 'border-fv-sand-border';
+
   return (
     <div ref={wrapperRef} className={`relative ${className}`}>
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+      {/* Search Container - matches Figma: padding 8px 12px, gap 8px, h-42px, border-radius 12px */}
+      <div className={`flex h-[42px] items-center rounded-xl border ${borderColor} bg-transparent py-2 px-3 gap-2 transition-colors`}>
+        {/* Search Icon - 24x24, color #9E7127 */}
+        <Search className="h-6 w-6 shrink-0 text-fv-gold-dark" strokeWidth={2} />
+        
+        {/* Input - Averia Serif Libre, 300 weight, 18px, line-height 26px */}
         <input
+          ref={inputRef}
           type="text"
           placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => query.length >= 2 && hasResults && setIsOpen(true)}
-          className="w-full rounded-full border border-green-200 bg-white/80 px-10 py-2 text-gray-900 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-green-400 placeholder:text-gray-400"
+          onFocus={() => {
+            setIsFocused(true);
+            if (query.length >= 2 && hasResults) setIsOpen(true);
+          }}
+          onBlur={() => setIsFocused(false)}
+          className="h-[26px] flex-1 bg-transparent text-fv-ink placeholder:text-fv-sand-border font-[var(--font-averia)] text-[18px] leading-[26px] font-light focus:outline-none"
         />
+        
+        {/* Loading Spinner */}
         {loading && (
-          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-green-600" />
+          <Loader2 className="h-5 w-5 shrink-0 animate-spin text-fv-olive" />
+        )}
+        
+        {/* Clear Button - 20x20, color #737270, only visible when there's text */}
+        {query.length > 0 && !loading && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="h-5 w-5 shrink-0 flex items-center justify-center text-[#737270] hover:text-fv-ink transition-colors"
+            aria-label="Clear search"
+          >
+            <X className="h-5 w-5" strokeWidth={2} />
+          </button>
         )}
       </div>
 
-      {/* Autocomplete Dropdown */}
-      {isOpen && hasResults && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-2 max-h-96 overflow-y-auto rounded-lg border border-green-200 bg-white/95 backdrop-blur-sm shadow-lg">
-          {/* Brands Section */}
-          {results.brands.length > 0 && (
-            <div>
-              <div className="border-b border-green-100 bg-green-50/50 px-3 py-2 text-xs font-semibold uppercase text-green-700 flex items-center gap-2">
-                <Sparkles className="w-3 h-3" />
-                Brands ({results.brands.length})
-              </div>
-              {results.brands.map((brand) => (
-                <Link
-                  key={brand._id}
-                  href={`/brands/${brand.slug || brand._id}`}
-                  onClick={() => handleSelect(brand, 'brand')}
-                  className="block border-b border-green-50 px-4 py-3 transition-colors hover:bg-green-50"
-                >
-                  <div className="font-medium text-gray-900">{brand.name}</div>
-                  <div className="text-xs text-gray-600">
-                    {brand.country && `${brand.country} • `}
-                    {brand.perfumes_count || 0} fragrances
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+      {/* Autocomplete Dropdown - Figma style */}
+      {isOpen && (
+        <div className="absolute top-full left-0 z-50 mt-3 w-full min-w-[320px] lg:w-[530px] flex flex-col gap-5 p-4 bg-[#FFF9EF] border border-[#C4C4C3] rounded-2xl shadow-lg">
+          {/* Tabs */}
+          <div className="flex items-center w-full h-9 border border-[#E2E1E1] rounded-full overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setActiveTab('brands')}
+              className={`flex-1 h-full flex items-center justify-center font-inter font-medium text-sm leading-5 rounded-full transition-colors ${
+                activeTab === 'brands'
+                  ? 'bg-[#211F1C] text-white'
+                  : 'bg-transparent text-[#211F1C] hover:bg-[#E2E1E1]/50'
+              }`}
+            >
+              Brands ({results.brands.length.toString().padStart(2, '0')})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('perfumes')}
+              className={`flex-1 h-full flex items-center justify-center font-inter font-medium text-sm leading-5 rounded-full transition-colors ${
+                activeTab === 'perfumes'
+                  ? 'bg-[#211F1C] text-white'
+                  : 'bg-transparent text-[#211F1C] hover:bg-[#E2E1E1]/50'
+              }`}
+            >
+              Perfumes ({results.perfumes.length.toString().padStart(2, '0')})
+            </button>
+          </div>
 
-          {/* Perfumes Section */}
-          {results.perfumes.length > 0 && (
-            <div>
-              <div className="border-b border-green-100 bg-orange-50/50 px-3 py-2 text-xs font-semibold uppercase text-orange-700 flex items-center gap-2">
-                <Sparkles className="w-3 h-3" />
-                Perfumes ({results.perfumes.length})
+          {/* Results List */}
+          {hasResults ? (
+            <div className="flex flex-col gap-3 max-h-[160px] overflow-y-auto search-results-scroll pr-1">
+              {activeTab === 'brands' && results.brands.length > 0 && (
+                results.brands.map((brand) => (
+                  <Link
+                    key={brand._id}
+                    href={`/brands/${brand.slug || brand._id}`}
+                    onClick={() => handleSelect(brand, 'brand')}
+                    className="flex items-center justify-between gap-2 group"
+                  >
+                    <span className="font-averia font-light text-xl leading-7 text-[#211F1C] truncate group-hover:text-[#8A6A35] transition-colors">
+                      {brand.name}
+                    </span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0" aria-hidden="true">
+                      <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#8A6A35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </Link>
+                ))
+              )}
+              {activeTab === 'perfumes' && results.perfumes.length > 0 && (
+                results.perfumes.map((perfume) => (
+                  <Link
+                    key={perfume._id}
+                    href={`/perfumes/${perfume.slug || perfume._id}`}
+                    onClick={() => handleSelect(perfume, 'perfume')}
+                    className="flex items-center justify-between gap-2 group"
+                  >
+                    <span className="font-averia font-light text-xl leading-7 text-[#211F1C] truncate group-hover:text-[#8A6A35] transition-colors">
+                      {perfume.variant_name}
+                    </span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0" aria-hidden="true">
+                      <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#8A6A35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </Link>
+                ))
+              )}
+              {/* Empty tab state */}
+              {activeTab === 'brands' && results.brands.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-6 gap-3">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#E2E1E1]">
+                    <Search className="w-6 h-6 text-[#737270]" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-inter font-medium text-base text-[#211F1C]">No Matches This Time</p>
+                    <p className="font-inter font-normal text-sm text-[#737270]">Maybe tweak the spelling or try something else</p>
+                  </div>
+                </div>
+              )}
+              {activeTab === 'perfumes' && results.perfumes.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-6 gap-3">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#E2E1E1]">
+                    <Search className="w-6 h-6 text-[#737270]" />
+                  </div>
+                  <div className="text-center">
+                    <p className="font-inter font-medium text-base text-[#211F1C]">No Matches This Time</p>
+                    <p className="font-inter font-normal text-sm text-[#737270]">Maybe tweak the spelling or try something else</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* No Results at all */
+            <div className="flex flex-col items-center justify-center py-6 gap-3">
+              <div className="w-12 h-12 flex items-center justify-center rounded-full bg-[#E2E1E1]">
+                <Search className="w-6 h-6 text-[#737270]" />
               </div>
-              {results.perfumes.map((perfume) => (
-                <Link
-                  key={perfume._id}
-                  href={`/perfumes/${perfume.slug || perfume._id}`}
-                  onClick={() => handleSelect(perfume, 'perfume')}
-                  className="block border-b border-green-50 px-4 py-3 transition-colors hover:bg-green-50"
-                >
-                  <div className="font-medium text-gray-900">
-                    {perfume.variant_name}
-                  </div>
-                  <div className="text-xs text-gray-600">
-                    {perfume.brand_name}
-                    {perfume.gender && ` • ${perfume.gender}`}
-                  </div>
-                </Link>
-              ))}
+              <div className="text-center">
+                <p className="font-inter font-medium text-base text-[#211F1C]">No Matches This Time</p>
+                <p className="font-inter font-normal text-sm text-[#737270]">Maybe tweak the spelling or try something else</p>
+              </div>
             </div>
           )}
         </div>
       )}
 
-      {/* No Results */}
-      {isOpen && !loading && query.length >= 2 && ! hasResults && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-2 rounded-lg border border-green-200 bg-white/95 backdrop-blur-sm p-4 text-center text-sm text-gray-600 shadow-lg">
-          No results found for "{query}"
-        </div>
-      )}
+      {/* Custom scrollbar styles */}
+      <style jsx global>{`
+        .search-results-scroll::-webkit-scrollbar {
+          width: 4px;
+        }
+        .search-results-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .search-results-scroll::-webkit-scrollbar-thumb {
+          background: #E2E1E1;
+          border-radius: 32px;
+        }
+        .search-results-scroll::-webkit-scrollbar-thumb:hover {
+          background: #C4C4C3;
+        }
+      `}</style>
     </div>
   );
 }

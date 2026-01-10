@@ -231,7 +231,7 @@ function ResetPasswordForm() {
 
         {/* Help Text */}
         <p className="text-center text-sm text-gray-600 mt-6">
-          Didn't receive a code?{' '}
+          Didn&apos;t receive a code?{' '}
           <Link
             href="/forgot-password"
             className="text-green-600 hover:text-green-700 hover:underline font-medium transition-colors"

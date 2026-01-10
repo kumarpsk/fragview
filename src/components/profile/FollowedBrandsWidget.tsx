@@ -79,7 +79,7 @@ export default function FollowedBrandsWidget() {
         </div>
         <div className="text-center py-8">
           <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 text-sm">You're not following any brands yet</p>
+          <p className="text-gray-500 text-sm">You&apos;re not following any brands yet</p>
           <Link 
             href="/brands"
             className="inline-block mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"

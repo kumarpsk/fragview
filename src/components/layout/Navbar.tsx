@@ -1,205 +1,294 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Menu, X, User, ShoppingBag } from 'lucide-react';
-
-import TopbarActions from '@/components/layout/TopbarActions';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { Menu, X, ArrowUpRight, ArrowRight, User, ChevronDown, Bell } from 'lucide-react';
+import { useAuthModal } from '@/components/auth/AuthModal';
+import { useSession, signOut } from 'next-auth/react';
 import SearchAutocomplete from '@/components/common/SearchAutocomplete';
-import NotificationBell from '@/components/notifications/NotificationBell'; // 🆕 ADD THIS
+import TopbarActions from './TopbarActions';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const { open } = useAuthModal();
+
+  const user = session?.user;
+
+
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-green-100/50 bg-white/80 backdrop-blur-lg transition-all duration-300">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center gap-4">
-          {/* Logo with Botanical Theme */}
-          <Link href="/" className="group flex items-center space-x-2 flex-shrink-0">
-            <img 
-              src="/logo.svg" 
-              alt="FragView Logo" 
-              className="h-14 lg:h-20 w-auto transition-all group-hover:scale-105"
-            />
-          </Link>
+    <header className="fixed top-0 z-50 w-full">
+      {/* Top Strip */}
+      <div className="h-12 bg-fv-ink text-white">
+        <div className="mx-auto flex h-full max-w-[1440px] items-center justify-center px-4 sm:px-6 lg:px-[72px]">
+          <div className="flex items-center gap-4 text-center text-sm sm:text-base">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M16 0L19.5 12.5L32 16L19.5 19.5L16 32L12.5 19.5L0 16L12.5 12.5L16 0Z" fill="white" />
+            </svg>
+            <span className="leading-6">Explore the best of perfumes, all for free</span>
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M16 0L19.5 12.5L32 16L19.5 19.5L16 32L12.5 19.5L0 16L12.5 12.5L16 0Z" fill="white" />
+            </svg>
+          </div>
+        </div>
+      </div>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden items-center space-x-6 lg:flex flex-shrink-0">
-            <div className="relative group">
-              <Link 
-                href="/" 
-                className="text-sm font-medium text-gray-700 transition-all duration-300 hover:text-green-600 whitespace-nowrap"
-              >
-                Home
+      {/* Navigation */}
+      <nav className="w-full border-b border-fv-parchment-border bg-fv-parchment">
+        {/* Desktop: py-3 (12px), Mobile: py-2.5 (10px) for 64px total with 44px content */}
+        <div className="mx-auto max-w-[1296px] px-6 lg:px-8 py-2.5 lg:py-3">
+          {/* Desktop layout */}
+          <div className="hidden lg:flex h-[50px] items-center justify-between gap-2">
+            {/* Left group: Logo + links */}
+            <div className="flex items-center gap-6 shrink-0">
+              <Link href="/" className="group flex items-center gap-2">
+                <Image src="/logo-icon.svg" alt="FragView" width={37} height={44} className="h-11 w-auto" priority />
+                <span className="font-hedvig text-[28px] leading-[42px] font-normal text-fv-ink">
+                  Fragview
+                </span>
+
+
+
               </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50">
-                Home Page
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
+
+              <div className="flex items-center gap-6">
+                <Link
+                  href="/perfumes"
+                  className={`relative font-averia text-[22px] leading-[30px] font-light transition-colors whitespace-nowrap px-1
+                    ${pathname === '/perfumes' || pathname.startsWith('/perfumes/')
+                      ? 'text-fv-ink after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-1 after:bg-fv-ink after:rounded-full after:content-[""] after:w-full after:mx-auto'
+                      : 'text-fv-ink hover:text-fv-gold-dark'}`}
+                >
+                  Perfumes
+                </Link>
+                <Link
+                  href="/brands"
+                  className={`relative font-averia text-[22px] leading-[30px] font-light transition-colors whitespace-nowrap px-1
+                    ${pathname === '/brands' || pathname.startsWith('/brands/')
+                      ? 'text-fv-ink after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-1 after:bg-fv-ink after:rounded-full after:content-[""] after:w-full after:mx-auto'
+                      : 'text-fv-ink hover:text-fv-gold-dark'}`}
+                >
+                  Brands
+                </Link>
+                <Link
+                  href="/drydown"
+                  className={`relative font-averia text-[22px] leading-[30px] font-light transition-colors whitespace-nowrap px-1
+                    ${pathname === '/drydown' || pathname.startsWith('/drydown/')
+                      ? 'text-fv-ink after:absolute after:left-0 after:right-0 after:-bottom-1 after:h-1 after:bg-fv-ink after:rounded-full after:content-[""] after:w-full after:mx-auto'
+                      : 'text-fv-ink hover:text-fv-gold-dark'}`}
+                >
+                  Drydown
+                </Link>
               </div>
             </div>
 
-            <div className="relative group">
-              <Link 
-                href="/brands" 
-                className="text-sm font-medium text-gray-700 transition-all duration-300 hover:text-green-600 whitespace-nowrap"
-              >
-                Brands
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50">
-                Explore Brands
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
-              </div>
+            {/* Center: Search */}
+            <div className="flex-1 max-w-[384px]">
+              <SearchAutocomplete placeholder="Search" className="w-full" />
             </div>
 
-            <div className="relative group">
-              <Link 
-                href="/perfumes" 
-                className="text-sm font-medium text-gray-700 transition-all duration-300 hover:text-green-600 whitespace-nowrap"
-              >
-                Perfumes
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50">
-                Explore Perfumes
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
-              </div>
-            </div>
-
-            <div className="relative group">
-              <Link 
-                href="/search" 
-                className="text-sm font-medium text-gray-700 transition-all duration-300 hover:text-green-600 whitespace-nowrap"
-              >
-                Search
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50">
-                Advanced Search
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
-              </div>
+            {/* Right: Actions */}
+            <div className="flex items-center shrink-0">
+              <TopbarActions />
             </div>
           </div>
 
-          {/* Desktop Search */}
-          <div className="hidden lg:flex flex-1 min-w-0 px-4">
-            <div className="w-full">
-              <SearchAutocomplete placeholder="Search fragrances, brands, notes..." />
-            </div>
-          </div>
+          {/* Mobile layout */}
+          <div className="flex h-10 items-center justify-between lg:hidden">
+            <Link href="/" className="group flex items-center gap-2">
+              <Image src="/logo-icon.svg" alt="FragView" width={27} height={32} className="h-8 w-auto" priority />
+              <span className="font-[var(--font-hedvig)] text-[20px] leading-[42px] font-normal text-fv-ink">
+                Fragview
+              </span>
+            </Link>
 
-          {/* Right Section: Actions */}
-          <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
-            <div className="relative group flex items-center">
-              <Link
-                href="/wardrobe"
-                className="flex items-center justify-center text-gray-700 transition-all duration-300 hover:text-green-600 p-2"
-                aria-label="Wardrobe"
+            <div className="flex items-center gap-4">
+              {user && (
+                <Link href="/notifications" aria-label="Notifications">
+                  <Bell className="h-6 w-6 text-fv-ink" strokeWidth={1.5} />
+                </Link>
+              )}
+              <button
+                onClick={() => setIsOpen((v) => !v)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-fv-ink transition-colors hover:bg-white/60"
+                aria-label="Toggle menu"
               >
-                <ShoppingBag className="h-5 w-5" />
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50">
-                Virtual Wardrobe
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
-              </div>
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
-
-            {/* 🆕 NOTIFICATION BELL - ADD THIS */}
-            <NotificationBell />
-
-            <div className="relative group flex items-center">
-              <Link
-                href="/profile"
-                className="flex items-center justify-center text-gray-700 transition-all duration-300 hover:text-green-600 p-2"
-                aria-label="Profile"
-              >
-                <User className="h-5 w-5" />
-              </Link>
-              <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap pointer-events-none z-50">
-                Profile
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
-              </div>
-            </div>
-
-            <TopbarActions />
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="flex items-center lg:hidden ml-auto">
-            <button
-              onClick={() => setIsOpen((v) => !v)}
-              className="text-gray-700 transition-all duration-300 hover:text-green-600 p-2"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
           </div>
         </div>
 
         {/* Mobile panel */}
         {isOpen && (
-          <div className="lg:hidden">
-            <div className="space-y-1 border-t border-green-100 bg-white/95 backdrop-blur-md px-2 pb-3 pt-2 transition-all duration-300">
-              <div className="px-3 py-2">
-                <SearchAutocomplete placeholder="Search..." />
+          <div className="lg:hidden border-t border-fv-gold bg-fv-parchment">
+            <div className="flex flex-col gap-5 px-6 py-6">
+              {/* Search */}
+              <SearchAutocomplete placeholder="Search" className="w-full" />
+
+              {/* Explore section */}
+              <div className="flex flex-col gap-2">
+                <span className="font-[var(--font-hedvig)] text-sm leading-5 text-fv-olive">
+                  Explore
+                </span>
+
+                <div className="flex flex-col gap-6">
+                  <Link
+                    href="/brands"
+                    className="flex items-center justify-between"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/brands' || pathname.startsWith('/brands/') ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                      Brands
+                    </span>
+                    <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                  </Link>
+                  <Link
+                    href="/perfumes"
+                    className="flex items-center justify-between"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/perfumes' || pathname.startsWith('/perfumes/') ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                      Perfumes
+                    </span>
+                    <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                  </Link>
+                  <Link
+                    href="/drydown"
+                    className="flex items-center justify-between"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/drydown' || pathname.startsWith('/drydown/') ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                      Drydown
+                    </span>
+                    <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                  </Link>
+                  {user && (
+                    <Link
+                      href="/wardrobe"
+                      className="flex items-center justify-between"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/wardrobe' || pathname.startsWith('/wardrobe/') ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                        My Wardrobe
+                      </span>
+                      <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                    </Link>
+                  )}
+                </div>
               </div>
-              <Link 
-                href="/" 
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-                onClick={() => setIsOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                href="/brands" 
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-                onClick={() => setIsOpen(false)}
-              >
-                Brands
-              </Link>
-              <Link 
-                href="/perfumes" 
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-                onClick={() => setIsOpen(false)}
-              >
-                Perfumes
-              </Link>
-              <Link 
-                href="/search" 
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-                onClick={() => setIsOpen(false)}
-              >
-                Advanced Search
-              </Link>
-              <div className="border-t border-green-100 my-2"></div>
-              <Link 
-                href="/wardrobe" 
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-                onClick={() => setIsOpen(false)}
-              >
-                My Wardrobe
-              </Link>
-              {/* 🆕 ADD NOTIFICATIONS LINK FOR MOBILE */}
-              <Link 
-                href="/notifications" 
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-                onClick={() => setIsOpen(false)}
-              >
-                Notifications
-              </Link>
-              <Link 
-                href="/profile" 
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-700 transition-all duration-300 hover:bg-green-50 hover:text-green-600"
-                onClick={() => setIsOpen(false)}
-              >
-                My Profile
-              </Link>
-              <div className="border-t border-green-100 my-2"></div>
-              <div className="px-3 py-2">
-                <TopbarActions />
-              </div>
+
+              {user && (
+                <>
+                  {/* Divider */}
+                  <div className="border-t border-fv-border" />
+
+                  {/* Account section */}
+                  <div className="flex flex-col gap-2">
+                    <span className="font-[var(--font-hedvig)] text-sm leading-5 text-fv-olive">
+                      Account
+                    </span>
+
+                    <div className="flex flex-col gap-6">
+                      <Link
+                        href="/profile"
+                        className="flex items-center justify-between"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/profile' ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                          My Profile
+                        </span>
+                        <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                      </Link>
+                      <Link
+                        href="/profile/reviews"
+                        className="flex items-center justify-between"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/profile/reviews' ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                          My Reviews
+                        </span>
+                        <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className="flex items-center justify-between"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/settings' ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                          Settings
+                        </span>
+                        <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                      </Link>
+                      <Link
+                        href="/submit"
+                        className="flex items-center justify-between"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <span className={`font-[var(--font-averia)] text-[20px] leading-7 font-light ${pathname === '/submit' ? 'text-[#B28845] underline' : 'text-fv-ink'}`}>
+                          Submit Perfume
+                        </span>
+                        <ArrowUpRight className="h-6 w-6 text-fv-olive" />
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Logout button */}
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      signOut({ callbackUrl: '/' });
+                    }}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-fv-border-strong bg-white px-6 font-[var(--font-inter)] text-base font-medium text-fv-ink hover:bg-fv-parchment/60 transition-colors w-fit"
+                  >
+                    Logout
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </>
+              )}
+
+              {!user && (
+                <>
+                  {/* Divider */}
+                  <div className="border-t border-fv-border" />
+
+                  {/* Actions */}
+                  <div className="flex flex-col gap-6">
+                    <Link
+                      href="/signin"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        open({ mode: 'signin', reason: 'Sign in to continue' });
+                      }}
+                      className="inline-flex h-10 w-fit items-center justify-center gap-2 rounded-lg border border-[#C4C4C3] bg-transparent px-6 py-2 font-[var(--font-inter)] text-base leading-6 font-medium text-fv-ink hover:bg-white/60 transition-colors"
+                    >
+                      Log in
+                      <ArrowRight className="h-6 w-6" aria-hidden="true" />
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        open({ mode: 'signup', reason: 'Create your FragView account' });
+                      }}
+                      className="inline-flex h-10 w-fit items-center gap-3 rounded-xl bg-fv-ink pl-4 pr-1 py-1 font-[var(--font-inter)] text-base leading-6 font-medium text-white hover:bg-fv-ink/90 transition-colors"
+                    >
+                      <span>Get Started</span>
+                      <span className="inline-flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-white text-fv-ink">
+                        <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 };
 

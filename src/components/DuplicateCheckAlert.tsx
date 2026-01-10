@@ -92,7 +92,7 @@ export default function DuplicateCheckAlert({ type, duplicateCheck, checking }: 
           <div className="flex-1">
             <p className="font-bold text-yellow-900">⚠️ Similar {type}s found:</p>
             <p className="text-sm text-yellow-700 mt-1 mb-2">
-              Please check if any of these match what you're trying to submit:
+              Please check if any of these match what you&apos;re trying to submit:
             </p>
             <ul className="space-y-1">
               {duplicateCheck.similar.map((item) => {

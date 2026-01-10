@@ -2,11 +2,8 @@
 import React, { useState, useTransition, useRef, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { Star, Plus, LogIn, Leaf, Flower2, Droplets, Wind, Sparkles, Camera, X, Bell, Clock, MessageCircle } from 'lucide-react';
-import NotesPyramid from '@/components/ui/NotesPyramid';
-import AccordTags from '@/components/ui/AccordTags';
+import { LogIn, Sparkles, X, Clock } from 'lucide-react';
 import SimilarFragrances from '@/components/ui/SimilarFragrances';
-import ReviewsSummary from '@/components/ui/ReviewsSummary';
 import ImageUpload from '@/components/upload/ImageUpload';
 import ReviewActionButtons from '@/components/reviews/ReviewActionButtons';
 import MentionTextarea from '@/components/ui/MentionTextarea';
@@ -117,20 +114,20 @@ const getAccordColor = (accordName: string): string => {
 
   const lowerName = accordName.toLowerCase().trim();
   if (colors[lowerName]) return colors[lowerName];
-  
+
   for (const [key, color] of Object.entries(colors)) {
     if (lowerName.includes(key) || key.includes(lowerName)) {
       return color;
     }
   }
-  
+
   const hash = accordName.charCodeAt(0) % 10;
   const defaultColors = [
-    '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', 
+    '#10b981', '#f59e0b', '#ec4899', '#8b5cf6',
     '#06b6d4', '#f97316', '#22c55e', '#a855f7',
     '#fb923c', '#14b8a6'
   ];
-  
+
   return defaultColors[hash];
 };
 
@@ -141,10 +138,10 @@ function getSillageLabel(value: number): string {
 }
 
 function getLongevityHrsLabel(value: number): string {
-    const safeValue = Math.max(0, Math.min(5, value));
-    if (safeValue >= 4.9) return '12+ hrs'; 
-    const hours = safeValue * 2.4;
-    return `${parseFloat(hours.toFixed(1))} hrs`;
+  const safeValue = Math.max(0, Math.min(5, value));
+  if (safeValue >= 4.9) return '12+ hrs';
+  const hours = safeValue * 2.4;
+  return `${parseFloat(hours.toFixed(1))} hrs`;
 }
 
 function getPosition(value: number): number {
@@ -163,15 +160,15 @@ export default function PerfumeDetailClient({
 }: Props) {
   const { open } = useAuthModal();
   const { data: session } = useSession();
-  
-  const [userRating, setUserRating] = useState<number>(0); 
+
+  const [userRating, setUserRating] = useState<number>(0);
   const [userLongevity, setUserLongevity] = useState<number>(0);
   const [userSillage, setUserSillage] = useState<number>(0);
   const [reviewText, setReviewText] = useState('');
-  
+
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
-  
+
   const [pending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -186,8 +183,8 @@ export default function PerfumeDetailClient({
   // --- COOLING PERIOD LOGIC ---
   const isCoolingPeriodActive = React.useMemo(() => {
     if (!perfume.created_at) return false;
-    const createdTime = typeof perfume.created_at === 'number' 
-      ? perfume.created_at * 1000 
+    const createdTime = typeof perfume.created_at === 'number'
+      ? perfume.created_at * 1000
       : new Date(perfume.created_at).getTime();
     const now = Date.now();
     const diffTime = Math.abs(now - createdTime);
@@ -196,9 +193,9 @@ export default function PerfumeDetailClient({
   }, [perfume.created_at]);
 
   const remainingDays = React.useMemo(() => {
-    if (! perfume.created_at) return 0;
-    const createdTime = typeof perfume.created_at === 'number' 
-      ? perfume.created_at * 1000 
+    if (!perfume.created_at) return 0;
+    const createdTime = typeof perfume.created_at === 'number'
+      ? perfume.created_at * 1000
       : new Date(perfume.created_at).getTime();
     const releaseDate = new Date(createdTime);
     const unlockDate = new Date(releaseDate);
@@ -214,8 +211,8 @@ export default function PerfumeDetailClient({
         typeof a.strength === 'number'
           ? a.strength
           : a.width
-          ? Math.round(Math.min(5, Math.max(1, (a.width / 100) * 5)))
-          : 3,
+            ? Math.round(Math.min(5, Math.max(1, (a.width / 100) * 5)))
+            : 3,
       width: a.width,
     })) || [];
 
@@ -230,16 +227,16 @@ export default function PerfumeDetailClient({
       const formData = new FormData();
       formData.append(field, String(value));
       submitReview(slug, formData).then((res) => {
-        if (! res.ok) console.error("Auto-save failed:", res.error);
+        if (!res.ok) console.error("Auto-save failed:", res.error);
       });
-    }, 500), 
+    }, 500),
     [slug, isCoolingPeriodActive]
   );
 
   const handleSliderChange = (field: 'longevity' | 'sillage', value: number) => {
-    if (! isSignedIn) {
-        open({ mode: 'signin', reason: `Sign in to rate`, callbackUrl: `/perfumes/${slug}` });
-        return;
+    if (!isSignedIn) {
+      open({ mode: 'signin', reason: `Sign in to rate`, callbackUrl: `/perfumes/${slug}` });
+      return;
     }
     if (isCoolingPeriodActive) return;
 
@@ -251,8 +248,8 @@ export default function PerfumeDetailClient({
 
   const handleRatingChange = (value: number) => {
     if (!isSignedIn) {
-        open({ mode: 'signin', reason: `Sign in to rate`, callbackUrl: `/perfumes/${slug}` });
-        return;
+      open({ mode: 'signin', reason: `Sign in to rate`, callbackUrl: `/perfumes/${slug}` });
+      return;
     }
     if (isCoolingPeriodActive) return;
 
@@ -260,7 +257,7 @@ export default function PerfumeDetailClient({
     const formData = new FormData();
     formData.append('rating', String(value));
     startTransition(() => {
-        submitReview(slug, formData);
+      submitReview(slug, formData);
     });
   };
 
@@ -269,14 +266,14 @@ export default function PerfumeDetailClient({
       open({ mode: 'signin', reason: 'Sign in to follow' });
       return;
     }
-  
+
     const prevState = isFollowing;
     setIsFollowing(!isFollowing);
-  
+
     try {
       const { toggleFollowThread: toggle } = await import('@/app/actions/thread');
       const result = await toggle(slug);
-    
+
       if (result.error) {
         setIsFollowing(prevState);
         console.error('Follow error:', result.error);
@@ -327,7 +324,7 @@ export default function PerfumeDetailClient({
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 28px;">
             <div style="background: white; border-radius: 18px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
               <p style="font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 1. 5px; margin: 0 0 14px 0; font-weight: 700; text-align: center;">RATING</p>
-              <div style="display: flex; gap: 5px; margin-bottom: 12px; justify-content: center;">${[1,2,3,4,5].map(star => `<span style="color: ${star <= Math.round(userRating || rating) ? '#fb923c' : '#d1d5db'}; font-size: 24px;">★</span>`).join('')}</div>
+              <div style="display: flex; gap: 5px; margin-bottom: 12px; justify-content: center;">${[1, 2, 3, 4, 5].map(star => `<span style="color: ${star <= Math.round(userRating || rating) ? '#fb923c' : '#d1d5db'}; font-size: 24px;">★</span>`).join('')}</div>
               <p style="font-size: 36px; font-weight: 900; color: #1f2937; margin: 0; text-align: center;">${(userRating || rating).toFixed(1)}</p>
             </div>
             <div style="background: white; border-radius: 18px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
@@ -355,7 +352,7 @@ export default function PerfumeDetailClient({
       const canvas = await html2canvas(postcard, { backgroundColor: '#FAFFF5', scale: 2, logging: false, useCORS: true, allowTaint: true, width: 1080, height: 1920 });
       document.body.removeChild(postcard);
       canvas.toBlob((blob) => {
-        if (! blob) { alert('Failed to generate image'); return; }
+        if (!blob) { alert('Failed to generate image'); return; }
         const url = URL.createObjectURL(blob);
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;';
@@ -365,14 +362,14 @@ export default function PerfumeDetailClient({
         document.body.appendChild(overlay);
         document.body.appendChild(dialog);
         const cleanup = () => { document.body.removeChild(overlay); document.body.removeChild(dialog); URL.revokeObjectURL(url); };
-        document.getElementById('share-whatsapp')! .onclick = () => {
+        document.getElementById('share-whatsapp')!.onclick = () => {
           const link = document.createElement('a'); link.href = url; link.download = `${perfume.variant_name}-fragview.jpg`; link.click();
           setTimeout(() => window.open(`https://wa.me/?text=Check out ${perfume.variant_name} on Fragview!  https://fragview.com/perfumes/${slug}`), 500); cleanup();
         };
-        document.getElementById('share-download')! .onclick = () => {
+        document.getElementById('share-download')!.onclick = () => {
           const link = document.createElement('a'); link.href = url; link.download = `${perfume.variant_name}-fragview.jpg`; link.click(); cleanup();
         };
-        document.getElementById('share-close')! .onclick = cleanup; overlay.onclick = cleanup;
+        document.getElementById('share-close')!.onclick = cleanup; overlay.onclick = cleanup;
       }, 'image/jpeg', 0.95);
     } catch (error) { console.error('Snapshot error:', error); alert(`Failed to generate snapshot: ${error instanceof Error ? error.message : 'Unknown error'}`); }
   };
@@ -380,24 +377,24 @@ export default function PerfumeDetailClient({
   async function handleSubmitReview(formData: FormData) {
     setErrorMessage(null);
     setSuccessMessage(null);
-    
+
     if (!isSignedIn) {
-        open({ mode: 'signin', reason: 'Sign in to review', callbackUrl: `/perfumes/${slug}` });
-        return;
+      open({ mode: 'signin', reason: 'Sign in to review', callbackUrl: `/perfumes/${slug}` });
+      return;
     }
 
     startTransition(async () => {
-      if (! formData.get('text')) formData.set('text', reviewText);
+      if (!formData.get('text')) formData.set('text', reviewText);
       if (userRating > 0) formData.set('rating', String(userRating));
       if (userLongevity > 0) formData.set('longevity', String(userLongevity));
       if (userSillage > 0) formData.set('sillage', String(userSillage));
-      
+
       if (uploadedPhotos.length > 0) {
         formData.set('photos', JSON.stringify(uploadedPhotos));
       }
-      
+
       const result = await submitReview(slug, formData);
-      if (! result.ok) setErrorMessage(result.error || 'Failed to submit review.');
+      if (!result.ok) setErrorMessage(result.error || 'Failed to submit review.');
       else {
         setSuccessMessage('Review submitted successfully!');
         setReviewText('');
@@ -412,16 +409,6 @@ export default function PerfumeDetailClient({
 
   const removePhoto = (index: number) => {
     setUploadedPhotos(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const reviewsSummary = {
-    totalReviews: reviewCount,
-    averageRating: rating,
-    sentiment: 'mixed' as const,
-    keyPoints: [],
-    commonWords: [],
-    ratingDistribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
-    aiSummary: reviewCount > 0 ? 'User reviews summary.' : 'No reviews yet.',
   };
 
   const similarPerfumes = React.useMemo(() => {
@@ -440,483 +427,874 @@ export default function PerfumeDetailClient({
   }, [perfume.reminds_me]);
 
   return (
-    <div className="py-4 text-gray-900">
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-32 right-20 animate-float">
-          <Leaf size={20} className="text-green-300/20" />
-        </div>
-        <div className="absolute bottom-40 left-32 animate-float animate-delay-3">
-          <Flower2 size={18} className="text-orange-300/20" />
-        </div>
+    <div className="text-gray-900">
+      {/* Hero Section */}
+      <section ref={snapshotRef} className="bg-[#FFF9EF]">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-6">
+            {/* Left - Image */}
+            {/* Left - Image */}
+           <div className="w-full lg:w-[520px] flex-shrink-0 flex items-center justify-center rounded-xl p-3 sm:p-4 lg:p-4">
+  <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[420px] aspect-[3/4] rounded-xl overflow-hidden bg-[#FFF4E3]">
+    {perfume.image ? (
+      <Image
+        src={perfume.image}
+        alt={perfume.variant_name}
+        fill
+        className="object-contain"
+        sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, 420px"
+        priority
+      />
+    ) : (
+      <div className="h-full w-full flex items-center justify-center">
+        <Sparkles className="w-10 h-10 sm:w-14 sm:h-14 lg:w-20 lg:h-20 text-[#8A6A35]" />
       </div>
+    )}
+  </div>
+</div>
 
-      <div className="mx-auto max-w-5xl space-y-5 px-4 relative z-10">
-        <div ref={snapshotRef} className="glass-card rounded-xl p-3 lg:p-5 shadow-sm">
-          <div className="grid grid-cols-2 lg:grid-cols-2 gap-3 lg:gap-6">
-            <div className="space-y-2 lg:space-y-3">
-              <div className="relative aspect-[3/4] w-full max-w-[150px] mx-auto lg:max-w-[280px] rounded-lg lg:rounded-xl overflow-hidden bg-gradient-to-br from-green-50/50 to-orange-50/50">
-                {perfume.image ? (
-                  <Image 
-                    src={perfume.image} 
-                    alt={perfume.variant_name} 
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 150px, 280px"
-                    priority
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <Sparkles className="w-6 h-6 lg:w-12 lg:h-12 text-green-300" />
+
+            {/* Right - Details */}
+            <div className="flex flex-col gap-5 lg:gap-5 w-full lg:flex-1 lg:p-4">
+              {/* Top Info Block */}
+              <div className="flex flex-col gap-3">
+                {/* Gender Badge */}
+                {perfume.gender && (
+                  <span className="inline-flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-full w-fit">
+                    <span className="font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                      {perfume.gender}
+                    </span>
+                  </span>
+                )}
+
+                {/* Brand Name */}
+                <p className="font-inter font-medium text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#211F1C]">
+                  {perfume.brand_name}
+                </p>
+
+                {/* Perfume Name */}
+                <h1 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[56px] lg:leading-[64px] text-[#211F1C]">
+                  {perfume.variant_name}
+                </h1>
+
+                {/* Perfumer */}
+                {perfume.perfumers && perfume.perfumers.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    <span className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#4A4946]">
+                      Perfumer:
+                    </span>
+                    <span className="font-inter font-medium text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#211F1C]">
+                      {perfume.perfumers.join(', ')}
+                    </span>
                   </div>
                 )}
               </div>
 
-              <div className="space-y-1 lg:space-y-2 text-[9px] lg:text-sm max-w-[150px] mx-auto lg:max-w-[280px]">
-                <div className="flex justify-between">
-                  <span className="text-gray-600 font-medium">Gender:</span>
-                  <span className="text-gray-800 font-semibold">{perfume.gender || '—'}</span>
+              {/* Main Accords */}
+              {transformedAccords.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  <h3 className="font-inter font-medium text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#211F1C]">
+                    Main Accords
+                  </h3>
+                  <div className="flex flex-wrap gap-3">
+                    {transformedAccords.map((accord, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-full"
+                      >
+                        <span className="font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                          {accord.name}
+                        </span>
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex justify-between items-start">
-                  <span className="text-gray-600 font-medium">Perfumer:</span>
-                  <span className="text-gray-800 font-semibold text-right leading-tight">{perfume.perfumers?.join(', ') || '—'}</span>
-                </div>
-              </div>
+              )}
 
-              <div className="flex gap-1 lg:gap-2 max-w-[150px] mx-auto lg:max-w-[280px]">
-                <button 
+              {/* Notes Section */}
+              {(topNotes.length > 0 || middleNotes.length > 0 || baseNotes.length > 0) && (
+                <div className="flex flex-col gap-5">
+                  {/* Head Notes */}
+                  {topNotes.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      {/* Top Note Icon */}
+                      <svg width="23" height="26" viewBox="0 0 23 26" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                        <path d="M11.5 3L21 23H2L11.5 3Z" fill="#FDE2B6" />
+                        <path d="M11.5 3L8 10H15L11.5 3Z" fill="#211F1C" />
+                      </svg>
+                      <span className="font-inter font-medium text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#211F1C]">
+                        Head Notes:
+                      </span>
+                      <span className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#211F1C]">
+                        {topNotes.map(n => n.name).join(', ')}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Heart Notes */}
+                  {middleNotes.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      {/* Heart Note Icon */}
+                      <svg width="23" height="26" viewBox="0 0 23 26" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                        <path d="M11.5 3L21 23H2L11.5 3Z" fill="#FDE2B6" />
+                        <rect x="3" y="12" width="17" height="5.6" fill="#211F1C" />
+                      </svg>
+                      <span className="font-inter font-medium text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#211F1C]">
+                        Heart Notes:
+                      </span>
+                      <span className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#211F1C]">
+                        {middleNotes.map(n => n.name).join(', ')}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Base Notes */}
+                  {baseNotes.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      {/* Base Note Icon */}
+                      <svg width="23" height="26" viewBox="0 0 23 26" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                        <path d="M11.5 3L21 23H2L11.5 3Z" fill="#FDE2B6" />
+                        <rect x="2" y="17" width="19" height="6" fill="#211F1C" />
+                      </svg>
+                      <span className="font-inter font-medium text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#211F1C]">
+                        Lasting Impressions:
+                      </span>
+                      <span className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#211F1C]">
+                        {baseNotes.map(n => n.name).join(', ')}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 lg:gap-6 mt-2">
+                <button
                   onClick={() => {
-                    if (! isSignedIn) {
+                    if (!isSignedIn) {
                       open({ mode: 'signin', reason: 'Sign in to add to wardrobe', callbackUrl: `/perfumes/${slug}` });
                     } else {
                       setShowWardrobeModal(true);
                     }
                   }}
-                  className="flex-1 rounded-md lg:rounded-lg bg-gradient-to-r from-green-500 to-orange-500 px-1.5 lg:px-3 py-1.5 lg:py-2 font-semibold text-white text-[9px] lg:text-sm hover:shadow-lg transition-all flex items-center justify-center gap-0.5 lg:gap-1"
+                  className="inline-flex items-center justify-center h-[50px] px-4 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
                 >
-                  <Plus className="h-3 w-3 lg:h-4 lg:w-4" />
-                  <span className="hidden lg:inline">Add to Wardrobe</span>
-                  <span className="lg:hidden">Add</span>
+                  Add to Wardrobe
                 </button>
-                <button onClick={handleSnapshot} className="rounded-md lg:rounded-lg border-2 border-green-200 p-1 lg:p-2 hover:bg-green-50" title="Snapshot">
-                  <Camera className="h-3 w-3 lg:h-4 lg:w-4 text-green-600" />
+                <button
+                  onClick={handleSnapshot}
+                  className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 border border-[#211F1C] bg-transparent rounded-xl font-inter font-medium text-[18px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors group"
+                >
+                  Snapshot
+                  <span className="flex items-center justify-center w-10 h-10 bg-[#211F1C] rounded-lg group-hover:bg-white">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      className="group-hover:hidden"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      className="hidden group-hover:block"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="#211F1C"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
                 </button>
               </div>
-              
-              {/* ✅ ADD SUCCESS MESSAGE BELOW */}
+
+              {/* Wardrobe Success Message */}
               {wardrobeSuccess && (
-                <div className="mt-2 p-2 bg-green-100 border border-green-300 rounded-lg text-xs text-green-800 font-medium text-center relative">
-                  ✓ Added to wardrobe! 
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-1.5 lg:space-y-4 flex flex-col">
-              <div>
-                <h1 className="text-base lg:text-3xl font-bold bg-gradient-to-r from-green-600 to-orange-500 bg-clip-text text-transparent leading-tight">
-                  {perfume.variant_name}
-                </h1>
-                <p className="text-xs lg:text-xl font-semibold text-gray-700">{perfume.brand_name}</p>
-              </div>
-
-              {transformedAccords.length > 0 && (
-                <div className="flex-1 min-h-0">
-                  <h3 className="text-[9px] lg:text-sm font-semibold text-gray-800 mb-1 lg:mb-2">Main Accords</h3>
-                  <AccordTags accords={transformedAccords} />
-                </div>
-              )}
-
-              {(topNotes.length || middleNotes.length || baseNotes.length) > 0 && (
-                <div className="hidden lg:block">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-2">Notes Pyramid</h3>
-                  <NotesPyramid topNotes={topNotes} middleNotes={middleNotes} baseNotes={baseNotes} />
+                <div className="p-3 bg-green-100 border border-green-300 rounded-lg text-sm text-green-800 font-medium text-center">
+                  ✓ Added to wardrobe!
                 </div>
               )}
             </div>
           </div>
-
-          {(topNotes.length || middleNotes.length || baseNotes.length) > 0 && (
-            <div className="lg:hidden mt-4 pt-4 border-t border-green-100">
-              <h3 className="text-[10px] font-semibold text-gray-800 mb-2">Notes Pyramid</h3>
-              <NotesPyramid topNotes={topNotes} middleNotes={middleNotes} baseNotes={baseNotes} />
-            </div>
-          )}
         </div>
+      </section>
 
-        <div className={`glass-card rounded-xl p-5 shadow-sm ${isCoolingPeriodActive ? 'opacity-50 pointer-events-none filter grayscale' : ''}`}>
+      {/* Content Section */}
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16 space-y-12 bg-white">
+
+        {/* Wear Experience Section */}
+        <div className={`flex flex-col gap-12 ${isCoolingPeriodActive ? 'opacity-50 pointer-events-none filter grayscale' : ''}`}>
+          {/* Section Header */}
+          <div className="flex flex-col gap-1">
+            <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+              Wear experience
+            </span>
+            <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+              What living with this scent feels like
+            </h2>
+          </div>
+
+          {/* Cards Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-2">
-              <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Overall Rating</h3>
-              <div className="flex items-center gap-1 cursor-pointer">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => handleRatingChange(star)}
-                    type="button"
-                    className="transition-transform hover:scale-110 focus:outline-none"
-                  >
-                    <Star 
-                        className={`w-7 h-7 ${star <= Math.round(userRating || rating) ? 'text-orange-400 fill-orange-400' : 'text-gray-300'}`} 
-                    />
-                  </button>
-                ))}
+            {/* Overall Rating Card */}
+            <div className="flex flex-col justify-between items-center p-6 gap-5 bg-white border border-[#E2E1E1] rounded-xl min-h-[280px]">
+              {/* Icon + Label */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 bg-[#FEEBCE] rounded-lg">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#E4AF58" />
+                  </svg>
+                </div>
+                <span className="font-inter font-medium text-[20px] leading-[28px] text-[#211F1C]">
+                  Overall Rating
+                </span>
               </div>
-              <div className="flex justify-between items-end">
-                 <p className="text-xl font-bold text-gray-800">{(userRating || rating).toFixed(1)}</p>
-                 <p className="text-xs text-gray-600">{reviewCount} votes</p>
+
+              {/* Rating Value + Stars + Votes */}
+              <div className="flex flex-col items-center gap-4 w-full">
+                <span className="font-hedvig font-normal text-[48px] leading-[56px] text-[#211F1C]">
+                  {(userRating || rating).toFixed(1)}<span className="text-[24px]">/5</span>
+                </span>
+
+                <div className="flex items-center gap-1 cursor-pointer">
+                  {[1, 2, 3, 4, 5].map((star) => {
+                    const currentRating = userRating || rating;
+                    const isFilled = star <= Math.floor(currentRating);
+                    const isHalf = !isFilled && star === Math.ceil(currentRating) && currentRating % 1 >= 0.25;
+                    const isEmpty = star > Math.ceil(currentRating);
+
+                    return (
+                      <button
+                        key={star}
+                        onClick={() => handleRatingChange(star)}
+                        type="button"
+                        className="transition-transform hover:scale-110 focus:outline-none"
+                      >
+                        {isFilled ? (
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FBC061" />
+                          </svg>
+                        ) : isHalf ? (
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                              <linearGradient id="halfStar">
+                                <stop offset="50%" stopColor="#FBC061" />
+                                <stop offset="50%" stopColor="transparent" />
+                              </linearGradient>
+                            </defs>
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="url(#halfStar)" stroke="#FBC061" strokeWidth="1.5" />
+                          </svg>
+                        ) : (
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="#FBC061" strokeWidth="1.5" fill="none" />
+                          </svg>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">
+                  Based on {reviewCount} votes
+                </span>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                    <Wind className="w-4 h-4 text-green-600" />
-                    <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Sillage</h3>
+            {/* Sillage Card */}
+            <div className="flex flex-col justify-between items-center p-6 gap-5 bg-white border border-[#E2E1E1] rounded-xl min-h-[280px]">
+              {/* Icon + Label */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 bg-[#FEEBCE] rounded-lg">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 8H16M16 8C16 8 18 8 18 6C18 4 16 4 16 4" stroke="#E4AF58" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M3 12H18M18 12C18 12 21 12 21 14C21 16 18 16 18 16" stroke="#E4AF58" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M4 16H12M12 16C12 16 14 16 14 18C14 20 12 20 12 20" stroke="#E4AF58" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
                 </div>
+                <span className="font-inter font-medium text-[20px] leading-[28px] text-[#211F1C]">
+                  Sillage
+                </span>
               </div>
-              
-              <div className="relative h-6 flex items-center">
-                <div className="absolute w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                   <div 
-                     className="h-full bg-gradient-to-r from-green-500 to-orange-500" 
-                     style={{ width: `${getPosition(userSillage || perfume.sillage || 0)}%` }} 
-                   />
-                </div>
-                <input
+
+              {/* Value + Slider + Labels */}
+              <div className="flex flex-col items-center gap-4 w-full">
+                <span className="font-hedvig font-normal text-[48px] leading-[56px] text-[#211F1C]">
+                  {getSillageLabel(userSillage || perfume.sillage || 0)}
+                </span>
+
+                {/* Progress Bar with Input */}
+                <div className="relative w-full h-[10px]">
+                  <div className="absolute w-full h-full bg-[#FFF4E3] rounded-xl overflow-hidden">
+                    <div
+                      className="h-full bg-[#B28845] rounded-xl transition-all"
+                      style={{ width: `${getPosition(userSillage || perfume.sillage || 0)}%` }}
+                    />
+                  </div>
+                  <input
                     type="range"
                     min="0"
                     max="5"
-                    step="0.1" 
+                    step="0.1"
                     value={userSillage || perfume.sillage || 0}
                     onChange={(e) => handleSliderChange('sillage', parseFloat(e.target.value))}
                     className="absolute w-full h-full opacity-0 cursor-pointer z-10"
-                />
-                <div 
-                    className="absolute h-4 w-4 bg-white border-2 border-orange-500 rounded-full shadow pointer-events-none transition-none"
-                    style={{ left: `calc(${getPosition(userSillage || perfume.sillage || 0)}% - 8px)` }}
-                />
-              </div>
-              <div className="flex justify-between items-center mt-1">
-                  <span className="text-[10px] text-gray-400 uppercase font-medium">Intimate</span>
-                  <span className="text-[10px] text-gray-400 uppercase font-medium">Moderate</span>
-                  <span className="text-[10px] text-gray-400 uppercase font-medium">Strong</span>
-              </div>
-              <div className="mt-1 text-left">
-                <span className="text-sm font-bold text-gray-800 uppercase">{getSillageLabel(userSillage || perfume.sillage || 0)}</span>
+                  />
+                </div>
+
+                <div className="flex justify-between w-full">
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">Intimate</span>
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">Moderate</span>
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">Strong</span>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1">
-                    <Droplets className="w-4 h-4 text-orange-600" />
-                    <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Longevity</h3>
+            {/* Longevity Card */}
+            <div className="flex flex-col justify-between items-center p-6 gap-5 bg-white border border-[#E2E1E1] rounded-xl min-h-[280px]">
+              {/* Icon + Label */}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 bg-[#FEEBCE] rounded-lg">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="9" stroke="#E4AF58" strokeWidth="2" />
+                    <path d="M12 7V12L15 15" stroke="#E4AF58" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
                 </div>
+                <span className="font-inter font-medium text-[20px] leading-[28px] text-[#211F1C]">
+                  Longevity
+                </span>
               </div>
 
-              <div className="relative h-6 flex items-center">
-                <div className="absolute w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                   <div 
-                     className="h-full bg-gradient-to-r from-green-500 to-orange-500" 
-                     style={{ width: `${getPosition(userLongevity || perfume.longevity || 0)}%` }} 
-                   />
-                </div>
-                <input
+              {/* Value + Slider + Labels */}
+              <div className="flex flex-col items-center gap-4 w-full">
+                <span className="font-hedvig font-normal text-[48px] leading-[56px] text-[#211F1C]">
+                  {getLongevityHrsLabel(userLongevity || perfume.longevity || 0).replace(' hrs', '')}<span className="text-[24px]"> hours</span>
+                </span>
+
+                {/* Progress Bar with Input */}
+                <div className="relative w-full h-[10px]">
+                  <div className="absolute w-full h-full bg-[#FFF4E3] rounded-xl overflow-hidden">
+                    <div
+                      className="h-full bg-[#B28845] rounded-xl transition-all"
+                      style={{ width: `${getPosition(userLongevity || perfume.longevity || 0)}%` }}
+                    />
+                  </div>
+                  <input
                     type="range"
                     min="0"
                     max="5"
-                    step="0.1" 
+                    step="0.1"
                     value={userLongevity || perfume.longevity || 0}
                     onChange={(e) => handleSliderChange('longevity', parseFloat(e.target.value))}
                     className="absolute w-full h-full opacity-0 cursor-pointer z-10"
-                />
-                <div 
-                    className="absolute h-4 w-4 bg-white border-2 border-green-500 rounded-full shadow pointer-events-none transition-none"
-                    style={{ left: `calc(${getPosition(userLongevity || perfume.longevity || 0)}% - 8px)` }}
-                />
-              </div>
-              
-              <div className="flex justify-between text-[10px] text-gray-400 uppercase font-medium mt-1">
-                <span>0h</span>
-                <span>2h</span>
-                <span>4h</span>
-                <span>6h</span>
-                <span>8h</span>
-                <span>10h</span>
-                <span>12h+</span>
-              </div>
-              
-              <div className="mt-1 text-left">
-                <span className="text-sm font-bold text-gray-800 uppercase">{getLongevityHrsLabel(userLongevity || perfume.longevity || 0)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+                  />
+                </div>
 
-      <div style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 1000px' }}>
-        {perfume.perfume_overview && (
-          <div className="glass-card rounded-xl p-5 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-800 mb-3">About This Fragrance</h3>
-            <p className="text-gray-700 leading-relaxed">{perfume.perfume_overview}</p>
-          </div>
-        )}
-
-        <SimilarFragrances
-          currentPerfumeId={perfume._id.toString()}
-        />
-
-        {perfume.ai_summary?.summary && (
-        <div className="glass-card rounded-xl p-5 shadow-sm">
-          <ReviewsSummary 
-            summary={reviewsSummary}
-            aiGeneratedSummary={perfume.ai_summary.summary}
-            reviewCount={perfume.ai_summary.review_count || reviewCount}
-            lastUpdated={perfume.ai_summary.last_updated ? new Date(perfume.ai_summary.last_updated) : undefined}
-          />
-        </div>
-        )}
-
-        <div id="review-section" className="glass-card rounded-xl p-5 shadow-sm relative overflow-hidden">
-          {isCoolingPeriodActive && (
-            <div className="absolute inset-0 z-20 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6">
-              <div className="bg-orange-100 p-4 rounded-full mb-4">
-                <Clock className="w-8 h-8 text-orange-600" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Reviews are Cooling Down</h3>
-              <p className="text-gray-600 max-w-md mb-4">
-                To ensure authentic experiences, reviews for this new fragrance will open in {remainingDays} days.
-              </p>
-              <span className="text-xs font-bold uppercase tracking-widest text-orange-600 border border-orange-200 px-3 py-1 rounded-full bg-orange-50">
-                Coming Soon
-              </span>
-            </div>
-          )}
-
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-gray-800">Leave Your Review</h3>
-            <button onClick={toggleFollowThread} className={`text-xs font-medium px-3 py-1.5 rounded-full border ${isFollowing ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-gray-600 border-gray-200 hover:border-green-300'} transition-all flex items-center gap-1.5`}>
-              <Bell className={`w-3 h-3 ${isFollowing ? 'fill-current' : ''}`} />
-              {isFollowing ? 'Following' : 'Follow Thread'}
-            </button>
-          </div>
-
-          {! isSignedIn ?  (
-            <div className="rounded-xl border-2 border-dashed border-green-300 bg-green-50/50 p-6 text-center">
-              <p className="mb-4 text-gray-700">Please sign in to leave a review</p>
-              <button
-                onClick={() => open({ mode: 'signin', reason: 'Sign in to leave a review', callbackUrl: `/perfumes/${slug}#review-section` })}
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-orange-500 px-6 py-3 font-semibold text-white hover:shadow-lg transition-all"
-              >
-                <LogIn className="h-5 w-5" />
-                Sign in to continue
-              </button>
-            </div>
-          ) : ! canRate ? (
-            <div className="rounded-xl border border-orange-300 bg-orange-50 p-4 text-sm text-orange-900">
-              Your account cannot leave reviews yet. 
-            </div>
-          ) : (
-            <form action={(fd) => handleSubmitReview(fd)} className="space-y-4">
-              <p className="text-sm text-gray-600">Use the sliders above to rate.  Write your review below:</p>
-              <MentionTextarea 
-                value={reviewText} 
-                onChange={setReviewText} 
-                placeholder="Share your experience...  Type @ to mention users and # to reference perfumes." 
-                className="w-full rounded-xl border border-green-200 px-4 py-3 focus:ring-2 focus:ring-green-400 outline-none bg-white/80"
-              />
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">Add Photos</label>
-                <div className="flex flex-wrap gap-2 items-start">
-                  {uploadedPhotos.map((url, i) => (
-                    <div key={i} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shrink-0">
-                      <Image src={url} alt="Review" fill className="object-cover" sizes="96px" />
-                      <button type="button" onClick={() => setUploadedPhotos(p => p.filter((_, idx) => idx !== i))} className="absolute top-0.5 right-0.5 bg-black/50 text-white rounded-full p-0.5"><X className="w-3 h-3" /></button>
-                    </div>
-                  ))}
-                  {uploadedPhotos.length < 3 && (
-                    <div className="w-full sm:w-auto min-w-[160px] max-w-xs">
-                      <ImageUpload 
-                        onUploadComplete={addPhoto} 
-                        folder="reviews" 
-                        label="Upload" 
-                        maxSizeMB={5} 
-                      />
-                    </div>
-                  )}
+                <div className="flex justify-between w-full">
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">0 hr</span>
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">6 hr</span>
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">12 hr+</span>
                 </div>
               </div>
-              {errorMessage && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{errorMessage}</div>}
-              {successMessage && <div className="text-sm text-green-600 bg-green-50 p-3 rounded-lg">{successMessage}</div>}
-              <button
-                type="submit"
-                disabled={pending || !reviewText.trim()}
-                className="rounded-lg bg-gradient-to-r from-green-500 to-orange-500 px-6 py-3 font-semibold text-white disabled:opacity-50 hover:shadow-lg transition-all"
-              >
-                {pending ?  'Submitting...' : 'Submit Review'}
-              </button>
-            </form>
-          )}
+            </div>
+          </div>
         </div>
 
-        {/* REVIEWS LIST - COMPACT & PROFESSIONAL */}
-        <div className="glass-card rounded-xl p-5 shadow-sm">
-          <h3 className="mb-4 text-xl font-bold text-gray-800">Community Reviews ({reviews.length})</h3>
-          
-          {reviews.length === 0 ? (
-            <p className="text-center py-10 text-gray-400">No reviews yet. Be the first to review!</p>
-          ) : (
-            <div className="space-y-4">
-              {reviews.map((r) => (
-                <div key={r.id} className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors bg-white">
-                  {/* Header Row - Compact */}
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      {/* Avatar */}
-                      <a href={`/u/${r.user.username}`} className="shrink-0 group">
-                        {/* Added 'relative' to the container div */}
-                      <div className="relative w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-sm font-bold text-gray-500 overflow-hidden ring-2 ring-transparent group-hover:ring-green-400 transition-all">
-                        {r.user.image ? (
-                          <Image 
-                            src={r.user.image} 
-                            alt={r.user.username} 
-                            fill
-                            sizes="40px"
-                            className="object-cover"
-                          />
-                        ) : (
-                          <span>{r.user.username.charAt(0).toUpperCase()}</span>
-                        )}
-                      </div>
-                      </a>
+        {/* About This Fragrance Section */}
+        {perfume.perfume_overview && (
+          <section className="bg-[#FFF9EF] -mx-4 sm:-mx-6 lg:-mx-[72px] px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16">
+            <div className="flex flex-col gap-10">
+              {/* Header */}
+              <div className="flex flex-col gap-1">
+                <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+                  Behind the making
+                </span>
+                <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                  About this fragrance
+                </h2>
+              </div>
 
-                      {/* User Info - Inline Compact */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <a href={`/u/${r.user.username}`} className="text-sm font-bold text-gray-900 hover:text-green-600 transition-colors">
-                            @{r.user.username}
-                          </a>
-                          
-                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                            r.user.level === 'Master' ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white' :
-                            r.user.level === 'Expert' ? 'bg-gradient-to-r from-purple-400 to-pink-500 text-white' :
-                            r.user.level === 'Connoisseur' ? 'bg-gradient-to-r from-blue-400 to-cyan-500 text-white' :
-                            r.user.level === 'Enthusiast' ? 'bg-gradient-to-r from-green-400 to-emerald-500 text-white' :
-                            'bg-gray-200 text-gray-700'
-                          }`}>
-                            {r.user.level}
-                          </span>
-                          
-                          <span className="text-[9px] font-medium text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">
-                            {r.user.xp} XP
-                          </span>
-                          
-                          {r.user.badges.slice(0, 2).map((badge, idx) => (
-                            <span key={idx} className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-gradient-to-r from-green-100 to-orange-100 text-gray-700 border border-green-200" title={badge}>
-                              {badge === 'Early Adopter' && '🌱'}
-                              {badge === 'Active Reviewer' && '⭐'}
-                              {badge === 'Photo Contributor' && '📸'}
-                              {badge === 'Community Helper' && '🤝'}
-                            </span>
-                          ))}
-                          
-                          <span className="text-[10px] text-gray-400">
-                            {new Date(r.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                            {r.isEdited && <span className="ml-1 text-orange-600 font-medium">(edited)</span>}
-                          </span>
-                        </div>
-                      </div>
+              {/* Description */}
+              <p className="font-inter font-normal text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#211F1C]">
+                <span className="font-semibold">{perfume.variant_name}</span> by <span className="font-semibold">{perfume.brand_name}</span> {perfume.perfume_overview}
+              </p>
+
+              {/* Divider */}
+              <div className="w-full h-px bg-[#E2E1E1]" />
+
+              {/* Info Row */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 lg:gap-10">
+                {/* Launch Year */}
+                <div className="flex flex-col items-center gap-1">
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">
+                    Launch Year
+                  </span>
+                  <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
+                    {(perfume as any).launch_year || (perfume as any).year || '—'}
+                  </span>
+                </div>
+
+                {/* Concentration */}
+                <div className="flex flex-col items-center gap-1">
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">
+                    Concentration
+                  </span>
+                  <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
+                    {(perfume as any).concentration || 'Eau de Parfum'}
+                  </span>
+                </div>
+
+                {/* Perfumer */}
+                <div className="flex flex-col items-center gap-1">
+                  <span className="font-inter font-normal text-[14px] leading-[20px] text-[#737270]">
+                    Perfumer
+                  </span>
+                  <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
+                    {perfume.perfumers?.join(', ') || '—'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        <div style={{ contentVisibility: 'auto', containIntrinsicSize: '1px 1000px' }} className="-mx-4 sm:-mx-6 lg:-mx-[72px] px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16">
+          <SimilarFragrances
+            currentPerfumeId={perfume._id.toString()}
+          />
+
+          {/* AI-Powered Summary Section */}
+          {perfume.ai_summary?.summary && (
+            <section className="bg-[#FFF9EF] -mx-4 sm:-mx-6 lg:-mx-[72px] px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16">
+              <div className="flex flex-col gap-10">
+                {/* Header Row */}
+                <div className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-10">
+                  <div className="flex flex-col gap-1 flex-1">
+                    <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+                      Based on community talks
+                    </span>
+                    <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                      AI-Powered summary
+                    </h2>
+                  </div>
+
+                  {/* Sentiment Badge */}
+                  <div className="flex items-center justify-center px-4 py-2 bg-[#FDE2B6] rounded-full w-fit">
+                    <span className="font-inter font-medium text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#695129] capitalize">
+                      {perfume.ai_summary.summary.overall_sentiment || 'Mixed'} Reviews
+                    </span>
+                  </div>
+                </div>
+
+                {/* Summary Text */}
+                <p className="font-inter font-semibold text-[18px] lg:text-[24px] leading-[26px] lg:leading-[32px] text-[#211F1C]">
+                  {perfume.ai_summary.summary.summary_text}
+                </p>
+
+                {/* Divider */}
+                <div className="w-full h-px bg-[#E2E1E1]" />
+
+                {/* Likes & Dislikes */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-5">
+                  {/* What people love */}
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-1">
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.33333 14.6667V26.6667M4 17.3333V24C4 25.4728 5.19391 26.6667 6.66667 26.6667H22.7387C24.7792 26.6667 26.4888 25.1587 26.7413 23.1333L27.808 14.4667C28.1147 12.0107 26.2029 9.86667 23.7287 9.86667H19.3333V6.13333C19.3333 4.95493 18.3784 4 17.2 4C16.6107 4 16.0867 4.36267 15.8827 4.91467L12.4693 13.3333H6.66667C5.19391 13.3333 4 14.5272 4 16V17.3333Z" stroke="#047857" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="font-inter font-semibold text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] text-[#047857]">
+                        What people love
+                      </span>
                     </div>
-
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 shrink-0">
-                      <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                      <span className="text-sm font-bold text-gray-900">{r.rating}</span>
+                    <div className="flex flex-col gap-3">
+                      {perfume.ai_summary.summary.common_likes?.map((like, idx) => (
+                        <span key={idx} className="font-inter font-normal text-[16px] lg:text-[20px] leading-[24px] lg:leading-[28px] text-[#211F1C]">
+                          {like}
+                        </span>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Review Content */}
-                  {r.isDeleted ?  (
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                      <p className="text-gray-400 italic text-sm text-center">[This review has been deleted]</p>
+                  {/* Common Concerns */}
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-1">
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.33333 17.3333V5.33333M4 14.6667V8C4 6.52724 5.19391 5.33333 6.66667 5.33333H22.7387C24.7792 5.33333 26.4888 6.84133 26.7413 8.86667L27.808 17.5333C28.1147 19.9893 26.2029 22.1333 23.7287 22.1333H19.3333V25.8667C19.3333 27.0451 18.3784 28 17.2 28C16.6107 28 16.0867 27.6373 15.8827 27.0853L12.4693 18.6667H6.66667C5.19391 18.6667 4 17.4728 4 16V14.6667Z" stroke="#BE133D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span className="font-inter font-semibold text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] text-[#BE133D]">
+                        Common Concerns
+                      </span>
                     </div>
-                  ) : (
-                    <>
-                      <div 
-                        className="text-gray-700 text-sm leading-relaxed mb-3"
-                        dangerouslySetInnerHTML={{ __html: parseReviewMentions(r.text || '') }}
-                      />
+                    <div className="flex flex-col gap-3">
+                      {perfume.ai_summary.summary.common_dislikes?.map((dislike, idx) => (
+                        <span key={idx} className="font-inter font-normal text-[16px] lg:text-[20px] leading-[24px] lg:leading-[28px] text-[#211F1C]">
+                          {dislike}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-                      {/* Review Photos - Compact */}
-                      {r.photos && r.photos.length > 0 && (
-                        <div className="flex gap-2 mb-3">
-                          {r.photos.map((p, idx) => (
-                            <div key={idx} className="relative w-16 h-16 shrink-0">
-                              <Image 
-                                src={p} 
-                                alt={`Photo ${idx + 1}`}
-                                fill
-                                className="object-cover rounded-lg border border-gray-200 cursor-pointer hover:scale-105 transition-transform"
-                                sizes="64px"
+                {/* Footer */}
+                <div className="flex flex-col gap-3">
+                  <div className="w-full h-px bg-[#E2E1E1]" />
+                  <p className="font-inter font-normal text-[14px] lg:text-[18px] leading-[20px] lg:leading-[26px] text-[#4A4946] text-center">
+                    AI-generated summary based on {perfume.ai_summary.review_count || reviewCount} user reviews · May not reflect all opinions
+                  </p>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Community Reviews Section */}
+          <section className="bg-white py-10 lg:py-16">
+            <div className="flex flex-col gap-8">
+              {/* Header Row */}
+              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+                {/* Title Block */}
+                <div className="flex flex-col gap-1">
+                  <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+                    Customer insights
+                  </span>
+                  <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                    Community Reviews
+                  </h2>
+                </div>
+
+                {/* Controls */}
+                <div className="flex flex-wrap items-center gap-4 lg:gap-6">
+                  {/* Sort Dropdown */}
+                  <button className="inline-flex items-center justify-between h-[50px] px-4 gap-3 border border-[#C4C4C3] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-[#211F1C] bg-white hover:bg-[#F5F0E8] transition-colors min-w-[180px]">
+                    <span>Most Recent</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 9L12 15L18 9" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+
+                  {/* Follow Button */}
+                  <button
+                    onClick={toggleFollowThread}
+                    className={`inline-flex items-center justify-center h-[50px] px-6 gap-2 border rounded-lg font-inter font-medium text-[18px] leading-[26px] transition-colors ${isFollowing
+                        ? 'bg-[#ECE0CF] border-[#8A6A35] text-[#695129]'
+                        : 'bg-white border-[#C4C4C3] text-[#211F1C] hover:bg-[#F5F0E8]'
+                      }`}
+                  >
+                    <span>Follow</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+
+                  {/* Write a Review Button */}
+                  <button
+                    onClick={() => {
+                      if (!isSignedIn) {
+                        open({ mode: 'signin', reason: 'Sign in to write a review', callbackUrl: `/perfumes/${slug}#review-section` });
+                      } else {
+                        document.getElementById('review-form')?.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                  >
+                    Write a review
+                    <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Cooling Period Overlay */}
+              {isCoolingPeriodActive && (
+                <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-8 text-center">
+                  <div className="w-16 h-16 bg-[#FEEBCE] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Clock className="w-8 h-8 text-[#8A6A35]" />
+                  </div>
+                  <h3 className="font-hedvig font-normal text-[24px] leading-[32px] text-[#211F1C] mb-2">Reviews are Cooling Down</h3>
+                  <p className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946] max-w-md mx-auto mb-4">
+                    To ensure authentic experiences, reviews for this new fragrance will open in {remainingDays} days.
+                  </p>
+                  <span className="inline-flex items-center justify-center px-4 py-2 bg-[#ECE0CF] rounded-full font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                    Coming Soon
+                  </span>
+                </div>
+              )}
+
+              {/* Reviews List */}
+              <div className={`flex flex-col gap-10 ${isCoolingPeriodActive ? 'opacity-50 pointer-events-none filter grayscale' : ''}`}>
+                {reviews.length === 0 ? (
+                  <div className="bg-white border border-[#C4C4C3] rounded-xl p-12 text-center">
+                    <p className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
+                      No reviews yet. Be the first to review!
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {reviews.map((r) => (
+                      <div key={r.id} className="bg-white border border-[#C4C4C3] rounded-xl p-6 flex flex-col gap-8">
+                        {/* Review Content */}
+                        <div className="flex flex-col gap-4">
+                          {/* Stars & Date Row */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg key={star} width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path
+                                    d="M15 2.5L18.8625 10.3375L27.5 11.5875L21.25 17.6625L22.725 26.25L15 22.2125L7.275 26.25L8.75 17.6625L2.5 11.5875L11.1375 10.3375L15 2.5Z"
+                                    fill={star <= Math.round(r.rating) ? "#FBC061" : "none"}
+                                    stroke={star <= Math.round(r.rating) ? "none" : "#FBC061"}
+                                    strokeWidth="1.5"
+                                  />
+                                </svg>
+                              ))}
+                            </div>
+                            <span className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
+                              {new Date(r.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-')}
+                            </span>
+                          </div>
+
+                          {/* Title - Use first sentence or first 50 chars as title */}
+                          {r.text && (
+                            <h4 className="font-inter font-medium text-[24px] lg:text-[28px] leading-[32px] lg:leading-[36px] text-[#211F1C]">
+                              {r.text.split('.')[0].length > 60 ? r.text.substring(0, 60) + '...' : r.text.split('.')[0]}
+                            </h4>
+                          )}
+
+                          {/* Review Body */}
+                          {r.isDeleted ? (
+                            <p className="font-inter font-normal text-[20px] lg:text-[24px] leading-[36px] lg:leading-[42px] text-[#737270] italic">
+                              [This review has been deleted]
+                            </p>
+                          ) : (
+                            <div
+                              className="font-inter font-normal text-[18px] lg:text-[24px] leading-[32px] lg:leading-[42px] text-[#4A4946]"
+                              dangerouslySetInnerHTML={{ __html: parseReviewMentions(r.text || '') }}
+                            />
+                          )}
+
+                          {/* Review Photos */}
+                          {r.photos && r.photos.length > 0 && !r.isDeleted && (
+                            <div className="flex gap-3 mt-2">
+                              {r.photos.map((p, idx) => (
+                                <div key={idx} className="relative w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] shrink-0">
+                                  <Image
+                                    src={p}
+                                    alt={`Photo ${idx + 1}`}
+                                    fill
+                                    className="object-cover rounded-xl border border-[#E2E1E1] cursor-pointer hover:scale-105 transition-transform"
+                                    sizes="150px"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Divider */}
+                        <div className="w-full h-px bg-[#E2E1E1]" />
+
+                        {/* Footer Row */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                          {/* Author */}
+                          <a href={`/u/${r.user.username}`} className="font-inter font-normal text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] text-[#211F1C] hover:text-[#8A6A35] transition-colors">
+                            {r.user.username}
+                          </a>
+
+                          {/* Actions */}
+                          <div className="flex items-center gap-4">
+                            {/* Helpful Actions */}
+                            <div className="flex items-center gap-4">
+                              <span className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
+                                Helpful?
+                              </span>
+                              <ReviewActionButtons
+                                reviewId={r.id}
+                                initialHelpfulCount={r.helpfulCount || 0}
+                                userVote={r.userVote}
+                                isLoggedIn={isSignedIn}
                               />
                             </div>
-                          ))}
+
+                            {/* Divider */}
+                            <div className="w-px h-6 bg-[#E2E1E1]" />
+
+                            {/* Report */}
+                            <button className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-[#211F1C] transition-colors">
+                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 15V21M4 15L12 9L14.5 11L21 5M4 15V6C4 5.44772 4.44772 5 5 5H7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                              Report
+                            </button>
+
+                            {/* Edit/Delete for own reviews */}
+                            {isSignedIn && session?.user?.id === r.user.id && !r.isDeleted && (
+                              <>
+                                <div className="w-px h-6 bg-[#E2E1E1]" />
+                                <button
+                                  onClick={() => {
+                                    setEditingReviewId(r.id);
+                                    setEditingReviewText(r.text || '');
+                                  }}
+                                  className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-[#211F1C] transition-colors"
+                                >
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    if (!confirm('Are you sure you want to delete this review? This action cannot be undone.')) return;
+                                    try {
+                                      const res = await fetch(`/api/reviews/actions?reviewId=${r.id}`, { method: 'DELETE' });
+                                      if (res.ok) window.location.reload();
+                                      else alert('Failed to delete review');
+                                    } catch {
+                                      alert('Network error');
+                                    }
+                                  }}
+                                  className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-red-600 transition-colors"
+                                >
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 6H5H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                  </svg>
+                                  Delete
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
-                      )}
+                      </div>
+                    ))}
 
-                      {/* Action Buttons - Perfectly Aligned */}
-                      <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
-                        <ReviewActionButtons 
-                          reviewId={r.id} 
-                          initialHelpfulCount={r.helpfulCount || 0} 
-                          userVote={r.userVote}
-                          isLoggedIn={isSignedIn} 
-                        />
+                    {/* Load More Button */}
+                    {reviews.length >= 4 && (
+                      <div className="flex justify-center">
+                        <button className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors">
+                          Load More
+                          <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </span>
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
 
-                        {/* Edit/Delete - Only for own reviews */}
-                        {isSignedIn && session?.user?.id === r.user.id && (
-                          <>
-                            <div className="w-px h-5 bg-gray-300"></div>
-                            
-                            <button
-                              onClick={() => {
-                                setEditingReviewId(r.id);
-                                setEditingReviewText(r.text || '');
-                              }}
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                              <span>Edit</span>
+              {/* Write Review Form */}
+              <div id="review-form" className={`bg-white border border-[#C4C4C3] rounded-xl p-6 ${isCoolingPeriodActive ? 'opacity-50 pointer-events-none filter grayscale' : ''}`}>
+                <h3 className="font-inter font-medium text-[24px] leading-[32px] text-[#211F1C] mb-6">Leave Your Review</h3>
+
+                {!isSignedIn ? (
+                  <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-8 text-center">
+                    <p className="font-inter font-normal text-[18px] leading-[26px] text-[#4A4946] mb-4">Please sign in to leave a review</p>
+                    <button
+                      onClick={() => open({ mode: 'signin', reason: 'Sign in to leave a review', callbackUrl: `/perfumes/${slug}#review-form` })}
+                      className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                    >
+                      Sign in to continue
+                      <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                        <LogIn className="w-5 h-5 text-[#211F1C]" />
+                      </span>
+                    </button>
+                  </div>
+                ) : !canRate ? (
+                  <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-6">
+                    <p className="font-inter font-normal text-[16px] leading-[24px] text-[#695129]">
+                      Your account cannot leave reviews yet.
+                    </p>
+                  </div>
+                ) : (
+                  <form action={(fd) => handleSubmitReview(fd)} className="flex flex-col gap-6">
+                    <p className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
+                      Use the sliders above to rate. Write your review below:
+                    </p>
+
+                    <MentionTextarea
+                      value={reviewText}
+                      onChange={setReviewText}
+                      placeholder="Share your experience... Type @ to mention users and # to reference perfumes."
+                      className="w-full min-h-[176px] rounded-xl border border-[#C4C4C3] px-4 py-4 focus:ring-2 focus:ring-[#8A6A35] focus:border-transparent outline-none bg-white font-inter text-[16px] leading-[24px] text-[#211F1C] placeholder:text-[#737270]"
+                    />
+
+                    <div className="flex flex-col gap-3">
+                      <label className="font-inter font-medium text-[16px] leading-[24px] text-[#211F1C]">Add Photos</label>
+                      <div className="flex flex-wrap gap-3 items-start">
+                        {uploadedPhotos.map((url, i) => (
+                          <div key={i} className="relative w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] rounded-xl overflow-hidden border border-[#E2E1E1] shrink-0">
+                            <Image src={url} alt="Review" fill className="object-cover" sizes="150px" />
+                            <button type="button" onClick={() => setUploadedPhotos(p => p.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 bg-[#211F1C]/80 text-white rounded-full p-1 hover:bg-[#211F1C] transition-colors">
+                              <X className="w-4 h-4" />
                             </button>
-                            
-                            <button
-                              onClick={async () => {
-                                if (! confirm('Are you sure you want to delete this review?  This action cannot be undone.')) return;
-                                try {
-                                  const res = await fetch(`/api/reviews/actions? reviewId=${r.id}`, { method: 'DELETE' });
-                                  if (res.ok) window.location.reload();
-                                  else alert('Failed to delete review');
-                                } catch {
-                                  alert('Network error');
-                                }
-                              }}
-                              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                              <span>Delete</span>
-                            </button>
-                          </>
+                          </div>
+                        ))}
+                        {uploadedPhotos.length < 3 && (
+                          <div className="w-full sm:w-auto min-w-[160px] max-w-xs">
+                            <ImageUpload
+                              onUploadComplete={addPhoto}
+                              folder="reviews"
+                              label="Upload"
+                              maxSizeMB={5}
+                            />
+                          </div>
                         )}
                       </div>
-                    </>
-                  )}
-                </div>
-              ))}
+                    </div>
+
+                    {errorMessage && (
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <p className="font-inter font-normal text-[14px] leading-[20px] text-red-600">{errorMessage}</p>
+                      </div>
+                    )}
+                    {successMessage && (
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                        <p className="font-inter font-normal text-[14px] leading-[20px] text-green-600">{successMessage}</p>
+                      </div>
+                    )}
+
+                    <div className="flex justify-end">
+                      <button
+                        type="submit"
+                        disabled={pending || !reviewText.trim()}
+                        className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white disabled:opacity-50 hover:bg-[#211F1C]/90 transition-colors"
+                      >
+                        {pending ? 'Submitting...' : 'Submit Review'}
+                        <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
             </div>
-          )}
-        </div>
+          </section>
         </div>
 
         {/* Edit Modal */}
@@ -936,7 +1314,7 @@ export default function PerfumeDetailClient({
           />
         )}
 
-         {/* ✅ ADD TO WARDROBE MODAL - ADD THIS ENTIRE BLOCK */}
+        {/* ✅ ADD TO WARDROBE MODAL - ADD THIS ENTIRE BLOCK */}
         {showWardrobeModal && (
           <AddToWardrobeModal
             perfumeId={perfume._id.toString()}

@@ -5,7 +5,7 @@ export interface ListBrandsParams {
   pageSize: number;
   search?: string;
   sort?: 'az' | 'za' | 'perfumes' | 'new';
-  letter?: string; // single A-Z or 'All'
+  letter?: string; // 'All', single A-Z, or range like 'A-C'
 }
 
 export async function listBrands(params: ListBrandsParams) {
@@ -25,8 +25,13 @@ export async function listBrands(params: ListBrandsParams) {
   }
 
   if (letter && letter !== 'All') {
-    // Starts with (case-insensitive)
-    filter.name = { $regex: `^${escapeRegex(letter)}`, $options: 'i' };
+    const letters = lettersFromFilter(letter);
+    if (letters.length === 1) {
+      filter.name = { $regex: `^${escapeRegex(letters[0])}`, $options: 'i' };
+    } else if (letters.length > 1) {
+      // Starts with any of the letters (case-insensitive)
+      filter.name = { $regex: `^[${letters.map(escapeRegex).join('')}]`, $options: 'i' };
+    }
   }
 
   const sortSpec: any = {};
@@ -78,4 +83,20 @@ export async function countBrands() {
 
 function escapeRegex(s: string) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function lettersFromFilter(letter: string): string[] {
+  const trimmed = (letter || '').trim().toUpperCase();
+  if (!trimmed || trimmed === 'ALL') return [];
+  if (/^[A-Z]$/.test(trimmed)) return [trimmed];
+
+  const m = trimmed.match(/^([A-Z])\s*-\s*([A-Z])$/);
+  if (!m) return [];
+  const start = m[1].charCodeAt(0);
+  const end = m[2].charCodeAt(0);
+  if (start > end) return [];
+
+  const letters: string[] = [];
+  for (let c = start; c <= end; c += 1) letters.push(String.fromCharCode(c));
+  return letters;
 }
