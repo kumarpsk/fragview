@@ -41,7 +41,7 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
 
   return (
     <section className="bg-[#FFFCF7]">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 lg:gap-10">
           <div className="flex flex-col gap-1">
@@ -50,7 +50,7 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
               Popular picks
             </span>
             {/* Title */}
-            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
               Perfumes with the highest ratings
             </h2>
           </div>
@@ -66,7 +66,7 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
         </div>
 
         {/* Tabs */}
-        <div className="mt-8 lg:mt-12">
+        <div className="mt-8 lg:mt-12 w-[76%] mx-auto max-md:w-full">
           <div className="flex flex-row justify-between items-center p-0 border border-[#E2E1E1] rounded-[32px] h-12 overflow-hidden">
             {(['All', 'Unisex', 'Male', 'Female'] as const).map((key) => {
               const active = tab === key;
@@ -89,15 +89,15 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
         </div>
 
         {/* Product Grid */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-16 gap-5">
           {visible.length > 0 ? (
             visible.map((perfume, i) => (
-              <div
+              <Link  href={`/perfumes/${perfume.slug}`}
                 key={perfume._id}
-                className="flex flex-col bg-[#FFF4E3] rounded-[16px] overflow-hidden isolate"
+                className="flex flex-col bg-[#FFF4E3] rounded-[16px] overflow-hidden isolate group shadow-md hover:shadow-lg"
               >
                 {/* Image Area */}
-                <div className="relative h-[280px] lg:h-[365px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px]">
+                <div className="relative h-[280px]  bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px] group-hover:scale-105 transition-all duration-300 ease-in-out overflow-hidden">
                   {perfume.image ? (
                     <Image
                       src={perfume.image}
@@ -160,15 +160,15 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
                   </div>
 
                   {/* View Details Button */}
-                  <Link
-                    href={`/perfumes/${perfume.slug}`}
-                    className="flex items-center justify-center gap-2 w-full h-[50px] border border-[#C4C4C3] rounded-lg font-inter font-medium text-[18px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors"
+                  <div
+                  
+                    className="flex items-center justify-center gap-2 w-full h-[40px] border border-[#C4C4C3] rounded-lg font-inter font-medium text-[16px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors"
                   >
                     View Details
                     <ArrowRight className="h-6 w-6" aria-hidden="true" />
-                  </Link>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-[#737270] py-8 font-inter">
@@ -181,10 +181,10 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
         <div className="mt-8 flex justify-center">
           <Link
             href="/perfumes"
-            className="inline-flex items-center justify-between w-[164px] h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-[12px] font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+            className="inline-flex items-center justify-between py-2 px-4 gap-4 bg-[#211F1C] rounded-[12px] font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
           >
             View More
-            <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg shrink-0">
+            <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg shrink-0">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>

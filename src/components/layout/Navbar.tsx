@@ -39,7 +39,7 @@ const Navbar = () => {
       {/* Navigation */}
       <nav className="w-full border-b border-fv-parchment-border bg-fv-parchment">
         {/* Desktop: py-3 (12px), Mobile: py-2.5 (10px) for 64px total with 44px content */}
-        <div className="mx-auto max-w-[1296px] px-6 lg:px-8 py-2.5 lg:py-3">
+        <div className="mx-auto max-w-[1296px] px-6 lg:px-0 py-2.5 lg:py-3">
           {/* Desktop layout */}
           <div className="hidden lg:flex h-[50px] items-center justify-between gap-2">
             {/* Left group: Logo + links */}

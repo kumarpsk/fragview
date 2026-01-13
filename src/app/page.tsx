@@ -1,14 +1,14 @@
-import React from 'react';
-import Link from 'next/link';
-import { ArrowRight, ArrowUpRight, Star, Droplets } from 'lucide-react';
-import AccordTags from '@/components/ui/AccordTags';
-import { getMongoDb } from '@/lib/mongodb';
-import prisma from '@/lib/prisma';
-import { ObjectId } from 'mongodb';
-import Image from 'next/image';
-import PopularPicksSection from '@/components/home/PopularPicksSection';
-import BrandPerfumesSection from '@/components/home/BrandPerfumesSection';
-import { getArticles } from '@/app/actions/drydown';
+import React from "react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Star, Droplets } from "lucide-react";
+import AccordTags from "@/components/ui/AccordTags";
+import { getMongoDb } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
+import { ObjectId } from "mongodb";
+import Image from "next/image";
+import PopularPicksSection from "@/components/home/PopularPicksSection";
+import BrandPerfumesSection from "@/components/home/BrandPerfumesSection";
+import { getArticles } from "@/app/actions/drydown";
 
 // Server Component - fetch data at build time
 async function getHomePageData() {
@@ -17,32 +17,34 @@ async function getHomePageData() {
 
     // Get total counts
     const [perfumesCount, brandsCount, reviewsCount] = await Promise.all([
-      db.collection('perfumes').countDocuments(),
-      db.collection('brands').countDocuments(),
+      db.collection("perfumes").countDocuments(),
+      db.collection("brands").countDocuments(),
       prisma.review.count(),
     ]);
 
     // Get MANUALLY SELECTED featured perfumes from PostgreSQL
     const manualFeatured = await prisma.featuredPerfume.findMany({
-      orderBy: { position: 'asc' },
-      take: 24
+      orderBy: { position: "asc" },
+      take: 24,
     });
 
     let featuredPerfumes = [];
 
     if (manualFeatured.length > 0) {
       // Use manually selected perfumes
-      const perfumeIds = manualFeatured.map(f => {
-        try {
-          return new ObjectId(f.perfumeId);
-        } catch {
-          return null;
-        }
-      }).filter(id => id !== null);
+      const perfumeIds = manualFeatured
+        .map((f) => {
+          try {
+            return new ObjectId(f.perfumeId);
+          } catch {
+            return null;
+          }
+        })
+        .filter((id) => id !== null);
 
       if (perfumeIds.length > 0) {
         featuredPerfumes = await db
-          .collection('perfumes')
+          .collection("perfumes")
           .find({ _id: { $in: perfumeIds } })
           .toArray();
       }
@@ -51,7 +53,7 @@ async function getHomePageData() {
     // Fallback to random if no manual selections
     if (featuredPerfumes.length === 0) {
       featuredPerfumes = await db
-        .collection('perfumes')
+        .collection("perfumes")
         .aggregate([
           { $match: { $or: [{ featured: true }, { rating: { $gte: 4.0 } }] } },
           { $sample: { size: 24 } },
@@ -61,25 +63,27 @@ async function getHomePageData() {
 
     // Get MANUALLY SELECTED trending brands from PostgreSQL
     const manualTrending = await prisma.trendingBrand.findMany({
-      orderBy: { position: 'asc' },
-      take: 12
+      orderBy: { position: "asc" },
+      take: 12,
     });
 
     let trendingBrands = [];
 
     if (manualTrending.length > 0) {
       // Use manually selected brands
-      const brandIds = manualTrending.map(b => {
-        try {
-          return new ObjectId(b.brandId);
-        } catch {
-          return null;
-        }
-      }).filter(id => id !== null);
+      const brandIds = manualTrending
+        .map((b) => {
+          try {
+            return new ObjectId(b.brandId);
+          } catch {
+            return null;
+          }
+        })
+        .filter((id) => id !== null);
 
       if (brandIds.length > 0) {
         trendingBrands = await db
-          .collection('brands')
+          .collection("brands")
           .find({ _id: { $in: brandIds } })
           .toArray();
       }
@@ -88,20 +92,22 @@ async function getHomePageData() {
     // Fallback to random if no manual selections
     if (trendingBrands.length === 0) {
       trendingBrands = await db
-        .collection('brands')
+        .collection("brands")
         .aggregate([
           {
             $addFields: {
-              perfumes_count: { $ifNull: ['$perfumes_count', { $size: { $ifNull: ['$perfumes', []] } }] }
-            }
+              perfumes_count: {
+                $ifNull: [
+                  "$perfumes_count",
+                  { $size: { $ifNull: ["$perfumes", []] } },
+                ],
+              },
+            },
           },
           {
             $match: {
-              $or: [
-                { trending: true },
-                { perfumes_count: { $gte: 10 } }
-              ]
-            }
+              $or: [{ trending: true }, { perfumes_count: { $gte: 10 } }],
+            },
           },
           { $sample: { size: 12 } },
         ])
@@ -113,7 +119,7 @@ async function getHomePageData() {
       const { articles } = await getArticles(undefined, 1, 3);
       latestArticles = articles;
     } catch (e) {
-      console.error('Error fetching latest articles for homepage:', e);
+      console.error("Error fetching latest articles for homepage:", e);
       latestArticles = [];
     }
 
@@ -129,7 +135,9 @@ async function getHomePageData() {
         image: p.image || p.perfume_image,
         rating: p.rating || 0,
         gender: p.gender,
-        accords: (p.accords || []).slice(0, 3).map((a: any) => ({ name: a.name || a })),
+        accords: (p.accords || [])
+          .slice(0, 3)
+          .map((a: any) => ({ name: a.name || a })),
       })),
       trendingBrands: trendingBrands.map((b: any) => ({
         _id: b._id.toString(),
@@ -148,12 +156,12 @@ async function getHomePageData() {
         publishedAt: a.publishedAt,
         createdAt: a.createdAt,
         author: {
-          name: a.author?.name ?? 'Fragview',
+          name: a.author?.name ?? "Fragview",
         },
       })),
     };
   } catch (error) {
-    console.error('Error fetching homepage data:', error);
+    console.error("Error fetching homepage data:", error);
     return {
       perfumesCount: 10000,
       brandsCount: 500,
@@ -176,45 +184,40 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="relative bg-fv-parchment overflow-hidden">
         <img
-          src="/Logo_vector.webp" 
+          src="/Logo_vector.webp"
           alt=""
           aria-hidden="true"
           className="absolute"
         />
-        <div className="mx-auto max-w-[1440px] px-6 lg:px-[72px] py-12 lg:py-[64px] relative">
-
-
+        <div className="mx-auto px-6  py-2 relative">
           <div className="mx-auto max-w-[1296px]">
-
             {/* FLEX LAYOUT */}
-            <div className="flex flex-col lg:flex-row gap-8 lg:gap-10">
-
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-center justify-center">
               {/* LEFT COLUMN */}
               <div className="flex flex-col lg:w-[686px]">
-
                 {/* TEXT */}
-                <h1 className="max-w-[520px] font-hedvig text-[36px] sm:text-[44px] lg:text-[56px] leading-[1.14] text-fv-ink">
+                <h1 className=" font-hedvig text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.14] text-fv-ink">
                   Discover perfumes worth your time and liking
                 </h1>
 
                 <p
                   className="
-              mt-5 max-w-[570px]
+              mt-5 
               font-[var(--font-inter)]
               text-[#4A4946]
-              text-[18px] leading-[26px]
-              sm:text-[20px] sm:leading-[28px]
-              lg:text-[24px] lg:leading-[32px]
+              text-sm
+              sm:text-lg
+              lg:text-xl 
             "
                 >
-                  You can browse scents, understand how they feel, and keep track of the
-                  fragrances that catch your attention with personal wardrobe to save
-                  perfumes you like, want to try or remember.
+                  You can browse scents, understand how they feel, and keep
+                  track of the fragrances that catch your attention with
+                  personal wardrobe to save perfumes you like, want to try or
+                  remember.
                 </p>
 
                 {/* TWO SMALL CARDS */}
                 <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-
                   {/* Explore by brands */}
                   <Link
                     href="/brands"
@@ -262,47 +265,43 @@ export default async function HomePage() {
               </div>
 
               {/* BIG CARD – MOVES BELOW ON TABLET */}
-          <Link
-  href="/perfumes"
-  className="
+              <Link
+                href="/perfumes"
+                className="
     group relative
     w-full
     h-[360px]
     md:h-[420px]
     lg:w-[570px]
-    lg:h-[665px]
+    lg:h-[550px]
     rounded-2xl
     overflow-hidden
     pt-4 pb-4 pl-5 pr-5
   "
->
-  <Image
-    src="/perfumes_home.webp"
-    alt="View Perfumes"
-    fill
-    priority
-    className="object-cover transition-transform duration-500 group-hover:scale-105"
-  />
+              >
+                <Image
+                  src="/perfumes_home.webp"
+                  alt="View Perfumes"
+                  fill
+                  priority
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
 
-  {/* Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-2xl" />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent rounded-2xl" />
 
-  {/* Content */}
-  <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between gap-2">
-    <span className="text-white font-[var(--font-inter)] text-xl sm:text-2xl font-medium">
-      View Perfumes
-    </span>
-    <ArrowUpRight className="h-8 w-8 text-white" />
-  </div>
-</Link>
-
-
+                {/* Content */}
+                <div className="absolute bottom-4 left-5 right-5 flex items-center justify-between gap-2">
+                  <span className="text-white font-[var(--font-inter)] text-xl sm:text-2xl font-medium">
+                    View Perfumes
+                  </span>
+                  <ArrowUpRight className="h-8 w-8 text-white" />
+                </div>
+              </Link>
             </div>
           </div>
         </div>
       </section>
-
-
 
       {/* Statistics Cards - Responsive */}
       <section className="bg-white">
@@ -315,17 +314,12 @@ export default async function HomePage() {
       sm:px-8
       md:px-12
       lg:px-[72px]        
-      py-8
-      sm:py-12
-      md:py-16
-      lg:py-[64px]
-      min-h-[466px]
-      lg:h-[466px]
+      py-6
+
     "
         >
           {/* Content wrapper */}
-          <div className="mx-auto max-w-[1296px] flex flex-col gap-6 lg:gap-10">
-
+          <div className="mx-auto max-w-[1296px] flex flex-col gap-6 ">
             {/* Section Text */}
             <div className="flex flex-col gap-0.5">
               {/* Pre-title */}
@@ -334,7 +328,7 @@ export default async function HomePage() {
               </div>
 
               {/* Title */}
-              <h2 className="font-hedvig text-3xl sm:text-4xl md:text-[48px] leading-tight sm:leading-[56px] font-normal text-fv-ink">
+              <h2 className="font-hedvig text-3xl sm:text-4xl md:text-[40px] leading-tight sm:leading-[56px] font-normal text-fv-ink">
                 A lot to explore, in one place
               </h2>
             </div>
@@ -342,73 +336,77 @@ export default async function HomePage() {
             {/* Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {/* Card 01 */}
-              <div className="rounded-xl border border-[#E2E1E1] bg-white p-5 sm:p-6">
+              <div className="rounded-xl border border-[#E2E1E1] bg-white p-4">
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-1">
                     <div className="font-hedvig text-lg sm:text-[20px] leading-[28px] font-normal text-[#737270]">
                       Fragrances
                     </div>
-                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[56px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
+                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[50px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
                       {data.perfumesCount >= 1000
                         ? `${Math.floor(data.perfumesCount / 1000)}k+`
                         : `${data.perfumesCount}+`}
                     </div>
                   </div>
                   <p className="font-[var(--font-inter)] text-base sm:text-[18px] leading-relaxed sm:leading-[26px] text-[#737270]">
-                    From niche houses to heritage classics, all mapped by notes, mood and seasonality.
+                    From niche houses to heritage classics, all mapped by notes,
+                    mood and seasonality.
                   </p>
                 </div>
               </div>
 
               {/* Card 02 */}
-              <div className="rounded-xl border border-[#E2E1E1] bg-white p-5 sm:p-6">
+              <div className="rounded-xl border border-[#E2E1E1] bg-white p-4">
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-1">
                     <div className="font-hedvig text-lg sm:text-[20px] leading-[28px] font-normal text-[#737270]">
                       Brands
                     </div>
-                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[56px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
+                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[50px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
                       {data.brandsCount >= 1000
                         ? `${Math.floor(data.brandsCount / 1000)}k+`
                         : `${data.brandsCount}+`}
                     </div>
                   </div>
                   <p className="font-[var(--font-inter)] text-base sm:text-[18px] leading-relaxed sm:leading-[26px] text-[#737270]">
-                    Thousands of perfume brands, with a vast collection of their perfumes.
+                    Thousands of perfume brands, with a vast collection of their
+                    perfumes.
                   </p>
                 </div>
               </div>
 
               {/* Card 03 */}
-              <div className="rounded-xl border border-[#E2E1E1] bg-white p-5 sm:p-6">
+              <div className="rounded-xl border border-[#E2E1E1] bg-white p-4">
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-1">
                     <div className="font-hedvig text-lg sm:text-[20px] leading-[28px] font-normal text-[#737270]">
                       Reviews
                     </div>
-                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[56px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
+                    <div className="font-hedvig text-4xl sm:text-5xl md:text-[50px] leading-tight sm:leading-[64px] font-normal text-fv-ink">
                       {data.reviewsCount >= 1000
                         ? `${Math.floor(data.reviewsCount / 1000)}k+`
                         : `${data.reviewsCount}+`}
                     </div>
                   </div>
                   <p className="font-[var(--font-inter)] text-base sm:text-[18px] leading-relaxed sm:leading-[26px] text-[#737270]">
-                    Honest reviews, not just star ratings — so you understand how a scent truly wears.
+                    Honest reviews, not just star ratings — so you understand
+                    how a scent truly wears.
                   </p>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
       </section>
 
-
       {/* Popular picks (Figma-style tabs + grid) */}
       <PopularPicksSection perfumes={data.featuredPerfumes} />
 
       {/* Perfumes by brand (Figma-style with brand tabs and perfume cards) */}
-      <BrandPerfumesSection brands={data.trendingBrands} perfumes={data.featuredPerfumes} />
+      <BrandPerfumesSection
+        brands={data.trendingBrands}
+        perfumes={data.featuredPerfumes}
+      />
 
       {/* OLD Perfumes by brand section - commented out
       <section className="bg-white">
@@ -464,7 +462,7 @@ export default async function HomePage() {
 
       {/* Read & explore (The Drydown) - Figma style */}
       <section className="bg-[#FFF9EF]">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5">
           {/* Header */}
           <div className="flex flex-col gap-1">
             {/* Pre-title */}
@@ -472,13 +470,13 @@ export default async function HomePage() {
               Read &amp; explore
             </span>
             {/* Title */}
-            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
               Notes on perfume, style, and how we wear scent
             </h2>
           </div>
 
           {/* Article Cards Grid */}
-          <div className="mt-10 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mt-4  grid grid-cols-1 md:grid-cols-3 gap-6">
             {data.latestArticles?.length ? (
               data.latestArticles.map((a: any) => (
                 <Link
@@ -487,12 +485,12 @@ export default async function HomePage() {
                   className="group flex flex-col bg-[#FFF4E3] rounded-[16px] overflow-hidden isolate"
                 >
                   {/* Image Area */}
-                  <div className="relative h-[280px] lg:h-[365px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px]">
+                  <div className="relative h-[280px] lg:h-[335px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px] overflow-hidden">
                     {a.coverImage ? (
                       <img
                         src={a.coverImage}
                         alt={a.title}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
                         loading="lazy"
                       />
                     ) : (
@@ -502,14 +500,16 @@ export default async function HomePage() {
                     <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
                       {/* Category Badge */}
                       <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
-                        {a.category || 'News'}
+                        {a.category || "News"}
                       </span>
                       {/* Date Badge */}
                       <span className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
-                        {new Date(a.publishedAt || a.createdAt).toLocaleDateString('en-GB', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric'
+                        {new Date(
+                          a.publishedAt || a.createdAt
+                        ).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
                         })}
                       </span>
                     </div>
@@ -537,22 +537,60 @@ export default async function HomePage() {
                       <div className="flex items-center justify-between">
                         {/* Author */}
                         <div className="flex items-center gap-[3px]">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <circle cx="12" cy="8" r="4" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
-                            <path d="M4 20C4 17 8 14 12 14C16 14 20 17 20 20" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" />
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                          >
+                            <circle
+                              cx="12"
+                              cy="8"
+                              r="4"
+                              stroke="#4A4946"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                            />
+                            <path
+                              d="M4 20C4 17 8 14 12 14C16 14 20 17 20 20"
+                              stroke="#4A4946"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                            />
                           </svg>
                           <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
-                            {a.author?.name || 'Fragview'}
+                            {a.author?.name || "Fragview"}
                           </span>
                         </div>
                         {/* Read Time */}
                         <div className="flex items-center gap-[3px]">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <circle cx="12" cy="12" r="9" stroke="#4A4946" strokeWidth="2" />
-                            <path d="M12 7V12L15 15" stroke="#4A4946" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true"
+                          >
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="9"
+                              stroke="#4A4946"
+                              strokeWidth="2"
+                            />
+                            <path
+                              d="M12 7V12L15 15"
+                              stroke="#4A4946"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
                           </svg>
                           <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
-                            {a.readTime || '5 min read'}
+                            {a.readTime || "5 min read"}
                           </span>
                         </div>
                       </div>
@@ -568,23 +606,34 @@ export default async function HomePage() {
           </div>
 
           {/* View More Button */}
-          <div className="mt-10 flex justify-center">
+          <div className="mt-3 flex justify-center">
             <Link
               href="/drydown"
-              className="inline-flex items-center justify-between w-[164px] h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-[12px] font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+              className="inline-flex items-center justify-between py-2 px-4 gap-4 bg-[#211F1C] rounded-[12px] font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
             >
               View More
-              <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg shrink-0">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg shrink-0">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M7 17L17 7M17 7H7M17 7V17"
+                    stroke="#211F1C"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </span>
             </Link>
           </div>
         </div>
       </section>
-
-
 
       {/* OLD CTA - Commented out, replaced by NewFooter Pre-Footer section
       <section className="bg-fv-parchment border-t border-fv-parchment-border">

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React, { useMemo, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, ArrowLeft, Star, Droplets } from 'lucide-react';
+import React, { useMemo, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight, ArrowLeft, Star, Droplets } from "lucide-react";
 
 type Brand = {
   _id: string;
@@ -43,7 +43,9 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
       (p) => p.brand.toLowerCase() === selectedBrand.name.toLowerCase()
     );
     // If no perfumes for this brand, show first 3 from all
-    return brandPerfumes.length > 0 ? brandPerfumes.slice(0, 3) : perfumes.slice(0, 3);
+    return brandPerfumes.length > 0
+      ? brandPerfumes.slice(0, 3)
+      : perfumes.slice(0, 3);
   }, [perfumes, selectedBrand]);
 
   if (brands.length === 0) {
@@ -52,7 +54,7 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
 
   return (
     <section className="bg-white">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 lg:gap-10">
           <div className="flex flex-col gap-1">
@@ -61,7 +63,7 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
               Perfumes by brand
             </span>
             {/* Title */}
-            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+            <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
               Discover what each brand creates
             </h2>
           </div>
@@ -77,7 +79,7 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="mt-8 lg:mt-12">
+        <div className="mt-8 lg:mt-12  w-[76%] mx-auto max-md:w-full">
           <div className="flex flex-row justify-between items-center p-0 border border-[#EFEFEF] rounded-[32px] h-12 overflow-hidden">
             {visibleBrands.map((brand, index) => {
               const active = selectedBrandIndex === index;
@@ -88,8 +90,8 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
                   onClick={() => setSelectedBrandIndex(index)}
                   className={`flex-1 flex items-center justify-center h-12 px-4 lg:px-[72px] font-inter font-medium text-[14px] lg:text-[20px] leading-[28px] transition-colors whitespace-nowrap ${
                     active
-                      ? 'bg-[#211F1C] text-white rounded-[32px]'
-                      : 'bg-transparent text-[#211F1C] hover:bg-[#211F1C]/5'
+                      ? "bg-[#211F1C] text-white rounded-[32px]"
+                      : "bg-transparent text-[#211F1C] hover:bg-[#211F1C]/5"
                   }`}
                 >
                   {brand.name}
@@ -100,15 +102,16 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
         </div>
 
         {/* Product Cards - Grid layout matching Popular picks */}
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-16 gap-5">
           {filteredPerfumes.length > 0 ? (
             filteredPerfumes.map((perfume, i) => (
-              <div
+              <Link
+                href={`/perfumes/${perfume.slug}`}
                 key={perfume._id}
-                className="flex flex-col bg-[#FFF9EF] rounded-[16px] overflow-hidden isolate"
+                className="flex flex-col bg-[#FFF9EF] rounded-[16px] overflow-hidden isolate group shadow-md hover:shadow-lg "
               >
                 {/* Image Area */}
-                <div className="relative h-[280px] lg:h-[365px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px]">
+                <div className="relative h-[280px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px]  group-hover:scale-105 transition-all duration-300 ease-in-out overflow-hidden">
                   {perfume.image ? (
                     <Image
                       src={perfume.image}
@@ -119,73 +122,76 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
                       priority={i < 3}
                     />
                   ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <Droplets className="h-12 w-12 text-[#8A6A35]" aria-hidden="true" />
-                      </div>
-                    )}
-                    {/* Gender Badge */}
-                    {perfume.gender && (
-                      <span className="absolute top-4 left-4 flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129] z-10">
-                        {perfume.gender}
+                    <div className="flex h-full items-center justify-center">
+                      <Droplets
+                        className="h-12 w-12 text-[#8A6A35]"
+                        aria-hidden="true"
+                      />
+                    </div>
+                  )}
+                  {/* Gender Badge */}
+                  {perfume.gender && (
+                    <span className="absolute top-4 left-4 flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129] z-10">
+                      {perfume.gender}
+                    </span>
+                  )}
+                </div>
+
+                {/* Content Area */}
+                <div className="flex flex-col justify-between flex-1 p-6 gap-6">
+                  <div className="flex flex-col gap-3">
+                    {/* Rating Row */}
+                    <div className="flex items-center gap-[3px]">
+                      <Star
+                        className="h-6 w-6 text-[#FBC061] fill-[#FBC061]"
+                        aria-hidden="true"
+                      />
+                      <span className="font-inter font-medium text-[18px] leading-[26px] text-[#211F1C]">
+                        {perfume.rating.toFixed(1)}
                       </span>
-                    )}
-                  </div>
-
-                  {/* Content Area */}
-                  <div className="flex flex-col justify-between flex-1 p-6 gap-6">
-                    <div className="flex flex-col gap-3">
-                      {/* Rating Row */}
-                      <div className="flex items-center gap-[3px]">
-                        <Star className="h-6 w-6 text-[#FBC061] fill-[#FBC061]" aria-hidden="true" />
-                        <span className="font-inter font-medium text-[18px] leading-[26px] text-[#211F1C]">
-                          {perfume.rating.toFixed(1)}
-                        </span>
-                        <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
-                          ({perfume.reviewCount ?? 0} reviews)
-                        </span>
-                      </div>
-
-                      {/* Title & Brand */}
-                      <div className="flex flex-col gap-[6px]">
-                        <h3 className="font-averia font-normal text-[24px] leading-[32px] text-[#211F1C] line-clamp-2">
-                          {perfume.name}
-                        </h3>
-                        <p className="font-inter font-normal text-[16px] leading-[24px] text-[#737270]">
-                          {perfume.brand}
-                        </p>
-                      </div>
-
-                      {/* Accord Tags */}
-                      {perfume.accords?.length > 0 && (
-                        <div className="flex flex-row flex-wrap items-center gap-2">
-                          {perfume.accords.slice(0, 3).map((accord) => (
-                            <span
-                              key={accord.name}
-                              className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]"
-                            >
-                              {accord.name}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      <span className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
+                        ({perfume.reviewCount ?? 0} reviews)
+                      </span>
                     </div>
 
-                    {/* View Details Button */}
-                    <Link
-                      href={`/perfumes/${perfume.slug}`}
-                      className="flex items-center justify-center gap-2 w-full h-[50px] border border-[#C4C4C3] rounded-lg font-inter font-medium text-[18px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors"
-                    >
-                      View Details
-                      <ArrowRight className="h-6 w-6" aria-hidden="true" />
-                    </Link>
+                    {/* Title & Brand */}
+                    <div className="flex flex-col gap-[6px]">
+                      <h3 className="font-averia font-normal text-[24px] leading-[32px] text-[#211F1C] line-clamp-2">
+                        {perfume.name}
+                      </h3>
+                      <p className="font-inter font-normal text-[16px] leading-[24px] text-[#737270]">
+                        {perfume.brand}
+                      </p>
+                    </div>
+
+                    {/* Accord Tags */}
+                    {perfume.accords?.length > 0 && (
+                      <div className="flex flex-row flex-wrap items-center gap-2">
+                        {perfume.accords.slice(0, 3).map((accord) => (
+                          <span
+                            key={accord.name}
+                            className="flex items-center justify-center px-[10px] py-1 bg-[#ECE0CF] rounded-[24px] font-inter font-medium text-[14px] leading-[20px] text-[#695129]"
+                          >
+                            {accord.name}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* View Details Button */}
+                  <div className="flex items-center justify-center gap-2 w-full h-[40px] border border-[#C4C4C3] rounded-lg font-inter font-medium text-[16px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors">
+                    View Details
+                    <ArrowRight className="h-6 w-6" aria-hidden="true" />
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-[#737270] py-8 font-inter">
-                No perfumes available for this brand.
-              </div>
-            )}
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-[#737270] py-8 font-inter">
+              No perfumes available for this brand.
+            </div>
+          )}
         </div>
 
         {/* Navigation Arrows */}
