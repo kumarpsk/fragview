@@ -25,7 +25,7 @@ export default async function PerfumesPage({ searchParams }: { searchParams: Pro
     <div className="min-h-screen bg-[#FFF9EF]">
       {/* Hero Section */}
       <section
-        className="relative w-full h-[320px] sm:h-[400px] lg:h-[464px] flex items-center"
+        className="relative w-full py-9 flex items-center"
         style={{
           background: `linear-gradient(90deg, rgba(33, 31, 28, 0.6) 20.81%, rgba(33, 31, 28, 0.4) 88.57%), url('/perfumes-hero.webp')`,
           backgroundSize: 'cover',
@@ -48,7 +48,7 @@ export default async function PerfumesPage({ searchParams }: { searchParams: Pro
 
       {/* Perfumes Content */}
       <section className="bg-white">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12 lg:py-16">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-12">
           <PerfumesClient
             initialItems={data.items}
             total={data.total}
@@ -117,7 +117,7 @@ export default async function PerfumesPage({ searchParams }: { searchParams: Pro
           className="absolute"
         />
 
-        <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16 relative">
+        <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5 relative">
 
           <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-6 " >
             {/* Left Content */}
@@ -130,10 +130,10 @@ export default async function PerfumesPage({ searchParams }: { searchParams: Pro
                     Your voice matters here
                   </span>
                   <div className="flex flex-col gap-4">
-                    <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                    <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
                       Suggest a missing perfume or claim a brand
                     </h2>
-                    <p className="font-inter font-normal text-[18px] leading-[26px] lg:text-[24px] lg:leading-[32px] text-[#4A4946]">
+                    <p className="font-inter font-normal text-[18px] leading-[26px] lg:text-[20px] lg:leading-[32px] text-[#4A4946]">
                       Found a missing perfume or own a brand? Submit suggestions or claim your profile for verification.
                     </p>
                   </div>
@@ -237,10 +237,10 @@ export default async function PerfumesPage({ searchParams }: { searchParams: Pro
               <div className="flex flex-col sm:flex-row items-center gap-6">
                 <Link
                   href="/submit"
-                  className="inline-flex items-center justify-between min-h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                  className="inline-flex items-center justify-between min-h-[40px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
                 >
                   Suggest a missing item
-                  <span className=" flex items-center justify-center w-10 h-10 bg-white rounded-lg shrink-0">
+                  <span className=" flex items-center justify-center w-8 h-8 bg-white rounded-lg shrink-0">
                     <svg
                       width="24"
                       height="24"
@@ -261,10 +261,10 @@ export default async function PerfumesPage({ searchParams }: { searchParams: Pro
                 </Link>
                 <Link
                   href="/submit?type=brand-claim"
-                  className="inline-flex items-center justify-between min-h-[50px] pl-4 pr-1 gap-3 border border-[#211F1C] bg-transparent rounded-xl font-inter font-medium text-[18px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors group"
+                  className="inline-flex items-center justify-between min-h-[40px] pl-4 pr-1 gap-3 border border-[#211F1C] bg-transparent rounded-xl font-inter font-medium text-[16px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors group"
                 >
                   Apply for brand account
-                  <span className=" flex items-center justify-center w-10 h-10 bg-[#211F1C] rounded-lg shrink-0 group-hover:bg-white">
+                  <span className=" flex items-center justify-center w-8 h-8 bg-[#211F1C] rounded-lg shrink-0 group-hover:bg-white">
                     <svg
                       width="24"
                       height="24"

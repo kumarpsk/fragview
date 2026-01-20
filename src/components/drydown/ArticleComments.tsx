@@ -82,9 +82,9 @@ export default function ArticleComments({ articleId, initialComments }: Props) {
   const hasMore = comments.length > visibleCount;
 
   return (
-    <div className="flex flex-col gap-10 lg:gap-12">
+    <div className="flex flex-col gap-5">
       {/* Header Section */}
-      <div className="flex flex-col gap-6 lg:gap-10">
+      <div className="flex flex-col gap-6 lg:gap-4">
         {/* Title */}
         <div className="flex flex-col gap-1">
           <span 
@@ -94,7 +94,7 @@ export default function ArticleComments({ articleId, initialComments }: Props) {
             Join in the conversation
           </span>
           <h2 
-            className="text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px]"
+            className="text-[32px] leading-[40px] lg:text-[40px] lg:leading-[50px]"
             style={{ fontFamily: "'Hedvig Letters Serif', serif", color: '#211F1C' }}
           >
             Discussion
@@ -164,7 +164,7 @@ export default function ArticleComments({ articleId, initialComments }: Props) {
       <div className="w-full h-px" style={{ backgroundColor: '#E2E1E1' }} />
 
       {/* Comments List Section */}
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-5">
         {/* Header Row */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h3 
@@ -191,11 +191,11 @@ export default function ArticleComments({ articleId, initialComments }: Props) {
         <div className="flex flex-col gap-8 lg:gap-10">
           {comments.length === 0 ? (
             <div 
-              className="p-6 rounded-xl text-center"
+              className="p-4 rounded-xl text-center"
               style={{ border: '1px solid #C4C4C3' }}
             >
               <p 
-                className="text-[18px] leading-[26px] lg:text-[24px] lg:leading-[32px]"
+                className="text-[18px] leading-[26px] lg:text-[20px] lg:leading-[30px]"
                 style={{ fontFamily: "'Inter', sans-serif", color: '#737270' }}
               >
                 No comments yet. Be the first to share your thoughts!

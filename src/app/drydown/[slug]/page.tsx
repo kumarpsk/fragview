@@ -45,7 +45,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <div className="min-h-screen" style={{ backgroundColor: '#FFF9EF' }}>
       {/* Hero Section */}
       <section 
-        className="relative w-full h-[300px] sm:h-[380px] lg:h-[464px]"
+        className="relative w-full py-9"
       >
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0">
@@ -136,12 +136,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       </section>
 
       {/* Content Section */}
-      <section className="px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16" style={{ backgroundColor: '#FFFFFF' }}>
+      <section className="px-4 sm:px-6 lg:px-[72px] py-4" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="max-w-[1296px] mx-auto">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             
             {/* Left Column - Article Content */}
-            <div className="flex-1 lg:max-w-[856px] flex flex-col gap-8 lg:gap-12">
+            <div className="flex-1 lg:max-w-[856px] flex flex-col gap-4">
               {/* Excerpt with Yellow Bar */}
               <div className="flex items-stretch gap-3">
                 <div 
@@ -149,7 +149,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   style={{ backgroundColor: '#FBC061' }}
                 />
                 <p 
-                  className="text-[18px] leading-[28px] lg:text-[24px] lg:leading-[34px]"
+                  className="text-[18px] leading-[28px] lg:text-[20px] lg:leading-[30px]"
                   style={{ 
                     fontFamily: "'Hedvig Letters Serif', serif", 
                     fontWeight: 400, 
@@ -162,7 +162,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
               {/* Main Content */}
               <div 
-                className="prose prose-lg max-w-none [&_p]:text-[18px] [&_p]:leading-[28px] lg:[&_p]:text-[24px] lg:[&_p]:leading-[32px] [&_p]:mb-6 [&_strong]:font-semibold"
+                className="prose prose-lg max-w-none [&_p]:text-[18px] [&_p]:leading-[28px] lg:[&_p]:text-[20px] lg:[&_p]:leading-[30px] [&_p]:mb-6 [&_strong]:font-semibold"
                 style={{ 
                   fontFamily: "'Inter', sans-serif", 
                   fontWeight: 400, 
@@ -180,7 +180,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 {/* Tagged In */}
                 <div className="flex items-center gap-3">
                   <span 
-                    className="text-[18px] leading-[28px] lg:text-[24px] lg:leading-[32px]"
+                    className="text-[18px] leading-[28px] lg:text-[20px] lg:leading-[30px]"
                     style={{ 
                       fontFamily: "'Inter', sans-serif", 
                       fontWeight: 400, 
@@ -209,7 +209,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 {/* Share Buttons */}
                 <div className="flex items-center gap-3 lg:gap-4">
                   <span 
-                    className="text-[18px] leading-[28px] lg:text-[24px] lg:leading-[32px]"
+                    className="text-[18px] leading-[28px] lg:text-[20px] lg:leading-[30px]"
                     style={{ 
                       fontFamily: "'Inter', sans-serif", 
                       fontWeight: 400, 
@@ -558,7 +558,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </div>
 
           {/* Comments Section - Full Width Below */}
-          <div className="mt-10 lg:mt-16">
+          <div className="mt-4">
             <ArticleComments articleId={article.id} initialComments={comments} />
           </div>
         </div>

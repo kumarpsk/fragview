@@ -187,16 +187,16 @@ export default async function HomePage() {
           src="/Logo_vector.webp"
           alt=""
           aria-hidden="true"
-          className="absolute"
+          className="absolute opacity-[.33]"
         />
-        <div className="mx-auto px-6  py-2 relative">
+        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12 lg:px-[72px] py-6">
           <div className="mx-auto max-w-[1296px]">
             {/* FLEX LAYOUT */}
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-center justify-center">
               {/* LEFT COLUMN */}
               <div className="flex flex-col lg:w-[686px]">
                 {/* TEXT */}
-                <h1 className=" font-hedvig text-[36px] sm:text-[44px] lg:text-[52px] leading-[1.14] text-fv-ink">
+                <h1 className=" font-hedvig text-[36px] sm:text-[44px] lg:text-[48px] leading-[1.14] text-fv-ink">
                   Discover perfumes worth your time and liking
                 </h1>
 
@@ -306,17 +306,7 @@ export default async function HomePage() {
       {/* Statistics Cards - Responsive */}
       <section className="bg-white">
         <div
-          className="
-      mx-auto
-      w-full
-      max-w-[1440px]
-      px-4
-      sm:px-8
-      md:px-12
-      lg:px-[72px]        
-      py-6
-
-    "
+          className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12 lg:px-[72px] py-6"
         >
           {/* Content wrapper */}
           <div className="mx-auto max-w-[1296px] flex flex-col gap-6 ">
@@ -516,7 +506,7 @@ export default async function HomePage() {
                   </div>
 
                   {/* Content Area */}
-                  <div className="flex flex-col flex-1 p-6 gap-6">
+                  <div className="flex flex-col flex-1 p-6 gap-6 max-xl:p-2">
                     <div className="flex flex-col gap-3">
                       {/* Title */}
                       <h3 className="font-averia font-normal text-[24px] leading-[32px] text-[#211F1C] line-clamp-2">
@@ -529,12 +519,12 @@ export default async function HomePage() {
                     </div>
 
                     {/* Divider + Meta */}
-                    <div className="mt-auto flex flex-col gap-6">
+                    <div className="mt-auto flex flex-col gap-6 ">
                       {/* Divider */}
                       <div className="w-full h-px bg-[#E2E1E1]" />
 
                       {/* Author & Read Time */}
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-2">
                         {/* Author */}
                         <div className="flex items-center gap-[3px]">
                           <svg

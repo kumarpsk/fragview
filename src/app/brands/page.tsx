@@ -106,7 +106,7 @@ export default async function BrandsPage({
     <div className="min-h-screen bg-[#FFF9EF]">
       {/* Hero Section */}
       <section
-        className="relative w-full h-[320px] sm:h-[400px] lg:h-[464px] flex items-center"
+        className="relative w-full  flex items-center py-9 "
         style={{
           background: `linear-gradient(90deg, rgba(33, 31, 28, 0.6) 20.81%, rgba(33, 31, 28, 0.4) 88.57%), url('/brands-hero.webp')`,
           backgroundSize: 'cover',
@@ -129,13 +129,13 @@ export default async function BrandsPage({
       <section className="bg-white">
         <div className="mx-auto max-w-[1440px]">
           {/* Featured brands (Trending Brands) */}
-          <div className="px-4 sm:px-6 lg:px-[72px] py-16 flex flex-col gap-12">
+          <div className="px-4 sm:px-6 lg:px-[72px] py-5 flex flex-col gap-12">
             <div className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-10">
               <div className="flex flex-col gap-1 flex-1">
                 <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
                   Curated selections
                 </span>
-                <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                <h2 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
                   Featured brands to explore
                 </h2>
               </div>
@@ -195,7 +195,7 @@ export default async function BrandsPage({
             </div>
           </div>
 
-          <div className="px-4 sm:px-6 lg:px-[72px] pb-12 lg:pb-16 bg-fv-parchment">
+          <div className="px-4 sm:px-6 lg:px-[72px] p-2 bg-fv-parchment">
             <BrandsClient
               initialItems={data.items as BrandItem[]}
               total={data.total}
@@ -229,7 +229,7 @@ export default async function BrandsPage({
           className="absolute"
         />
 
-        <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-10 lg:py-16 relative">
+        <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5 relative">
           <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-6">
             {/* Left Content */}
             <div className="flex flex-col gap-8 w-full lg:w-auto lg:flex-1 lg:max-w-[745px]">
@@ -241,7 +241,7 @@ export default async function BrandsPage({
                     Your voice matters here
                   </span>
                   <div className="flex flex-col gap-4">
-                    <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[48px] lg:leading-[56px] text-[#211F1C]">
+                    <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
                       Suggest a missing perfume or claim a brand
                     </h2>
                     <p className="font-inter font-normal text-[18px] leading-[26px] lg:text-[24px] lg:leading-[32px] text-[#4A4946]">
@@ -298,10 +298,10 @@ export default async function BrandsPage({
               <div className="flex flex-col lg:flex-row items-center gap-6">
                 <Link
                   href="/submit"
-                  className="inline-flex items-center justify-between w-full lg:w-auto min-h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                  className="inline-flex items-center justify-between w-full lg:w-auto min-h-[40px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
                 >
                   Suggest a missing item
-                  <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg shrink-0">
+                  <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg shrink-0">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                       <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -309,10 +309,10 @@ export default async function BrandsPage({
                 </Link>
                 <Link
                   href="/submit?type=brand-claim"
-                  className="inline-flex items-center justify-between w-full lg:w-auto min-h-[50px] pl-4 pr-1 gap-3 border border-[#211F1C] bg-transparent rounded-xl font-inter font-medium text-[18px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors group"
+                  className="inline-flex items-center justify-between w-full lg:w-auto min-h-[40px] pl-4 pr-1 gap-3 border border-[#211F1C] bg-transparent rounded-xl font-inter font-medium text-[16px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors group"
                 >
                   Apply for brand account
-                  <span className="flex items-center justify-center w-10 h-10 bg-[#211F1C] rounded-lg shrink-0 group-hover:bg-white">
+                  <span className="flex items-center justify-center w-8 h-8 bg-[#211F1C] rounded-lg shrink-0 group-hover:bg-white">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="group-hover:hidden">
                       <path d="M7 17L17 7M17 7H7M17 7V17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>

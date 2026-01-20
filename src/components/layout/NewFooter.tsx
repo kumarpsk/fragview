@@ -20,83 +20,85 @@ const NewFooter = () => {
       {/* Pre-Footer Section */}
       <div className="w-full flex flex-col items-center">
         {/* Hero Banner with Background Image */}
+
         <div
-          className="relative w-full  rounded-t-[56px] flex flex-col items-start justify-center px-6 sm:px-12 lg:px-[72px] py-10"
+          className="relative w-full rounded-t-[56px]  "
           style={{
             background: `linear-gradient(360deg, rgba(33, 31, 28, 0.6) 0%, rgba(33, 31, 28, 0.4) 106%), url('/footer-bg.webp')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         >
-          <div className="flex flex-col items-start gap-6 max-w-[679px]">
-            {/* Pre-title */}
-            <div className="flex flex-col gap-1">
-              <span className="font-hedvig font-normal text-xl lg:text-2xl leading-8 text-[#EFEFEF]">
-                Discover what fits
-              </span>
-              {/* Title */}
-              <h2 className="font-hedvig font-normal text-3xl sm:text-4xl lg:text-[48px] leading-tight lg:leading-[56px] text-white">
-                We&apos;re here to help you explore scents that feel right
-              </h2>
-            </div>
-
-            {/* Buttons */}
-            <div className="flex flex-row flex-wrap items-center gap-4 lg:gap-6">
-              {/* Get Started Button */}
-              <Link
-                href={session ? "/discover" : "/signup"}
-                className="inline-flex items-center justify-between w-[203px] h-[50px] pl-4 pr-1 bg-[#211F1C] rounded-xl font-inter font-medium text-lg leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
-              >
-                Get Started
-                <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M7 17L17 7M17 7H7M17 7V17"
-                      stroke="#211F1C"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-10">
+            <div className="flex flex-col items-start gap-6 max-w-[679px]">
+              {/* Pre-title */}
+              <div className="flex flex-col gap-1">
+                <span className="font-hedvig font-normal text-xl lg:text-2xl leading-8 text-[#EFEFEF]">
+                  Discover what fits
                 </span>
-              </Link>
+                {/* Title */}
+                <h2 className="font-hedvig font-normal text-3xl sm:text-4xl lg:text-[48px] leading-tight lg:leading-[56px] text-white">
+                  We&apos;re here to help you explore scents that feel right
+                </h2>
+              </div>
 
-              {/* Our Collection Button */}
-              <Link
-                href="/perfumes"
-                className="inline-flex items-center justify-between w-[227px] h-[50px] pl-4 pr-1 border border-white rounded-xl font-inter font-medium text-lg leading-[26px] text-white hover:bg-white/10 transition-colors"
-              >
-                Our Collection
-                <span className="flex items-center justify-center w-10 h-10 bg-white/40 rounded-lg">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M7 17L17 7M17 7H7M17 7V17"
-                      stroke="#FFFFFF"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </span>
-              </Link>
+              {/* Buttons */}
+              <div className="flex flex-row flex-wrap items-center gap-4 lg:gap-6">
+                {/* Get Started Button */}
+                <Link
+                  href={session ? "/discover" : "/signup"}
+                  className="inline-flex items-center justify-between w-[203px] h-[50px] pl-4 pr-1 bg-[#211F1C] rounded-xl font-inter font-medium text-lg leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                >
+                  Get Started
+                  <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="#211F1C"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </Link>
+
+                {/* Our Collection Button */}
+                <Link
+                  href="/perfumes"
+                  className="inline-flex items-center justify-between w-[227px] h-[50px] pl-4 pr-1 border border-white rounded-xl font-inter font-medium text-lg leading-[26px] text-white hover:bg-white/10 transition-colors"
+                >
+                  Our Collection
+                  <span className="flex items-center justify-center w-10 h-10 bg-white/40 rounded-lg">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="#FFFFFF"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-
         {/* Scroller Strip */}
         <div className="w-full h-[72px] bg-[#211F1C] flex items-center overflow-hidden">
           <div className="flex items-center gap-6 animate-scroll whitespace-nowrap">
@@ -151,7 +153,7 @@ const NewFooter = () => {
         <div className="relative z-10 mx-auto max-w-[1440px] px-6 sm:px-12 lg:px-[72px] py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-12">
             {/* Left Side - Link Columns */}
-            <div className="flex flex-col sm:flex-row gap-8 lg:gap-[61px]">
+            <div className="flex flex-col sm:flex-row gap-8 lg:gap-[61px] max-sm:grid max-sm:grid-cols-2">
               {/* Account Column */}
               <div className="flex flex-col gap-5 min-w-[180px] lg:w-[212px]">
                 <h3 className="font-[var(--font-averia)] font-normal text-sm leading-[22px] uppercase text-[#C4C4C3]">

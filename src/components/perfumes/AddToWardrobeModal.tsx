@@ -78,20 +78,20 @@ export default function AddToWardrobeModal({
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
         {/* Header */}
-        <div className="p-6 bg-gradient-to-r from-green-50 to-orange-50 border-b border-green-100 flex justify-between items-center">
-          <h3 className="font-bold text-lg text-gray-800">Add to Wardrobe</h3>
+        <div className="p-6 bg-[#211F1C] border-b border-green-100 flex justify-between items-center">
+          <h3 className="font-bold text-lg text-white">Add to Wardrobe</h3>
           <button 
             onClick={onClose}
             className="p-1 hover:bg-white/60 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-white" />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-4">
           {/* Perfume Preview */}
-          <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+          <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
             {perfumeImage && (
               <img 
                 src={perfumeImage} 
@@ -121,7 +121,7 @@ export default function AddToWardrobeModal({
                   }}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedCategory === category
-                      ? 'bg-gradient-to-r from-green-500 to-orange-500 text-white shadow-md'
+                      ? 'bg-[#211F1C] text-white shadow-md'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -141,17 +141,17 @@ export default function AddToWardrobeModal({
                 <select
                   value={selectedSubcat}
                   onChange={(e) => setSelectedSubcat(e.target.value)}
-                  className="w-full p-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 outline-none text-white"
                 >
                   {availableSubcats.map((subcat) => (
-                    <option key={subcat} value={subcat}>
+                    <option key={subcat} value={subcat} className='text-white'>
                       {subcat}
                     </option>
                   ))}
                 </select>
                 <button
                   onClick={() => setIsCustom(true)}
-                  className="flex items-center gap-1 text-sm text-green-600 hover:text-green-700 font-medium"
+                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-700 font-medium"
                 >
                   <Plus className="w-4 h-4" />
                   Add Custom Subcategory
@@ -164,7 +164,7 @@ export default function AddToWardrobeModal({
                   value={customSubcat}
                   onChange={(e) => setCustomSubcat(e.target.value)}
                   placeholder="Enter custom subcategory..."
-                  className="w-full p-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 outline-none"
                   autoFocus
                 />
                 <button
@@ -189,7 +189,7 @@ export default function AddToWardrobeModal({
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add personal notes about this perfume..."
-              className="w-full p-3 border border-gray-200 rounded-lg text-sm h-20 focus:ring-2 focus:ring-green-500 outline-none resize-none"
+              className="w-full p-3 border border-gray-200 rounded-lg text-sm h-20 focus:ring-2 focus:ring-gray-500 outline-none resize-none text-white"
               maxLength={500}
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -216,7 +216,7 @@ export default function AddToWardrobeModal({
             <button
               onClick={handleSubmit}
               disabled={loading || (isCustom && ! customSubcat.trim())}
-              className="flex-1 py-3 bg-gradient-to-r from-green-600 to-orange-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-[#211F1C] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

@@ -111,3 +111,33 @@ export const getAccordColor = (accordName: string): string => {
 
   return accordColors[accordName.toLowerCase()] || accordColors.default;
 };
+
+
+
+
+export const scrollTabsBy = (
+  containerRef: React.RefObject<HTMLElement>,
+  left: number = 160
+) => {
+  if (!containerRef.current) return
+
+  containerRef.current.scrollBy({
+    left,
+    behavior: 'smooth',
+  })
+}
+
+export const scrollToTabIndex = (
+  containerRef: React.RefObject<HTMLElement>,
+  index: number
+) => {
+  if (!containerRef.current) return
+
+  const tab = containerRef.current.children[index] as HTMLElement | undefined
+
+  tab?.scrollIntoView({
+    behavior: 'smooth',
+    inline: 'center',
+    block: 'nearest',
+  })
+}

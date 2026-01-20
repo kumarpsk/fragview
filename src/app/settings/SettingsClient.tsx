@@ -89,7 +89,7 @@ export default function SettingsClient({ user }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFFF5] py-8 px-4">
+    <div className=" bg-[#FAFFF5] py-4 px-4 mb-6">
       {/* Floating Botanical Elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-32 right-20 animate-float">
@@ -102,7 +102,7 @@ export default function SettingsClient({ user }: Props) {
 
       <div className="max-w-4xl mx-auto relative z-10">
         {/* Header */}
-        <div className="glass-card rounded-2xl p-6 mb-6">
+        <div className="glass-card rounded-2xl p-6 mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-orange-400 rounded-xl flex items-center justify-center">
               <Settings className="w-6 h-6 text-white" />
@@ -117,7 +117,7 @@ export default function SettingsClient({ user }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="glass-card rounded-2xl mb-6 overflow-hidden">
+        <div className="glass-card rounded-2xl mb-4 overflow-hidden">
           <div className="flex border-b border-green-100">
             <button
               onClick={() => {
@@ -180,7 +180,7 @@ export default function SettingsClient({ user }: Props) {
 
           {/* PRIVACY TAB */}
           {activeTab === 'privacy' && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div>
                 <h3 className="text-lg font-bold text-gray-900 mb-4">Privacy Settings</h3>
                 <p className="text-sm text-gray-600 mb-6">
@@ -359,7 +359,7 @@ export default function SettingsClient({ user }: Props) {
           {activeTab === 'password' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Change Password</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Change Password</h3>
                 <p className="text-sm text-gray-600 mb-6">
                   Update your password to keep your account secure
                 </p>

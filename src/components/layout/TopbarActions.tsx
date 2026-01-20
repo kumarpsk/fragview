@@ -222,7 +222,7 @@ export default function TopbarActions({
       )}
 
       {status !== "loading" && !user && (
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-6 max-xl:gap-1">
           <Link
             href="/signin"
             onClick={(e) => {

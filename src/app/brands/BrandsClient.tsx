@@ -147,7 +147,7 @@ export default function BrandsClient({ initialItems, total, meta, query, pageSiz
             <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-fv-olive">
               Discover the makers
             </span>
-            <h1 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[48px] lg:leading-[56px] text-fv-ink">
+            <h1 className="font-hedvig font-normal text-[28px] leading-[36px] lg:text-[40px] lg:leading-[56px] text-fv-ink">
               Fragrance brands
             </h1>
           </div>
@@ -243,7 +243,7 @@ export default function BrandsClient({ initialItems, total, meta, query, pageSiz
       </div>
 
       {/* Grouped Results */}
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-5">
         {groupedBrands.length === 0 && !isSearching ? (
           <div className="text-center py-12">
             <p className="font-inter text-[18px] leading-[26px] text-fv-text-muted">No brands found.</p>

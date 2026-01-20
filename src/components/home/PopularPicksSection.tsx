@@ -66,7 +66,7 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
         </div>
 
         {/* Tabs */}
-        <div className="mt-8 lg:mt-12 w-[76%] mx-auto max-md:w-full">
+        <div className="mt-8 lg:mt-12 w-[76%] mx-auto  max-xl:w-[90%]  max-lg:w-full">
           <div className="flex flex-row justify-between items-center p-0 border border-[#E2E1E1] rounded-[32px] h-12 overflow-hidden">
             {(['All', 'Unisex', 'Male', 'Female'] as const).map((key) => {
               const active = tab === key;
@@ -75,7 +75,7 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
                   key={key}
                   type="button"
                   onClick={() => setTab(key)}
-                  className={`flex-1 flex items-center justify-center h-12 px-4 lg:px-[72px] font-inter font-medium text-[16px] lg:text-[20px] leading-[28px] transition-colors ${
+                  className={`flex-1 flex items-center justify-center h-12 px-4 lg:px-[72px] font-inter font-medium text-[14px] lg:text-[20px] leading-[28px] transition-colors ${
                     active
                       ? 'bg-[#211F1C] text-white rounded-[32px]'
                       : 'bg-transparent text-[#211F1C] hover:bg-[#211F1C]/5'

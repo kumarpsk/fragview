@@ -117,7 +117,7 @@ const ProfilePage = () => {
   });
 
   return (
-    <div className="min-h-screen relative overflow-hidden py-8" style={{ backgroundColor: '#FAFFF5' }}>
+    <div className=" relative overflow-hidden py-4 mb-6" style={{ backgroundColor: '#FAFFF5' }}>
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-green-200/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-200/10 rounded-full blur-3xl animate-pulse animate-delay-2" />
@@ -129,7 +129,7 @@ const ProfilePage = () => {
         <FollowRequestsWidget />
         
         {/* 1.  HERO CARD */}
-        <div className="glass-card rounded-2xl shadow-sm p-8 mb-8 relative overflow-hidden">
+        <div className="glass-card rounded-2xl shadow-sm p-6 mb-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 opacity-5"><Trees size={200} /></div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
             
@@ -190,7 +190,7 @@ const ProfilePage = () => {
 
         {/* 2. SUBTLE NUDGE */}
         {! nudge.isComplete && (
-          <div className="mb-8 mx-auto max-w-3xl">
+          <div className="mb-4 mx-auto max-w-3xl">
             <div className="bg-white/80 backdrop-blur-sm border border-green-100 rounded-full p-1.5 pl-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-green-500 animate-spin" style={{ animationDuration: '3s' }}></div>

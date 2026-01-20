@@ -142,7 +142,7 @@ export default function NotificationsClient({ initialNotifications }: Props) {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden py-8" style={{ backgroundColor: '#FAFFF5' }}>
+    <div className=" relative overflow-hidden py-4 mb-6" style={{ backgroundColor: '#FAFFF5' }}>
       {/* Floating Background Elements */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-green-200/10 rounded-full blur-3xl animate-pulse" />
@@ -157,7 +157,7 @@ export default function NotificationsClient({ initialNotifications }: Props) {
 
       <div className="max-w-4xl mx-auto px-4 relative z-10">
         {/* Header */}
-        <div className="glass-card rounded-2xl p-6 mb-6 shadow-sm">
+        <div className="glass-card rounded-2xl p-6 mb-4 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-orange-400 rounded-xl flex items-center justify-center">

@@ -161,7 +161,7 @@ const WardrobePage = () => {
   if (loading) return <div className="min-h-screen flex justify-center items-center bg-[#FAFFF5]"><Loader2 className="animate-spin text-green-600" /></div>;
 
   return (
-    <div className="min-h-screen relative overflow-hidden py-8" style={{ backgroundColor: '#FAFFF5' }}>
+    <div className=" relative overflow-hidden py-4 mb-6" style={{ backgroundColor: '#FAFFF5' }}>
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 left-10 w-96 h-96 bg-green-200/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-200/10 rounded-full blur-3xl animate-pulse animate-delay-2" />
@@ -169,7 +169,7 @@ const WardrobePage = () => {
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         
-        <div className="glass-card rounded-2xl shadow-sm p-8 mb-8 relative overflow-hidden">
+        <div className="glass-card rounded-2xl shadow-sm p-6 mb-4 relative overflow-hidden">
           <div className="absolute top-0 right-0 opacity-5"><Trees size={150} /></div>
           <div className="flex items-center justify-between relative z-10">
             <div>
@@ -183,9 +183,9 @@ const WardrobePage = () => {
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl shadow-sm mb-8">
+        <div className="glass-card rounded-2xl shadow-sm mb-4">
           <div className="border-b border-green-100">
-            <div className="flex flex-col md:flex-row md:items-center px-8 py-4 gap-4">
+            <div className="flex flex-col md:flex-row md:items-center px-6 py-4 gap-4">
               <div className="flex space-x-8">
                 {['My Bottles', 'Wishlist', 'Past Bottles'].map(tab => (
                   <button
@@ -234,7 +234,7 @@ const WardrobePage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
             {processedData.items.length === 0 ? (
-               <div className="text-center py-12 glass-card rounded-xl">
+               <div className="text-center py-10 glass-card rounded-xl">
                  <Leaf className="w-12 h-12 text-green-200 mx-auto mb-3" />
                  <p className="text-gray-500">Your {activeTab} is empty.</p>
                  <button onClick={() => { setSelectedCategory(activeTab); setShowAddModal(true); }} className="mt-4 text-green-600 font-medium hover:underline">Add your first perfume</button>
@@ -351,7 +351,7 @@ const WardrobePage = () => {
         {/* Modals (Add & Rename) - Unchanged logic, just keeping file complete */}
         {showAddModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl mt-20">
               <div className="p-6 bg-gradient-to-r from-green-50 to-orange-50 border-b border-green-100 flex justify-between items-center">
                 <h3 className="font-semibold text-gray-800">Add to Wardrobe</h3>
                 <button onClick={() => setShowAddModal(false)}><X className="w-5 h-5 text-gray-500" /></button>

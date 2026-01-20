@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ArrowLeft, Star, Droplets } from "lucide-react";
+import { scrollTabsBy, scrollToTabIndex } from "@/utils/colors";
 
 type Brand = {
   _id: string;
@@ -31,6 +32,11 @@ type Props = {
 
 export default function BrandPerfumesSection({ brands, perfumes }: Props) {
   const [selectedBrandIndex, setSelectedBrandIndex] = useState(0);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  const scrollRight = () => scrollTabsBy(tabsRef, 160);
+
+  const scrollToTab = (index: number) => scrollToTabIndex(tabsRef, index);
 
   // Get first 4 brands for tabs
   const visibleBrands = brands.slice(0, 4);
@@ -79,25 +85,77 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
         </div>
 
         {/* Tabs */}
-        <div className="mt-8 lg:mt-12  w-[76%] mx-auto max-md:w-full">
-          <div className="flex flex-row justify-between items-center p-0 border border-[#EFEFEF] rounded-[32px] h-12 overflow-hidden">
+        <div className="mt-8 lg:mt-12  w-[76%] max-xl:w-[90%] mx-auto max-lg:w-full relative">
+          <div
+            ref={tabsRef}
+            className="
+          flex items-center lg:gap-0
+          border border-[#EFEFEF] rounded-[32px]
+              h-9 lg:h-12
+          overflow-x-auto lg:overflow-hidden
+         scrollbar-hide  scroll-smooth
+        "
+          >
             {visibleBrands.map((brand, index) => {
               const active = selectedBrandIndex === index;
+
               return (
                 <button
                   key={brand._id}
                   type="button"
-                  onClick={() => setSelectedBrandIndex(index)}
-                  className={`flex-1 flex items-center justify-center h-12 px-4 lg:px-[72px] font-inter font-medium text-[14px] lg:text-[20px] leading-[28px] transition-colors whitespace-nowrap ${
-                    active
-                      ? "bg-[#211F1C] text-white rounded-[32px]"
-                      : "bg-transparent text-[#211F1C] hover:bg-[#211F1C]/5"
-                  }`}
+                  onClick={() => {
+                    setSelectedBrandIndex(index);
+                    scrollToTab(index);
+                  }}
+                  className={`
+           flex-1
+                h-9 lg:h-12
+                flex items-center justify-center
+                px-6 lg:px-8
+                font-inter font-medium
+                text-sm lg:text-xl
+                rounded-full whitespace-nowrap
+                transition-all duration-300
+                ${
+                  active
+                    ? "bg-[#211F1C] text-white "
+                    : "bg-transparent text-[#211F1C] hover:bg-[#E2E1E1]/50"
+                }
+              `}
                 >
                   {brand.name}
                 </button>
               );
             })}
+            <div className="lg:hidden flex-shrink-0 w-12" />
+          </div>
+
+          {/* Right Scroll Button (Mobile only) */}
+          <div
+            className="
+    lg:hidden absolute right-0 top-1/2 -translate-y-1/2
+    h-8 flex items-center
+    bg-gradient-to-l from-[#FFF9EF] via-[#FFF9EF] to-transparent
+    pl-6 pr-1 rounded-full
+  "
+          >
+            <button
+              type="button"
+              onClick={scrollRight}
+              className="w-8 h-8 flex items-center justify-center
+               bg-[#211F1C] rounded-full"
+              aria-label="Scroll tabs"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M9 6L15 12L9 18"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
           </div>
         </div>
 

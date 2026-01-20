@@ -39,11 +39,11 @@ const Navbar = () => {
       {/* Navigation */}
       <nav className="w-full border-b border-fv-parchment-border bg-fv-parchment">
         {/* Desktop: py-3 (12px), Mobile: py-2.5 (10px) for 64px total with 44px content */}
-        <div className="mx-auto max-w-[1296px] px-6 lg:px-0 py-2.5 lg:py-3">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-2.5 lg:py-3">
           {/* Desktop layout */}
           <div className="hidden lg:flex h-[50px] items-center justify-between gap-2">
             {/* Left group: Logo + links */}
-            <div className="flex items-center gap-6 shrink-0">
+            <div className="flex items-center gap-6 shrink-0 max-xl:gap-2">
               <Link href="/" className="group flex items-center gap-2">
                 <Image src="/logo-icon.svg" alt="FragView" width={37} height={44} className="h-11 w-auto" priority />
                 <span className="font-hedvig text-[28px] leading-[42px] font-normal text-fv-ink">
@@ -54,7 +54,7 @@ const Navbar = () => {
 
               </Link>
 
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-6 max-xl:gap-2">
                 <Link
                   href="/perfumes"
                   className={`relative font-averia text-[22px] leading-[30px] font-light transition-colors whitespace-nowrap px-1
@@ -86,7 +86,7 @@ const Navbar = () => {
             </div>
 
             {/* Center: Search */}
-            <div className="flex-1 max-w-[384px]">
+            <div className="flex-1 max-w-[384px] max-xl:max-w-[250px]">
               <SearchAutocomplete placeholder="Search" className="w-full" />
             </div>
 
@@ -256,7 +256,7 @@ const Navbar = () => {
                   <div className="border-t border-fv-border" />
 
                   {/* Actions */}
-                  <div className="flex flex-col gap-6">
+                  <div className="flex flex-col gap-6 ">
                     <Link
                       href="/signin"
                       onClick={(e) => {

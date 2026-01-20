@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
-import Image from 'next/image';
-import { Upload } from 'lucide-react';
+import { useState, useRef } from "react";
+import Image from "next/image";
+import { Upload } from "lucide-react";
 
 interface ImageUploadProps {
   onUploadComplete: (url: string) => void;
@@ -14,14 +14,14 @@ interface ImageUploadProps {
 
 export default function ImageUpload({
   onUploadComplete,
-  folder = 'misc',
+  folder = "misc",
   currentImage,
   maxSizeMB = 5,
-  label = 'Image'
+  label = "Image",
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentImage || null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const pick = () => fileInputRef.current?.click();
@@ -30,9 +30,9 @@ export default function ImageUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
-      setError('Allowed: JPEG, PNG, WebP');
+      setError("Allowed: JPEG, PNG, WebP");
       return;
     }
 
@@ -42,7 +42,7 @@ export default function ImageUpload({
       return;
     }
 
-    setError('');
+    setError("");
     const reader = new FileReader();
     reader.onloadend = () => setPreview(reader.result as string);
     reader.readAsDataURL(file);
@@ -53,15 +53,18 @@ export default function ImageUpload({
     setIsUploading(true);
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', folder);
+      formData.append("file", file);
+      formData.append("folder", folder);
 
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      if (!res.ok) throw new Error(data.error || "Upload failed");
       onUploadComplete(data.url);
     } catch (err: any) {
-      setError(err.message || 'Upload failed');
+      setError(err.message || "Upload failed");
       setPreview(currentImage || null);
     } finally {
       setIsUploading(false);
@@ -87,7 +90,7 @@ export default function ImageUpload({
 
       <div
         className={`relative flex w-full flex-col items-center justify-center overflow-hidden rounded-xl border ${
-          preview ? 'border-green-200' : 'border-dashed border-green-300'
+          preview ? "border-gray-200" : "border-dashed border-gray-300"
         } bg-white/80 p-4 shadow-sm transition-colors duration-300`}
       >
         {preview ? (
@@ -110,18 +113,18 @@ export default function ImageUpload({
                 type="button"
                 onClick={pick}
                 disabled={isUploading}
-                className="w-full rounded-full bg-gradient-to-r from-green-500 to-orange-500 px-4 py-2 text-center text-sm font-medium text-white transition-shadow hover:shadow-md disabled:opacity-50"
+                className="w-full inline-flex items-center justify-center h-[40px] px-4 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
               >
-                {isUploading ? 'Uploading…' : 'Change Image'}
+                {isUploading ? "Uploading…" : "Change Image"}
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setPreview(null);
-                  setError('');
+                  setError("");
                 }}
                 disabled={isUploading}
-                className="w-full rounded-full border border-green-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-green-50 disabled:opacity-50"
+                className="w-full  flex items-center justify-center h-[40px] px-4 gap-3 border border-[#211F1C] bg-transparent rounded-xl font-inter font-medium text-[16px] leading-[26px] text-[#211F1C] hover:bg-[#211F1C] hover:text-white transition-colors "
               >
                 Remove
               </button>
@@ -129,8 +132,8 @@ export default function ImageUpload({
           </div>
         ) : (
           <div className="flex w-full flex-col items-center justify-center space-y-4 py-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <Upload className="h-8 w-8 text-green-600" />
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+              <Upload className="h-8 w-8 text-gray-600" />
             </div>
             <p className="text-sm text-gray-600">
               Upload an image (JPEG, PNG, WebP)
@@ -139,22 +142,16 @@ export default function ImageUpload({
               type="button"
               onClick={pick}
               disabled={isUploading}
-              className="w-full rounded-full bg-gradient-to-r from-green-500 to-orange-500 px-4 py-2 text-center text-sm font-medium text-white transition-shadow hover:shadow-md disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center h-[40px] px-4 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
             >
-              {isUploading ? 'Uploading…' : 'Select File'}
+              {isUploading ? "Uploading…" : "Select File"}
             </button>
-            <p className="text-xs text-gray-500">
-              Max size {maxSizeMB}MB
-            </p>
+            <p className="text-xs text-gray-500">Max size {maxSizeMB}MB</p>
           </div>
         )}
       </div>
 
-      {error && (
-        <p className="text-xs text-red-600">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-xs text-red-600">{error}</p>}
     </div>
   );
 }
