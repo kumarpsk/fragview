@@ -16,7 +16,7 @@ const NewFooter = () => {
   ];
 
   return (
-    <footer className="flex flex-col items-center w-full bg-[#FFF9EF]">
+    <footer className="flex flex-col items-center w-full bg-transparent">
       {/* Pre-Footer Section */}
       <div className="w-full flex flex-col items-center">
         {/* Hero Banner with Background Image */}

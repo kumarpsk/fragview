@@ -180,11 +180,11 @@ export default function TopbarActions({
                     <ArrowUpRight className="h-4 w-4" />
                   </Link>
                   <Link
-                    href="/profile/reviews"
+                    href="/wardrobe"
                     className="flex items-center justify-between px-4 py-3 text-sm text-fv-ink hover:bg-fv-parchment/40 transition-colors"
                     onClick={() => setIsDropdownOpen(false)}
                   >
-                    <span>My Reviews</span>
+                    <span>My Wardrobe</span>
                     <ArrowUpRight className="h-4 w-4" />
                   </Link>
                   <Link
