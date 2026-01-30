@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import SettingsClient from "./SettingsClient";
+import Image from "next/image";
 
 export const metadata = {
   title: "Settings | FragView",
@@ -40,13 +41,16 @@ export default async function SettingsPage() {
     <div className="bg-white">
       <section
         className="relative w-full py-9 flex items-center"
-        style={{
-          background: `linear-gradient(90deg, rgba(33, 31, 28, 0.6) 20.81%, rgba(33, 31, 28, 0.4) 88.57%), url('/set/bg.png')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
+        //  style={{
+        //   background: `linear-gradient(90deg, rgba(33, 31, 28, 0.6) 20.81%, rgba(33, 31, 28, 0.4) 88.57%), url('/set/bg.png')`,
+        //   backgroundSize: "cover",
+        //   backgroundPosition: "center",
+        // }}
       >
-        <div className="mx-auto max-w-[1440px] w-full px-4 sm:px-6 lg:px-[72px]">
+                <Image src="/set/bg.png" alt="perfumes-hero" width={1440} height={853} className="absolute w-full h-full object-cover " />
+             <div className="absolute inset-0 bg-[#211F1C] opacity-50" />
+
+        <div className="mx-auto max-w-[1440px] w-full px-4 sm:px-6 lg:px-[72px] z-20">
           <div className="max-w-[775px] flex flex-col gap-3 lg:gap-4 p-4 lg:p-0">
             {/* Title */}
             <h1 className="font-hedvig font-normal text-[32px] leading-[40px] sm:text-[44px] sm:leading-[52px] lg:text-[56px] lg:leading-[64px] text-white">

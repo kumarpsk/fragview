@@ -20,17 +20,17 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Admin Header */}
-      <AdminHeader admin={admin} />
+    <div className="min-h-screen bg-[#FFF9EF] text-[#211F1C]">
+      {/* Admin Header - keep space for future header if needed */}
+      {/* <AdminHeader admin={admin} /> */}
 
-      <div className="flex">
+      <div className="flex max-md:flex-col">
         {/* Sidebar */}
         <AdminSidebar />
 
         {/* Main Content */}
-        <main className="flex-1 p-8 ml-64">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 md:ml-64">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-8 sm:py-10 space-y-8">
             {children}
           </div>
         </main>

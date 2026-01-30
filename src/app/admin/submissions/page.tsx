@@ -16,20 +16,30 @@ export default async function SubmissionsPage({
   await requireAdmin();
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-          <ClipboardList className="w-6 h-6 text-orange-600" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Community Submissions</h1>
-          <p className="text-gray-600">Review user suggestions for missing perfumes and brands</p>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center border border-amber-200/50">
+            <ClipboardList className="w-7 h-7 text-amber-700" />
+          </div>
+          <div>
+            <h1 className="font-hedvig text-[28px] sm:text-[32px] lg:text-[36px] leading-tight text-[#211F1C]">
+              Community Submissions
+            </h1>
+            <p className="font-[var(--font-inter)] text-sm sm:text-base text-[#4A4946] mt-1">
+              Review user suggestions for missing perfumes and brands
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Submissions List */}
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={
+        <div className="rounded-2xl border border-[#E2E1E1] bg-white/80 backdrop-blur-sm p-12 text-center">
+          <p className="font-[var(--font-inter)] text-[#4A4946]">Loading submissions...</p>
+        </div>
+      }>
         <SubmissionsListContent searchParams={await searchParams} />
       </Suspense>
     </div>

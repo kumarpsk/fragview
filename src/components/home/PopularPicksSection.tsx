@@ -34,7 +34,7 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
   const filtered = useMemo(() => {
     if (tab === 'All') return perfumes;
     const list = perfumes.filter((p) => normalizeGender(p.gender) === tab);
-    return list.length > 0 ? list : perfumes;
+    return list.length > 0 ? list : [];
   }, [perfumes, tab]);
 
   const visible = filtered.slice(0, 6);
@@ -171,13 +171,43 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
               </Link>
             ))
           ) : (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-[#737270] py-8 font-inter">
-              No perfumes available.
-            </div>
+            // <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-[#737270] py-8 font-inter">
+            //   No perfumes available.
+            // </div>
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center py-16 text-center font-inter">
+  <div className="w-16 h-16 mb-4 rounded-full bg-[#F5F3EF] flex items-center justify-center">
+    <svg
+      className="w-8 h-8 text-[#8A6A35]"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6v6l4 2"
+      />
+    </svg>
+  </div>
+
+  <h3 className="text-[18px] font-semibold text-[#211F1C] mb-2">
+    No perfumes found
+  </h3>
+
+  <p className="text-[15px] text-[#737270] max-w-lg">
+    We couldn’t find any perfumes matching your selection. Try adjusting your
+    filters or search again.
+  </p>
+</div>
+
           )}
         </div>
 
         {/* View More Button */}
+             {visible.length > 0 && (
+
+          
         <div className="mt-8 flex justify-center">
           <Link
             href="/perfumes"
@@ -190,7 +220,7 @@ export default function PopularPicksSection({ perfumes }: { perfumes: PopularPer
               </svg>
             </span>
           </Link>
-        </div>
+        </div>   )}
       </div>
     </section>
   );

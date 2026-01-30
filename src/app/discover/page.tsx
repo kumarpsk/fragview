@@ -162,7 +162,7 @@ const DiscoverPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-300">
+    <div className="min-h-screen bg-[#FFF9EF] dark:bg-gray-900 py-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header - FIXED */}
         <div className="text-center mb-12">
@@ -275,13 +275,13 @@ const DiscoverPage = () => {
 
         {/* Inspiration Section - Already has proper gradient */}
         <section className="mt-16">
-          <div className="bg-gradient-to-br from-primary-600 to-purple-600 rounded-2xl p-8 text-white text-center">
+          <div className="bg-black/90 rounded-2xl p-8 text-white text-center">
             <h2 className="text-3xl font-bold mb-4">Need More Inspiration?</h2>
             <p className="text-xl mb-8 text-primary-100">
               Take our fragrance quiz to discover your perfect scent profile
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/quiz" className="bg-white text-primary-600 px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-shadow">
+              <Link href="/quiz" className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-shadow">
                 Take Fragrance Quiz
               </Link>
               <Link href="/search" className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors">

@@ -68,7 +68,7 @@ export async function loadBrands(searchParams: Record<string, string | string[] 
     // fallback below
   }
 
-  const { items, total } = await listBrands({
+  const { items, total, letterTotals } = await listBrands({
     page,
     pageSize: PAGE_SIZE,
     search: q || undefined,
@@ -85,6 +85,7 @@ export async function loadBrands(searchParams: Record<string, string | string[] 
     query: { q, sort: sortRaw, letter },
     pageSize: PAGE_SIZE,
     source: 'mongo',
+    letterTotals: letterTotals || {},
   };
 }
 

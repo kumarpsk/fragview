@@ -224,7 +224,7 @@ export default function BrandDetailClient({ brand, perfumes: initialPerfumes, me
               {brand.description && (
                 <div className="relative">
                   <p
-                    className="text-[14px] leading-[22px] lg:text-[24px] lg:leading-[38px]"
+                    className="text-[14px] leading-[22px] lg:text-[22px] lg:leading-[36px]"
                     style={{ fontFamily: "'Inter', sans-serif", color: '#737270' }}
                   >
                     {showFullDescription ? brand.description : shortDescription}

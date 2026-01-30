@@ -36,13 +36,13 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-orange-100 text-orange-800';
+        return 'bg-amber-100 text-amber-800 border border-amber-200';
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-amber-50 text-amber-800 border border-amber-200';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-lime-100 text-lime-800 border border-lime-200';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-[#F9F7F5] text-[#4A4946] border border-[#E2E1E1]';
     }
   };
 
@@ -65,15 +65,15 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
   return (
     <div className="space-y-6">
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-[#E2E1E1] p-5 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('perfumes')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-[var(--font-inter)] font-medium transition-all ${
                 activeTab === 'perfumes'
-                  ? 'bg-purple-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-rose-500 text-white shadow-sm'
+                  : 'bg-[#F9F7F5] text-[#4A4946] hover:bg-[#E2E1E1] border border-[#E2E1E1]'
               }`}
             >
               <Package className="w-4 h-4" />
@@ -81,10 +81,10 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
             </button>
             <button
               onClick={() => setActiveTab('brands')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-[var(--font-inter)] font-medium transition-all ${
                 activeTab === 'brands'
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-amber-800 text-white shadow-sm'
+                  : 'bg-[#F9F7F5] text-[#4A4946] hover:bg-[#E2E1E1] border border-[#E2E1E1]'
               }`}
             >
               <Building2 className="w-4 h-4" />
@@ -93,12 +93,12 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
           </div>
 
           {/* Status Filter */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">Status:</span>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-[var(--font-inter)] font-medium text-[#4A4946]">Status:</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="px-3 py-1. 5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="px-4 py-2 border border-[#E2E1E1] rounded-xl text-sm font-[var(--font-inter)] bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-[#211F1C]"
             >
               <option value="all">All</option>
               <option value="pending">Pending</option>
@@ -110,19 +110,19 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
 
       {/* Items Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredItems. length === 0 ? (
-          <div className="col-span-full bg-white rounded-xl border border-gray-200 p-12 text-center">
-            <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
-            <p className="text-lg font-medium text-gray-900">All caught up!</p>
-            <p className="text-sm text-gray-500 mt-1">
+        {filteredItems.length === 0 ? (
+          <div className="col-span-full bg-white/80 backdrop-blur-sm rounded-2xl border border-[#E2E1E1] p-16 text-center shadow-sm">
+            <CheckCircle className="w-20 h-20 mx-auto mb-5 text-lime-600" />
+            <p className="font-hedvig text-xl text-[#211F1C] mb-2">All caught up!</p>
+            <p className="font-[var(--font-inter)] text-sm text-[#4A4946]">
               No {activeTab} need enrichment at this time.
             </p>
           </div>
         ) : (
-          filteredItems. map((item) => (
+          filteredItems.map((item) => (
             <div
               key={item._id}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow"
+              className="bg-white/80 backdrop-blur-sm rounded-2xl border border-[#E2E1E1] p-6 hover:shadow-md transition-all"
             >
               {/* Header */}
               <div className="flex items-start gap-4 mb-4">
@@ -134,24 +134,24 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
                     className="w-16 h-16 object-cover rounded-lg"
                   />
                 ) : (
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                    {activeTab === 'perfumes' ?  (
-                      <Package className="w-8 h-8 text-gray-400" />
+                  <div className="w-16 h-16 bg-[#F9F7F5] rounded-xl flex items-center justify-center border border-[#E2E1E1]">
+                    {activeTab === 'perfumes' ? (
+                      <Package className="w-8 h-8 text-[#C4C4C3]" />
                     ) : (
-                      <Building2 className="w-8 h-8 text-gray-400" />
+                      <Building2 className="w-8 h-8 text-[#C4C4C3]" />
                     )}
                   </div>
                 )}
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 truncate">
+                  <h3 className="font-[var(--font-inter)] font-semibold text-[#211F1C] truncate">
                     {item.name}
                   </h3>
                   {item.brand && (
-                    <p className="text-sm text-gray-500 truncate">{item.brand}</p>
+                    <p className="text-sm font-[var(--font-inter)] text-[#4A4946] truncate mt-0.5">{item.brand}</p>
                   )}
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${getStatusColor(item.enrichmentStatus)}`}>
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-[var(--font-inter)] font-medium mt-2 ${getStatusColor(item.enrichmentStatus)}`}>
                     {item.enrichmentStatus === 'pending' && <Clock className="w-3 h-3 mr-1" />}
                     {item.enrichmentStatus === 'in_progress' && <Edit className="w-3 h-3 mr-1" />}
                     {item.enrichmentStatus}
@@ -161,15 +161,15 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
 
               {/* Missing Fields */}
               <div className="mb-4">
-                <p className="text-xs font-medium text-gray-500 mb-2">Missing Fields:</p>
-                <div className="flex flex-wrap gap-1">
+                <p className="text-xs font-[var(--font-inter)] font-medium text-[#4A4946] mb-2">Missing Fields:</p>
+                <div className="flex flex-wrap gap-1.5">
                   {item.missingFields.length === 0 ? (
-                    <span className="text-xs text-gray-400 italic">None</span>
+                    <span className="text-xs font-[var(--font-inter)] text-[#737270] italic">None</span>
                   ) : (
-                    item. missingFields.map((field) => (
+                    item.missingFields.map((field) => (
                       <span
                         key={field}
-                        className="inline-flex items-center px-2 py-1 bg-red-50 text-red-700 text-xs rounded-md"
+                        className="inline-flex items-center px-2.5 py-1 bg-red-50 text-red-700 text-xs font-[var(--font-inter)] rounded-lg border border-red-200"
                       >
                         {getMissingFieldBadge(field)}
                       </span>
@@ -179,19 +179,19 @@ export default function EnrichmentDashboard({ perfumes, brands }: Props) {
               </div>
 
               {/* Metadata */}
-              <div className="mb-4 pb-4 border-b border-gray-100">
-                <p className="text-xs text-gray-500">
+              <div className="mb-4 pb-4 border-b border-[#E2E1E1]">
+                <p className="text-xs font-[var(--font-inter)] text-[#4A4946]">
                   Added {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
                 </p>
-                <p className="text-xs text-gray-500">
-                  Source: <span className="font-medium">{item.addedBy}</span>
+                <p className="text-xs font-[var(--font-inter)] text-[#4A4946] mt-0.5">
+                  Source: <span className="font-medium text-[#211F1C]">{item.addedBy}</span>
                 </p>
               </div>
 
               {/* Actions */}
               <Link
                 href={`/admin/enrichment/${activeTab}/${item._id}`}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-lime-700 text-white font-[var(--font-inter)] font-medium rounded-xl hover:bg-lime-800 transition-colors shadow-sm"
               >
                 <Edit className="w-4 h-4" />
                 Enrich Now

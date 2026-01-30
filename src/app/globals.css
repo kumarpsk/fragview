@@ -187,3 +187,42 @@ a {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
 }
+
+
+
+
+/* REMOVE browser default styling */
+.range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  outline: none;
+}
+
+/* Track - Chrome / Edge / Safari */
+.range-slider::-webkit-slider-runnable-track {
+  height: 10px;
+  background: transparent;
+  border-radius: 9999px;
+}
+
+/* Thumb - Chrome / Edge / Safari */
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #ffffff;
+  border: 3px solid #b28845;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -4px;
+}
+
+/* Firefox */
+.range-slider::-moz-range-track {
+  height: 10px;
+  background: transparent;
+}
+
+

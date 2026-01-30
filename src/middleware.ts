@@ -40,6 +40,7 @@ export default withAuth(
           '/api/stats',                         // ✅ ADDED
           '/api/similar-fragrances',            // ✅ ADDED (GET only - view similar)
           '/api/notifications/count',           // ✅ ADDED (for bell icon)
+          '/api/brands/by-letter',              // ✅ ADDED (brands pagination)
         ];
 
         // Check if pathname starts with any public API route

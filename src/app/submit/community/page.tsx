@@ -28,12 +28,12 @@ export default function CommunitySubmitPage() {
 
   // ✅ Debounced duplicate check
   useEffect(() => {
-    if (type === 'PERFUME' && (! formData.name || !formData.brand)) {
+    if (type === 'PERFUME' && (!formData.name || !formData.brand)) {
       setDuplicateCheck(null);
       return;
     }
 
-    if (type === 'BRAND' && ! formData.name) {
+    if (type === 'BRAND' && !formData.name) {
       setDuplicateCheck(null);
       return;
     }
@@ -45,9 +45,9 @@ export default function CommunitySubmitPage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            type: type. toLowerCase(),
+            type: type.toLowerCase(),
             name: formData.name,
-            brandName: type === 'PERFUME' ?  formData.brand : undefined,
+            brandName: type === 'PERFUME' ? formData.brand : undefined,
           }),
         });
 
@@ -61,16 +61,16 @@ export default function CommunitySubmitPage() {
     }, 500); // Wait 500ms after user stops typing
 
     return () => clearTimeout(timer);
-  }, [formData. name, formData.brand, type]);
+  }, [formData.name, formData.brand, type]);
 
-  if (status === 'loading') return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin text-green-600" /></div>;
+  if (status === 'loading') return <div className="min-h-screen flex items-center justify-center bg-[#F8F7F4]"><Loader2 className="animate-spin text-[#211F1C]" /></div>;
 
   if (status === 'unauthenticated') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFFF5] p-4 text-center">
-        <h2 className="text-2xl font-bold mb-4">Please Log In</h2>
-        <p className="text-gray-600 mb-6">You need to be a member to submit suggestions. </p>
-        <button onClick={() => open({ mode: 'signin', reason: 'Sign in to submit suggestions' })} className="px-6 py-3 bg-green-600 text-white rounded-xl font-bold">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8F7F4] p-4 text-center">
+        <h2 className="text-2xl font-bold font-[var(--font-hedvig)] text-[#211F1C] mb-4">Please Log In</h2>
+        <p className="font-[var(--font-inter)] text-[#4A4946] mb-6">You need to be a member to submit suggestions.</p>
+        <button onClick={() => open({ mode: 'signin', reason: 'Sign in to submit suggestions' })} className="px-6 py-3 bg-[#211F1C] text-white rounded-xl font-[var(--font-inter)] font-semibold hover:bg-[#211F1C]/90 transition-colors">
           Sign In
         </button>
       </div>
@@ -81,8 +81,8 @@ export default function CommunitySubmitPage() {
     e.preventDefault();
 
     // ✅ Block submission if exact duplicate exists
-    if (duplicateCheck?. exists) {
-      alert('❌ This ' + type. toLowerCase() + ' already exists in our database!  Please check the existing entry instead of submitting a duplicate.');
+    if (duplicateCheck?.exists) {
+      alert('❌ This ' + type.toLowerCase() + ' already exists in our database! Please check the existing entry instead of submitting a duplicate.');
       return;
     }
 
@@ -104,7 +104,7 @@ export default function CommunitySubmitPage() {
     if (res.error === 'duplicate') {
       alert(`❌ ${res.message}`);
     } else if (res.error) {
-      setError(res. error);
+      setError(res.error);
     } else {
       setSuccess(true);
     }
@@ -112,47 +112,53 @@ export default function CommunitySubmitPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FAFFF5] p-4 text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8F7F4] p-4 text-center">
+        <div className="w-16 h-16 bg-[#F9F7F5] border border-[#E2E1E1] rounded-full flex items-center justify-center text-[#211F1C] mb-6">
           <CheckCircle size={32} />
         </div>
-        <h2 className="text-2xl font-bold mb-2">Suggestion Received!</h2>
-        <p className="text-gray-600 mb-8">Thank you for helping improve FragView.  Our admins will review your submission shortly.</p>
-        <Link href="/submit" className="text-green-600 font-bold hover:underline">Submit another</Link>
-        <Link href="/" className="mt-4 text-gray-500 text-sm hover:text-gray-800">Back to Home</Link>
+        <h2 className="text-2xl font-bold font-[var(--font-hedvig)] text-[#211F1C] mb-2">Suggestion Received!</h2>
+        <p className="font-[var(--font-inter)] text-[#4A4946] mb-8">Thank you for helping improve FragView. Our admins will review your submission shortly.</p>
+        <Link href="/submit" className="font-[var(--font-inter)] text-amber-800 font-semibold hover:underline">Submit another</Link>
+        <Link href="/" className="mt-4 font-[var(--font-inter)] text-[#4A4946] text-sm hover:text-[#211F1C]">Back to Home</Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFFF5] py-12 px-4">
+    <div className="min-h-screen bg-[#F8F7F4] py-12 px-4">
       <div className="max-w-2xl mx-auto">
-        <Link href="/submit" className="inline-flex items-center text-gray-500 hover:text-gray-900 mb-8">
+        <Link href="/submit" className="inline-flex items-center font-[var(--font-inter)] text-[#4A4946] hover:text-[#211F1C] mb-8 transition-colors">
           <ArrowLeft size={16} className="mr-2" /> Back
         </Link>
 
-        <div className="bg-white rounded-3xl shadow-sm border border-green-100 p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">Suggest a Missing Item</h1>
-          
+        <div className="bg-white rounded-2xl shadow-sm border border-[#E2E1E1] p-8">
+          <h1 className="text-2xl font-bold font-[var(--font-hedvig)] text-[#211F1C] mb-6">Suggest a Missing Item</h1>
+
           {/* Type Toggle */}
-          <div className="flex bg-gray-100 p-1 rounded-xl mb-8">
-            <button 
+          <div className="flex gap-2 mb-8">
+            <button
+              type="button"
               onClick={() => {
                 setType('PERFUME');
                 setFormData({ name: '', brand: '', link: '', notes: '' });
                 setDuplicateCheck(null);
               }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${type === 'PERFUME' ?  'bg-white text-green-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-[var(--font-inter)] font-medium transition-all ${
+                type === 'PERFUME' ? 'bg-[#211F1C] text-white shadow-sm' : 'bg-[#F9F7F5] text-[#4A4946] border border-[#E2E1E1] hover:bg-[#E2E1E1]'
+              }`}
             >
               Missing Perfume
             </button>
-            <button 
+            <button
+              type="button"
               onClick={() => {
                 setType('BRAND');
                 setFormData({ name: '', brand: '', link: '', notes: '' });
                 setDuplicateCheck(null);
               }}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${type === 'BRAND' ? 'bg-white text-green-700 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-[var(--font-inter)] font-medium transition-all ${
+                type === 'BRAND' ? 'bg-[#211F1C] text-white shadow-sm' : 'bg-[#F9F7F5] text-[#4A4946] border border-[#E2E1E1] hover:bg-[#E2E1E1]'
+              }`}
             >
               Missing Brand
             </button>
@@ -160,72 +166,71 @@ export default function CommunitySubmitPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
+              <label className="block text-sm font-[var(--font-inter)] font-semibold text-[#211F1C] mb-2">
                 {type === 'PERFUME' ? 'Perfume Name' : 'Brand Name'} <span className="text-red-500">*</span>
               </label>
-              <input 
-                required 
-                name="name" 
+              <input
+                required
+                name="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none" 
+                className="w-full p-3 rounded-xl border border-[#E2E1E1] font-[var(--font-inter)] text-[#211F1C] bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
               />
             </div>
 
             {type === 'PERFUME' && (
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">Brand Name <span className="text-red-500">*</span></label>
-                <input 
-                  required 
-                  name="brand" 
+                <label className="block text-sm font-[var(--font-inter)] font-semibold text-[#211F1C] mb-2">Brand Name <span className="text-red-500">*</span></label>
+                <input
+                  required
+                  name="brand"
                   value={formData.brand}
-                  onChange={(e) => setFormData({ ... formData, brand: e.target.value })}
-                  className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none" 
+                  onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                  className="w-full p-3 rounded-xl border border-[#E2E1E1] font-[var(--font-inter)] text-[#211F1C] bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                 />
               </div>
             )}
 
-            {/* ✅ Duplicate Check Alert */}
             <DuplicateCheckAlert
-              type={type. toLowerCase() as 'perfume' | 'brand'}
+              type={type.toLowerCase() as 'perfume' | 'brand'}
               duplicateCheck={duplicateCheck}
               checking={checking}
             />
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Reference Link <span className="text-red-500">*</span></label>
-              <input 
-                required 
-                type="url" 
-                name="link" 
+              <label className="block text-sm font-[var(--font-inter)] font-semibold text-[#211F1C] mb-2">Reference Link <span className="text-red-500">*</span></label>
+              <input
+                required
+                type="url"
+                name="link"
                 value={formData.link}
-                onChange={(e) => setFormData({ ... formData, link: e.target.value })}
-                placeholder="Official website, press release..." 
-                className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none" 
+                onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+                placeholder="Official website, press release..."
+                className="w-full p-3 rounded-xl border border-[#E2E1E1] font-[var(--font-inter)] text-[#211F1C] bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
               />
-              <p className="text-xs text-gray-500 mt-1">Helping us verify the information faster.</p>
+              <p className="text-xs font-[var(--font-inter)] text-[#4A4946] mt-1">Helping us verify the information faster.</p>
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">Additional Notes</label>
-              <textarea 
-                name="notes" 
-                rows={3} 
-                value={formData. notes}
+              <label className="block text-sm font-[var(--font-inter)] font-semibold text-[#211F1C] mb-2">Additional Notes</label>
+              <textarea
+                name="notes"
+                rows={3}
+                value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Any details about notes, year, or perfumer..." 
-                className="w-full p-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none" 
+                placeholder="Any details about notes, year, or perfumer..."
+                className="w-full p-3 rounded-xl border border-[#E2E1E1] font-[var(--font-inter)] text-[#211F1C] bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
               />
             </div>
 
-            {error && <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>}
+            {error && <div className="p-3 bg-red-50 text-red-700 rounded-xl text-sm font-[var(--font-inter)] border border-red-200">{error}</div>}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading || duplicateCheck?.exists || checking}
-              className="w-full py-4 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full py-4 bg-[#211F1C] text-white font-[var(--font-inter)] font-semibold rounded-xl hover:bg-[#211F1C]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {loading ?  <Loader2 className="animate-spin" /> : 'Submit Suggestion'}
+              {loading ? <Loader2 className="animate-spin" /> : 'Submit Suggestion'}
             </button>
           </form>
         </div>

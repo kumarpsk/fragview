@@ -17,7 +17,11 @@ export type WardrobeEntryHydrated = {
   brand: string;
   image: string;
   rating: number;
+  // Total number of reviews this perfume has received
+  reviewCount: number;
   accords: any[]; 
+  // Gender / marketing classification for the perfume, if available
+  gender?: string | null;
   status: WardrobeStatus;
   subcategory: string;
   notes?: string | null;
@@ -55,11 +59,12 @@ export async function getWardrobe(): Promise<WardrobeEntryHydrated[]> {
         name: 1, 
         variant_name: 1, 
         brand: 1,
-        brand_name: 1, // ✅ Added this to catch string brand names
+        brand_name: 1, // ✅ catch string brand names
         image: 1, 
         images: 1, 
         rating: 1, 
-        rating_count: 1, 
+        rating_count: 1,
+        gender: 1,
         accords: 1, 
         main_accords: 1, 
         slug: 1
@@ -85,6 +90,10 @@ export async function getWardrobe(): Promise<WardrobeEntryHydrated[]> {
 
       const slug = p?.slug || entry.perfumeId;
 
+      // Some older Mongo documents might have a typo (`geneder`) – handle both safely
+      const gender: string | null = p?.gender || null;
+      const reviewCount: number = typeof p?.rating_count === 'number' ? p.rating_count : 0;
+
       return {
         id: entry.id,
         perfumeId: entry.perfumeId,
@@ -93,7 +102,9 @@ export async function getWardrobe(): Promise<WardrobeEntryHydrated[]> {
         brand: brandName,
         image,
         rating: p?.rating || 0,
+        reviewCount,
         accords: accords.slice(0, 3), 
+        gender,
         status: entry.status,
         subcategory: entry.subcategory || 'General',
         notes: entry.notes,

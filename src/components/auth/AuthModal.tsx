@@ -389,7 +389,13 @@ function AuthModalUI({
               {/* Tabs */}
 
               {/* Form Fields */}
-              <div className="flex flex-col gap-4">
+              <form
+                className="flex flex-col gap-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  run(mode === "signin" ? doSignIn : doRegister);
+                }}
+              >
                 {mode === "signup" && (
                   <div className="flex flex-col gap-2">
                     <label
@@ -531,25 +537,10 @@ function AuthModalUI({
                   </div>
                 )}
 
-                {/* Error Message */}
-                {/* {error && (
-                  <div
-                    className="p-3 rounded-xl text-[14px] leading-[20px]"
-                    style={{
-                      backgroundColor: "#FEF2F2",
-                      border: "1px solid #FECACA",
-                      fontFamily: "'Inter', sans-serif",
-                      color: "#DC2626",
-                    }}
-                  >
-                    {error}
-                  </div>
-                )} */}
-
                 {/* Submit Button */}
                 <button
+                  type="submit"
                   disabled={loading}
-                  onClick={() => run(mode === "signin" ? doSignIn : doRegister)}
                   className="w-full p-3 flex items-center justify-center gap-3 rounded-xl transition-all disabled:opacity-60 hover:opacity-90"
                   style={{ backgroundColor: "#211F1C" }}
                 >
@@ -587,7 +578,7 @@ function AuthModalUI({
                     </svg>
                   </span>
                 </button>
-              </div>
+              </form>
 
               {/* Divider */}
 

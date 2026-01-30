@@ -20,6 +20,7 @@ interface Props {
   meta: { page: number; totalPages: number; total: number };
   query: { q: string; sort: string; letter: string };
   pageSize: number;
+  letterTotals?: Record<string, number>;
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -47,7 +48,9 @@ function lettersFromRange(range: string): string[] {
   return letters;
 }
 
-export default function BrandsClient({ initialItems, total, meta, query, pageSize }: Props) {
+const ITEMS_PER_PAGE = 6;
+
+export default function BrandsClient({ initialItems, total, meta, query, pageSize, letterTotals = {} }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -55,35 +58,27 @@ export default function BrandsClient({ initialItems, total, meta, query, pageSiz
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState(query.sort || 'name');
   const [selectedLetter, setSelectedLetter] = useState(normalizeLetterRange(query.letter));
-  const [isSearching, setIsSearching] = useState(false); // 🔧 NEW: Loading state
+  const [isSearching, setIsSearching] = useState(false);
+  
+  // Track items per letter (can be appended via Load More)
+  const [itemsPerLetter, setItemsPerLetter] = useState<Record<string, BrandItem[]>>({});
+  // Track current page per letter for backend pagination
+  const [pagePerLetter, setPagePerLetter] = useState<Record<string, number>>({});
+  // Track loading state per letter
+  const [loadingLetter, setLoadingLetter] = useState<string | null>(null);
 
-  // Items are already server-paginated and filtered; do not re-filter by letter on client.
-  const brands = initialItems;
-
-  // Client-only resorting for some options to keep UI behavior
-  const sortedBrands = useMemo(() => {
-    const arr = [...brands];
-    switch (sortBy) {
-      case 'country':
-        arr.sort((a, b) => (a.country || '').localeCompare(b.country || ''));
-        break;
-      case 'fragrances':
-        arr.sort(
-          (a, b) =>
-            (b.perfumes_count ?? b.perfumes?.length ?? 0) -
-            (a.perfumes_count ?? a.perfumes?.length ?? 0)
-        );
-        break;
-      case 'founded':
-        // No founded data; keep order
-        break;
-      case 'name':
-      default:
-        arr.sort((a, b) => a.name.localeCompare(b.name));
-        break;
+  // Initialize items per letter from initialItems
+  useEffect(() => {
+    const groups: Record<string, BrandItem[]> = {};
+    for (const b of initialItems) {
+      const first = (b.name?.trim()?.[0] || '').toUpperCase();
+      if (!first) continue;
+      if (!groups[first]) groups[first] = [];
+      groups[first].push(b);
     }
-    return arr;
-  }, [brands, sortBy]);
+    setItemsPerLetter(groups);
+    setPagePerLetter({});
+  }, [initialItems]);
 
   const visibleLetters = useMemo(() => {
     const allowed = new Set(lettersFromRange(selectedLetter));
@@ -92,27 +87,18 @@ export default function BrandsClient({ initialItems, total, meta, query, pageSiz
   }, [selectedLetter]);
 
   const groupedBrands = useMemo(() => {
-    const groups = new Map<string, BrandItem[]>();
-    for (const l of ALPHABET) groups.set(l, []);
-
-    for (const b of sortedBrands) {
-      const first = (b.name?.trim()?.[0] || '').toUpperCase();
-      if (!first || !groups.has(first)) continue;
-      if (!visibleLetters.has(first)) continue;
-      groups.get(first)!.push(b);
-    }
-
-    return ALPHABET.filter((l) => visibleLetters.has(l) && (groups.get(l)?.length || 0) > 0).map((l) => {
-      const items = groups.get(l) || [];
+    return ALPHABET.filter((l) => visibleLetters.has(l) && (itemsPerLetter[l]?.length || 0) > 0).map((l) => {
+      const items = itemsPerLetter[l] || [];
       const fragrancesTotal = items.reduce(
         (acc, it) => acc + (it.perfumes_count ?? it.perfumes?.length ?? 0),
         0
       );
-      return { letter: l, items, fragrancesTotal };
+      const totalForLetter = letterTotals[l] || items.length;
+      return { letter: l, items, fragrancesTotal, totalForLetter };
     });
-  }, [sortedBrands, visibleLetters]);
+  }, [itemsPerLetter, visibleLetters, letterTotals]);
 
-  // 🔧 CHANGED: Debounced search with loading state
+  // 🔧 Debounced search with loading state
   useEffect(() => {
     setIsSearching(true);
     const t = setTimeout(() => {
@@ -132,12 +118,54 @@ export default function BrandsClient({ initialItems, total, meta, query, pageSiz
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, sortBy, selectedLetter]);
 
-  function gotoPage(newPage: number) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', String(newPage));
-    router.replace(`/brands?${params.toString()}`);
-  }
+  // Function to load more items for a specific letter from backend
+  const loadMoreForLetter = async (letter: string) => {
+    if (loadingLetter) return; // Prevent multiple simultaneous requests
+    
+    setLoadingLetter(letter);
+    const currentPage = pagePerLetter[letter] || 1;
+    const nextPage = currentPage + 1;
 
+    try {
+      const params = new URLSearchParams();
+      params.set('letter', letter);
+      params.set('page', String(nextPage));
+      params.set('sort', sortBy);
+      if (searchQuery.trim()) params.set('search', searchQuery.trim());
+
+      const url = `/api/brands/by-letter?${params.toString()}`;
+      const res = await fetch(url);
+      
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('API error:', res.status, text);
+        throw new Error(`Failed to fetch: ${res.status}`);
+      }
+      
+      const data = await res.json();
+      
+      if (!data.items || !Array.isArray(data.items)) {
+        console.error('Invalid API response:', data);
+        throw new Error('Invalid response format');
+      }
+      
+      // Append new items to existing ones
+      setItemsPerLetter((prev) => ({
+        ...prev,
+        [letter]: [...(prev[letter] || []), ...data.items],
+      }));
+      
+      // Update page for this letter
+      setPagePerLetter((prev) => ({
+        ...prev,
+        [letter]: nextPage,
+      }));
+    } catch (error) {
+      console.error('Error loading more brands:', error);
+    } finally {
+      setLoadingLetter(null);
+    }
+  };
   return (
     <div className="flex flex-col gap-12">
       {/* Header + Controls */}
@@ -249,128 +277,143 @@ export default function BrandsClient({ initialItems, total, meta, query, pageSiz
             <p className="font-inter text-[18px] leading-[26px] text-fv-text-muted">No brands found.</p>
           </div>
         ) : (
-          groupedBrands.map((group) => (
-            <div key={group.letter} className="flex flex-col gap-8">
-              <div className="flex items-center justify-between gap-8">
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-fv-parchment-border">
-                  <span className="font-hedvig font-normal text-[40px] leading-[48px] text-fv-ink">
-                    {group.letter}
-                  </span>
-                </div>
-                <div className="font-inter font-normal text-[16px] lg:text-[20px] leading-[28px] text-fv-text-muted">
-                  {group.fragrancesTotal} Fragrances
-                </div>
-              </div>
+          groupedBrands.map((group) => {
+            const hasMore = group.items.length < group.totalForLetter;
+            const isLoadingThis = loadingLetter === group.letter;
 
-              {viewMode === 'grid' ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {group.items.map((brand) => {
-                    const count = brand.perfumes_count ?? brand.perfumes?.length ?? 0;
-                    const first = (brand.name?.trim()?.[0] || 'B').toUpperCase();
-                    return (
-                      <Link
-                        key={brand._id}
-                        href={`/brands/${brand.slug || brand._id}`}
-                        className="flex flex-col justify-between bg-fv-parchment border border-fv-border rounded-2xl p-4 gap-5 min-h-[240px]"
-                      >
-                        <div className="flex flex-col gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-fv-parchment-border">
-                            <span className="font-hedvig text-[24px] leading-[32px] text-fv-ink">{first}</span>
-                          </div>
-
-                          <div className="flex flex-col gap-3">
-                            <h3 className="font-averia font-normal text-[24px] leading-[32px] text-fv-ink">
-                              {brand.name}
-                            </h3>
-                            <div className="flex items-center justify-between gap-4">
-                              <div className="flex items-center gap-1 min-w-0">
-                                <MapPin className="h-5 w-5 text-fv-text-muted" aria-hidden="true" />
-                                <span className="font-inter text-[14px] leading-[20px] text-fv-text-muted truncate">
-                                  {brand.country || 'Unknown'}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1 flex-shrink-0">
-                                <Droplets className="h-5 w-5 text-fv-text-muted" aria-hidden="true" />
-                                <span className="font-inter text-[14px] leading-[20px] text-fv-text-muted text-right">
-                                  {count} {count === 1 ? 'Fragrance' : 'Fragrances'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <span className="flex items-center justify-center gap-2 w-full h-10 border border-fv-border-strong rounded-lg font-inter font-medium text-[14px] leading-[22px] text-fv-ink hover:bg-fv-ink hover:text-white transition-colors">
-                          View Details
-                          <ArrowRight className="h-5 w-5" aria-hidden="true" />
-                        </span>
-                      </Link>
-                    );
-                  })}
+            return (
+              <div key={group.letter} className="flex flex-col gap-8">
+                <div className="flex items-center justify-between gap-8">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-fv-parchment-border">
+                    <span className="font-hedvig font-normal text-[40px] leading-[48px] text-fv-ink">
+                      {group.letter}
+                    </span>
+                  </div>
+                  <div className="font-inter font-normal text-[16px] lg:text-[20px] leading-[28px] text-fv-text-muted">
+                    {group.fragrancesTotal} Fragrances ({group.items.length} of {group.totalForLetter} brands)
+                  </div>
                 </div>
-              ) : (
-                <div className="flex flex-col gap-4">
-                  {group.items.map((brand) => {
-                    const count = brand.perfumes_count ?? brand.perfumes?.length ?? 0;
-                    const first = (brand.name?.trim()?.[0] || 'B').toUpperCase();
-                    return (
-                      <Link
-                        key={brand._id}
-                        href={`/brands/${brand.slug || brand._id}`}
-                        className="flex flex-col justify-between bg-fv-parchment border border-fv-border rounded-2xl p-4 gap-5"
-                      >
-                        <div className="flex items-start justify-between gap-6">
-                          <div className="flex items-start gap-4 min-w-0">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-fv-parchment-border flex-shrink-0">
+
+                {viewMode === 'grid' ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {group.items.map((brand) => {
+                      const count = brand.perfumes_count ?? brand.perfumes?.length ?? 0;
+                      const first = (brand.name?.trim()?.[0] || 'B').toUpperCase();
+                      return (
+                        <Link
+                          key={brand._id}
+                          href={`/brands/${brand.slug || brand._id}`}
+                          className="flex flex-col justify-between bg-fv-parchment border border-fv-border rounded-2xl p-4 gap-5 min-h-[240px]"
+                        >
+                          <div className="flex flex-col gap-4">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-fv-parchment-border">
                               <span className="font-hedvig text-[24px] leading-[32px] text-fv-ink">{first}</span>
                             </div>
-                            <div className="min-w-0">
-                              <h3 className="font-averia font-normal text-[24px] leading-[32px] text-fv-ink truncate">
+
+                            <div className="flex flex-col gap-3">
+                              <h3 className="font-averia font-normal text-[24px] leading-[32px] text-fv-ink">
                                 {brand.name}
                               </h3>
-                              <div className="mt-1 flex items-center gap-4 flex-wrap">
+                              <div className="flex items-center justify-between gap-4">
                                 <div className="flex items-center gap-1 min-w-0">
                                   <MapPin className="h-5 w-5 text-fv-text-muted" aria-hidden="true" />
                                   <span className="font-inter text-[14px] leading-[20px] text-fv-text-muted truncate">
                                     {brand.country || 'Unknown'}
                                   </span>
                                 </div>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-1 flex-shrink-0">
                                   <Droplets className="h-5 w-5 text-fv-text-muted" aria-hidden="true" />
-                                  <span className="font-inter text-[14px] leading-[20px] text-fv-text-muted">
+                                  <span className="font-inter text-[14px] leading-[20px] text-fv-text-muted text-right">
                                     {count} {count === 1 ? 'Fragrance' : 'Fragrances'}
                                   </span>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
 
-                        <span className="flex items-center justify-center gap-2 w-full h-10 border border-fv-border-strong rounded-lg font-inter font-medium text-[14px] leading-[22px] text-fv-ink hover:bg-fv-ink hover:text-white transition-colors">
-                          View Details
-                          <ArrowRight className="h-5 w-5" aria-hidden="true" />
-                        </span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ))
-        )}
+                          <span className="flex items-center justify-center gap-2 w-full h-10 border border-fv-border-strong rounded-lg font-inter font-medium text-[14px] leading-[22px] text-fv-ink hover:bg-fv-ink hover:text-white transition-colors">
+                            View Details
+                            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    {group.items.map((brand) => {
+                      const count = brand.perfumes_count ?? brand.perfumes?.length ?? 0;
+                      const first = (brand.name?.trim()?.[0] || 'B').toUpperCase();
+                      return (
+                        <Link
+                          key={brand._id}
+                          href={`/brands/${brand.slug || brand._id}`}
+                          className="flex flex-col justify-between bg-fv-parchment border border-fv-border rounded-2xl p-4 gap-5"
+                        >
+                          <div className="flex items-start justify-between gap-6">
+                            <div className="flex items-start gap-4 min-w-0">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-fv-parchment-border flex-shrink-0">
+                                <span className="font-hedvig text-[24px] leading-[32px] text-fv-ink">{first}</span>
+                              </div>
+                              <div className="min-w-0">
+                                <h3 className="font-averia font-normal text-[24px] leading-[32px] text-fv-ink truncate">
+                                  {brand.name}
+                                </h3>
+                                <div className="mt-1 flex items-center gap-4 flex-wrap">
+                                  <div className="flex items-center gap-1 min-w-0">
+                                    <MapPin className="h-5 w-5 text-fv-text-muted" aria-hidden="true" />
+                                    <span className="font-inter text-[14px] leading-[20px] text-fv-text-muted truncate">
+                                      {brand.country || 'Unknown'}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Droplets className="h-5 w-5 text-fv-text-muted" aria-hidden="true" />
+                                    <span className="font-inter text-[14px] leading-[20px] text-fv-text-muted">
+                                      {count} {count === 1 ? 'Fragrance' : 'Fragrances'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
-        {meta.totalPages > 1 && meta.page < meta.totalPages && (
-          <div className="flex justify-center">
-            <button
-              type="button"
-              onClick={() => gotoPage(meta.page + 1)}
-              className="h-[50px] px-4 rounded-xl bg-fv-ink text-white font-inter font-medium text-[16px] leading-[26px] flex items-center gap-3"
-            >
-              Load More
-              <span className="h-10 w-10 rounded-lg bg-white flex items-center justify-center">
-                <ArrowRight className="h-5 w-5 text-fv-ink" aria-hidden="true" />
-              </span>
-            </button>
-          </div>
+                          <span className="flex items-center justify-center gap-2 w-full h-10 border border-fv-border-strong rounded-lg font-inter font-medium text-[14px] leading-[22px] text-fv-ink hover:bg-fv-ink hover:text-white transition-colors">
+                            View Details
+                            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {hasMore && (
+                  <div className="flex justify-center">
+                    <button
+                      type="button"
+                      onClick={() => loadMoreForLetter(group.letter)}
+                      disabled={isLoadingThis}
+                      className="h-[50px] px-4 rounded-xl bg-fv-ink text-white font-inter font-medium text-[16px] leading-[26px] flex items-center gap-3 disabled:opacity-50"
+                    >
+                      {isLoadingThis ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                          Loading...
+                        </>
+                      ) : (
+                        <>
+                          Load More 
+                          <span className="h-10 w-10 rounded-lg bg-white flex items-center justify-center">
+                            <ArrowRight className="h-5 w-5 text-fv-ink" aria-hidden="true" />
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
     </div>

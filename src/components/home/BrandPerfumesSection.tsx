@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ArrowLeft, Star, Droplets } from "lucide-react";
@@ -27,12 +27,21 @@ type Perfume = {
 
 type Props = {
   brands: Brand[];
-  perfumes: Perfume[];
+  brandPerfumesMap: Record<string, Perfume[]>;
 };
 
-export default function BrandPerfumesSection({ brands, perfumes }: Props) {
+export default function BrandPerfumesSection({
+  brands,
+  brandPerfumesMap,
+}: Props) {
   const [selectedBrandIndex, setSelectedBrandIndex] = useState(0);
   const tabsRef = useRef<HTMLDivElement>(null);
+  const ITEMS_PER_PAGE = 3;
+  const [page, setPage] = useState(0);
+
+  useEffect(() => {
+    setPage(0);
+  }, [selectedBrandIndex]);
 
   const scrollRight = () => scrollTabsBy(tabsRef, 160);
 
@@ -42,21 +51,35 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
   const visibleBrands = brands.slice(0, 4);
   const selectedBrand = visibleBrands[selectedBrandIndex];
 
-  // Filter perfumes by selected brand
+  // Get top 9 perfumes for selected brand (sorted by rating from backend)
   const filteredPerfumes = useMemo(() => {
-    if (!selectedBrand) return perfumes.slice(0, 3);
-    const brandPerfumes = perfumes.filter(
-      (p) => p.brand.toLowerCase() === selectedBrand.name.toLowerCase()
-    );
-    // If no perfumes for this brand, show first 3 from all
-    return brandPerfumes.length > 0
-      ? brandPerfumes.slice(0, 3)
-      : perfumes.slice(0, 3);
-  }, [perfumes, selectedBrand]);
+    if (!selectedBrand) return [];
+    const brandKey = selectedBrand.name.toLowerCase();
+    return brandPerfumesMap[brandKey] || [];
+  }, [brandPerfumesMap, selectedBrand]);
 
   if (brands.length === 0) {
     return null;
   }
+
+  const visiblePerfumes = useMemo(() => {
+    const start = page * ITEMS_PER_PAGE;
+    return filteredPerfumes.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredPerfumes, page]);
+
+  const totalPages = Math.ceil(filteredPerfumes.length / ITEMS_PER_PAGE);
+
+  const handleNext = () => {
+    if (page < totalPages - 1) {
+      setPage((p) => p + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (page > 0) {
+      setPage((p) => p - 1);
+    }
+  };
 
   return (
     <section className="bg-white">
@@ -161,8 +184,8 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
 
         {/* Product Cards - Grid layout matching Popular picks */}
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:gap-16 gap-5">
-          {filteredPerfumes.length > 0 ? (
-            filteredPerfumes.map((perfume, i) => (
+          {visiblePerfumes.length > 0 ? (
+            visiblePerfumes.map((perfume, i) => (
               <Link
                 href={`/perfumes/${perfume.slug}`}
                 key={perfume._id}
@@ -246,29 +269,69 @@ export default function BrandPerfumesSection({ brands, perfumes }: Props) {
               </Link>
             ))
           ) : (
-            <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-[#737270] py-8 font-inter">
-              No perfumes available for this brand.
+            // <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-[#737270] py-8 font-inter">
+            //   No perfumes available for this brand.
+            // </div>
+            <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex flex-col items-center justify-center py-16 text-center font-inter">
+              <div className="w-16 h-16 mb-4 rounded-full bg-[#F5F3EF] flex items-center justify-center">
+                <svg
+                  className="w-8 h-8 text-[#8A6A35]"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6l4 2"
+                  />
+                </svg>
+              </div>
+
+              <h3 className="text-[18px] font-semibold text-[#211F1C] mb-2">
+                No perfumes found
+              </h3>
+
+              <p className="text-[15px] text-[#737270] max-w-lg">
+                We couldn’t find any perfumes matching your selection. Try
+                adjusting your filters or search again.
+              </p>
             </div>
           )}
         </div>
 
         {/* Navigation Arrows */}
-        <div className="mt-8 flex justify-center items-center gap-4">
-          <button
-            type="button"
-            className="flex items-center justify-center w-11 h-11 bg-[#211F1C] rounded-lg hover:bg-[#211F1C]/80 transition-colors"
-            aria-label="Previous"
-          >
-            <ArrowLeft className="h-6 w-6 text-white" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="flex items-center justify-center w-11 h-11 bg-[#211F1C] rounded-lg hover:bg-[#211F1C]/80 transition-colors"
-            aria-label="Next"
-          >
-            <ArrowRight className="h-6 w-6 text-white" aria-hidden="true" />
-          </button>
-        </div>
+        {visiblePerfumes.length > 0 && (
+          <div className="mt-8 flex justify-center items-center gap-4">
+            <button
+              type="button"
+              onClick={handlePrev}
+              disabled={page === 0}
+              className={`flex items-center justify-center w-11 h-11 rounded-lg transition-colors ${
+                page === 0
+                  ? "bg-[#C4C4C3] cursor-not-allowed"
+                  : "bg-[#211F1C] hover:bg-[#211F1C]/80"
+              }`}
+              aria-label="Previous"
+            >
+              <ArrowLeft className="h-6 w-6 text-white" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={page >= totalPages - 1}
+              className={`flex items-center justify-center w-11 h-11 rounded-lg transition-colors ${
+                page >= totalPages - 1
+                  ? "bg-[#C4C4C3] cursor-not-allowed"
+                  : "bg-[#211F1C] hover:bg-[#211F1C]/80"
+              }`}
+              aria-label="Next"
+            >
+              <ArrowRight className="h-6 w-6 text-white" aria-hidden="true" />
+            </button>
+          </div>
+        )}
 
         {/* Mobile View All link */}
         <div className="mt-8 lg:hidden">

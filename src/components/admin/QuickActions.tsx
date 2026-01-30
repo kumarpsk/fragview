@@ -17,37 +17,37 @@ const actions = [
     name: 'Review Submissions',
     href: '/admin/submissions',
     icon: ClipboardList,
-    color: 'bg-orange-500 hover:bg-orange-600',
+    color: 'bg-amber-500 hover:bg-amber-600', // Muted amber
   },
   {
     name: 'Brand Applications',
     href: '/admin/brand-applications',
     icon: Building2,
-    color: 'bg-blue-500 hover:bg-blue-600',
+    color: 'bg-amber-800 hover:bg-amber-900', // Warm brown / sand
   },
   {
     name: 'Featured Content',
     href: '/admin/featured',
     icon: Star,
-    color: 'bg-purple-500 hover:bg-purple-600',
+    color: 'bg-rose-500 hover:bg-rose-600', // Dusty mauve
   },
   {
     name: 'User Management',
     href: '/admin/users',
     icon: Users,
-    color: 'bg-green-500 hover:bg-green-600',
+    color: 'bg-lime-700 hover:bg-lime-800', // Olive
   },
   {
     name: 'Analytics',
     href: '/admin/analytics',
     icon: BarChart3,
-    color: 'bg-indigo-500 hover:bg-indigo-600',
+    color: 'bg-sky-600 hover:bg-sky-700',
   },
   {
     name: 'Settings',
     href: '/admin/settings',
     icon: Settings,
-    color: 'bg-gray-500 hover:bg-gray-600',
+    color: 'bg-gray-600 hover:bg-gray-700',
   },
 ];
 

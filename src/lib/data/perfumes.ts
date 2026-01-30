@@ -56,6 +56,12 @@ export async function listPerfumes(opts: {
   brand?: string;
   gender?: string;
   sort?: 'new' | 'rating' | 'az' | 'za';
+    minRating?: number;
+  minLongevity?: number;
+  minSillage?: number;
+    perfumer?: string;
+  notes?: string;
+  accords?: string;
 } = {}) {
   const {
     page = 1,
@@ -63,7 +69,13 @@ export async function listPerfumes(opts: {
     search,
     brand,
     gender,
-    sort = 'az',
+        sort = 'az',
+     minRating = 1,
+  minLongevity = 1,
+  minSillage = 1,
+    perfumer,
+  notes,
+  accords,
   } = opts;
 
   const client = await clientPromise;
@@ -81,6 +93,38 @@ export async function listPerfumes(opts: {
   filter.brand_name = { $regex: `^${escapeRegex(brand)}$`, $options: 'i' };
   }
   if (gender) filter.gender = gender;
+  if (minRating > 1) {
+  filter.rating = { $gte: minRating };
+}
+if (minLongevity > 1) {
+  filter.longevity = { $gte: minLongevity };
+}
+if (minSillage > 1) {
+  filter.sillage = { $gte: minSillage };
+}
+if (perfumer) {
+  filter.perfumers = {
+    $elemMatch: { $regex: perfumer, $options: 'i' },
+  };
+}
+
+
+if (notes) {
+  filter.perfume_overview = {
+    $regex: escapeRegex(notes),
+    $options: 'i',
+  };
+}
+
+
+if (accords) {
+  filter.accords = {
+    $elemMatch: {
+      name: { $regex: accords, $options: 'i' },
+    },
+  };
+}
+
 
   const sortSpec: any = {};
   switch (sort) {

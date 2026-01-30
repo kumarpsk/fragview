@@ -12,17 +12,21 @@ export default async function EnrichmentPage() {
   const data = await getNeedsEnrichment();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-          <AlertCircle className="w-6 h-6 text-yellow-600" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Needs Enrichment</h1>
-          <p className="text-gray-600">
-            {data.perfumes.length} perfumes and {data.brands.length} brands need additional data
-          </p>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center border border-amber-200/50">
+            <AlertCircle className="w-7 h-7 text-amber-700" />
+          </div>
+          <div>
+            <h1 className="font-hedvig text-[28px] sm:text-[32px] lg:text-[36px] leading-tight text-[#211F1C]">
+              Needs Enrichment
+            </h1>
+            <p className="font-[var(--font-inter)] text-sm sm:text-base text-[#4A4946] mt-1">
+              {data.perfumes.length} perfumes and {data.brands.length} brands need additional data
+            </p>
+          </div>
         </div>
       </div>
 

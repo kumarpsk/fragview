@@ -144,7 +144,7 @@ export default function FeaturedContentManager({ initialData }: Props) {
   return (
     <div className="space-y-6">
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-[#E2E1E1] p-5 shadow-sm">
         <div className="flex gap-2">
           <button
             onClick={() => {
@@ -152,10 +152,10 @@ export default function FeaturedContentManager({ initialData }: Props) {
               setSearchQuery('');
               setSearchResults([]);
             }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-[var(--font-inter)] font-medium transition-all ${
               activeTab === 'perfumes'
-                ? 'bg-purple-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-rose-500 text-white shadow-sm'
+                : 'bg-[#F9F7F5] text-[#4A4946] hover:bg-[#E2E1E1] border border-[#E2E1E1]'
             }`}
           >
             <Package className="w-4 h-4" />
@@ -167,10 +167,10 @@ export default function FeaturedContentManager({ initialData }: Props) {
               setSearchQuery('');
               setSearchResults([]);
             }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-[var(--font-inter)] font-medium transition-all ${
               activeTab === 'brands'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-amber-800 text-white shadow-sm'
+                : 'bg-[#F9F7F5] text-[#4A4946] hover:bg-[#E2E1E1] border border-[#E2E1E1]'
             }`}
           >
             <Building2 className="w-4 h-4" />
@@ -180,28 +180,28 @@ export default function FeaturedContentManager({ initialData }: Props) {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-[#E2E1E1] p-6 shadow-sm">
+        <h3 className="font-hedvig text-lg text-[#211F1C] mb-4">
           {activeTab === 'perfumes' ? 'Search Perfumes' : 'Search Brands'}
         </h3>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#737270]" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={(e) => e. key === 'Enter' && handleSearch()}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={`Search ${activeTab === 'perfumes' ? 'perfumes' : 'brands'}...`}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-[#E2E1E1] rounded-xl font-[var(--font-inter)] text-[#211F1C] bg-white focus:ring-2 focus:ring-lime-500 focus:border-lime-500"
             />
           </div>
           <button
             onClick={handleSearch}
             disabled={searching || !searchQuery.trim()}
-            className="px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-lime-700 text-white font-[var(--font-inter)] font-medium rounded-xl hover:bg-lime-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
-            {searching ?  <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
+            {searching ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Search'}
           </button>
         </div>
 
@@ -211,34 +211,34 @@ export default function FeaturedContentManager({ initialData }: Props) {
             {searchResults.map((result) => (
               <div
                 key={result._id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                className="flex items-center justify-between p-3 bg-[#F9F7F5] rounded-xl hover:bg-[#E2E1E1] transition-colors border border-[#E2E1E1]"
               >
                 <div className="flex items-center gap-3">
                   {result.image || result.logo ? (
                     <img
                       src={result.image || result.logo}
                       alt={result.name}
-                      className="w-12 h-12 object-cover rounded-lg"
+                      className="w-12 h-12 object-cover rounded-xl"
                     />
                   ) : (
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                      {activeTab === 'perfumes' ?  (
-                        <Package className="w-6 h-6 text-gray-400" />
+                    <div className="w-12 h-12 bg-[#E2E1E1] rounded-xl flex items-center justify-center">
+                      {activeTab === 'perfumes' ? (
+                        <Package className="w-6 h-6 text-[#C4C4C3]" />
                       ) : (
-                        <Building2 className="w-6 h-6 text-gray-400" />
+                        <Building2 className="w-6 h-6 text-[#C4C4C3]" />
                       )}
                     </div>
                   )}
                   <div>
-                    <p className="font-medium text-gray-900">{result.name}</p>
-                    {result. brand_name && (
-                      <p className="text-sm text-gray-500">{result.brand_name}</p>
+                    <p className="font-[var(--font-inter)] font-semibold text-[#211F1C]">{result.name}</p>
+                    {result.brand_name && (
+                      <p className="text-sm font-[var(--font-inter)] text-[#4A4946] mt-0.5">{result.brand_name}</p>
                     )}
                   </div>
                 </div>
                 <button
                   onClick={() => addItem(result)}
-                  className="flex items-center gap-1 px-3 py-1. 5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-black text-white text-sm font-[var(--font-inter)] font-medium rounded-xl hover:bg-black/80 transition-colors shadow-sm"
                 >
                   <Plus className="w-4 h-4" />
                   Add
@@ -258,7 +258,7 @@ export default function FeaturedContentManager({ initialData }: Props) {
           <button
             onClick={handleSave}
             disabled={saving || currentItems.length === 0}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 bg-black text-white font-medium rounded-lg hover:bg-black/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -272,9 +272,9 @@ export default function FeaturedContentManager({ initialData }: Props) {
         </div>
 
         {currentItems.length === 0 ? (
-          <div className="py-12 text-center text-gray-500">
-            <p>No items selected</p>
-            <p className="text-sm mt-1">Search and add items above</p>
+          <div className="py-12 text-center">
+            <p className="font-[var(--font-inter)] text-[#4A4946]">No items selected</p>
+            <p className="text-sm font-[var(--font-inter)] text-[#737270] mt-1">Search and add items above</p>
           </div>
         ) : (
           <DragDropContext onDragEnd={onDragEnd}>
@@ -291,42 +291,42 @@ export default function FeaturedContentManager({ initialData }: Props) {
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="flex items-center gap-3 p-3 bg-[#F9F7F5] rounded-xl hover:bg-[#E2E1E1] transition-colors border border-[#E2E1E1]"
                         >
-                          <div {... provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
-                            <GripVertical className="w-5 h-5 text-gray-400" />
+                          <div {...provided.dragHandleProps} className="cursor-grab active:cursor-grabbing">
+                            <GripVertical className="w-5 h-5 text-[#737270]" />
                           </div>
                           
-                          <span className="text-sm font-medium text-gray-500 w-8">
+                          <span className="text-sm font-[var(--font-inter)] font-medium text-[#4A4946] w-8">
                             #{index + 1}
                           </span>
 
-                          {item.image ?  (
+                          {item.image ? (
                             <img
                               src={item.image}
                               alt={item.name}
-                              className="w-12 h-12 object-cover rounded-lg"
+                              className="w-12 h-12 object-cover rounded-xl"
                             />
                           ) : (
-                            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <div className="w-12 h-12 bg-[#E2E1E1] rounded-xl flex items-center justify-center">
                               {activeTab === 'perfumes' ? (
-                                <Package className="w-6 h-6 text-gray-400" />
+                                <Package className="w-6 h-6 text-[#C4C4C3]" />
                               ) : (
-                                <Building2 className="w-6 h-6 text-gray-400" />
+                                <Building2 className="w-6 h-6 text-[#C4C4C3]" />
                               )}
                             </div>
                           )}
 
                           <div className="flex-1">
-                            <p className="font-medium text-gray-900">{item.name}</p>
-                            {item. brandName && (
-                              <p className="text-sm text-gray-500">{item.brandName}</p>
+                            <p className="font-[var(--font-inter)] font-semibold text-[#211F1C]">{item.name}</p>
+                            {item.brandName && (
+                              <p className="text-sm font-[var(--font-inter)] text-[#4A4946] mt-0.5">{item.brandName}</p>
                             )}
                           </div>
 
                           <button
                             onClick={() => removeItem(item.mongoId)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                           >
                             <X className="w-5 h-5" />
                           </button>
@@ -342,9 +342,9 @@ export default function FeaturedContentManager({ initialData }: Props) {
         )}
 
         {currentItems.length >= maxItems && (
-          <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-            <p className="text-sm text-orange-800">
-              ⚠️ Maximum of {maxItems} items reached.  Remove some items to add more.
+          <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
+            <p className="text-sm font-[var(--font-inter)] text-amber-800">
+              ⚠️ Maximum of {maxItems} items reached. Remove some items to add more.
             </p>
           </div>
         )}

@@ -12,6 +12,7 @@ import { getArticles } from "@/app/actions/drydown";
 import { auth } from "@/lib/auth";
 import ApplyButton from "@/components/drydown/ApplyButton";
 import CatagoryTabs from "@/components/drydown/CatagoryTabs";
+import Image from "next/image";
 
 export const metadata = {
   title: "The Drydown • Editorial | Fragview",
@@ -147,7 +148,7 @@ export default async function DrydownPage({
           ) : (
             /* Featured Article */
             featured && (
-              <div className="w-full flex flex-col lg:flex-row items-stretch gap-6">
+              <div className="w-full flex flex-col lg:flex-row items-stretch  gap-8 lg:gap-16">
                 {/* Left Side - Content */}
                 <div className="flex-1 flex flex-col justify-center gap-5">
                   {/* Badges */}
@@ -202,9 +203,9 @@ export default async function DrydownPage({
                   {/* Divider + Meta */}
                   <div className="flex flex-col gap-4">
                     <div className="w-full h-px bg-[#E2E1E1]" />
-                    <div className="flex items-center gap-4 lg:gap-6 flex-wrap">
+                    <div className="flex items-center justify-between gap-4 lg:gap-6 flex-wrap">
                       {/* Author */}
-                      <div className="flex items-center gap-[3px]">
+                      <div className="flex items-center gap-[3px] ">
                         <svg
                           width="24"
                           height="24"
@@ -266,9 +267,12 @@ export default async function DrydownPage({
                 </div>
 
                 {/* Right Side - Image - Mobile: below content, Desktop: right side */}
-                <div className="w-full lg:flex-1 h-[352px] rounded-xl overflow-hidden">
+                <div className="w-full lg:w-[530px] h-[352px] rounded-xl overflow-hidden">
                   {featured.coverImage ? (
-                    <img
+                    <Image
+                      width={530}
+                      height={352}
+                      quality={100}
                       src={featured.coverImage}
                       alt={featured.title}
                       className="w-full h-full object-cover"
@@ -634,7 +638,7 @@ export default async function DrydownPage({
       </section> */}
 
       {/* Join our team - CTA Section */}
-      <section className="relative overflow-hidden bg-[#FFF9EF]">
+      <section className="relative overflow-hidden bg-white">
         {/* Decorative background pattern */}
         <div
           className="absolute -left-[338px] -top-[398px] w-[567px] h-[651px] pointer-events-none"
@@ -681,13 +685,14 @@ export default async function DrydownPage({
             style={{ transform: "rotate(-42deg)", left: "7%", top: "-5%" }}
           />
         </div>
-        <img
-          src="/Logo_vector.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute"
-        />
-
+       <Image
+           width={ 300 }
+           height={ 200 }
+           src="/Logo_vector.webp"
+           alt=""
+           aria-hidden="true"
+           className="absolute"
+         />
         <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5 relative">
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
             {/* Left Content */}
@@ -809,8 +814,8 @@ export default async function DrydownPage({
 
               {/* CTA Button */}
               <div>
-                <Link
-                  href="/drydown"
+                      <a
+                href="mailto:info@fragview.com"
                   className="inline-flex items-center justify-between h-[40px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
                 >
                   Join as an Editor
@@ -832,18 +837,27 @@ export default async function DrydownPage({
                       />
                     </svg>
                   </span>
-                </Link>
+                </a>
               </div>
             </div>
 
             {/* Right Image - Mobile: below content, Desktop: right side */}
-            <div className="w-full lg:w-[524px] h-[280px] sm:h-[350px] lg:h-[418px] rounded-xl overflow-hidden flex-shrink-0">
+            {/* <div className="w-full lg:w-[524px] h-[280px] sm:h-[350px] lg:h-[418px] rounded-xl overflow-hidden flex-shrink-0">
               <img
                 src="/join-team-drydown.webp"
                 alt="Join our team"
                 className="w-full h-full object-cover"
                 loading="lazy"
-              />
+              /> */}
+                   <div className="relative w-full lg:w-[527px] h-[300px] sm:h-[400px] lg:h-[466px] rounded-xl overflow-hidden flex-shrink-0">
+                            <Image
+                              src="/join-team-brand.webp"
+                              alt="Suggest a perfume or claim a brand"
+                              fill
+                              sizes="(max-width: 768px) 100vw, 527px"
+                              className="object-cover object-center"
+                              loading="lazy"
+                            />
             </div>
           </div>
         </div>

@@ -93,7 +93,7 @@ export default function SimilarFragrances({ currentPerfumeId }: Props) {
       setCanScrollLeft(container.scrollLeft > 0);
       setCanScrollRight(
         container.scrollLeft <
-          container.scrollWidth - container.clientWidth - 10
+          container.scrollWidth - container.clientWidth - 10,
       );
     };
 
@@ -119,7 +119,7 @@ export default function SimilarFragrances({ currentPerfumeId }: Props) {
           // 🚀 ADD CACHING: Use browser cache
           cache: "force-cache",
           next: { revalidate: 300 },
-        }
+        },
       );
       const data = await response.json();
       setFragrances(data.fragrances || []);
@@ -142,9 +142,9 @@ export default function SimilarFragrances({ currentPerfumeId }: Props) {
     try {
       const response = await fetch(
         `/api/perfumes/search-similar?q=${encodeURIComponent(
-          searchQuery
+          searchQuery,
         )}&exclude=${currentPerfumeId}`,
-        { signal: controller.signal }
+        { signal: controller.signal },
       );
       const data = await response.json();
       setSearchResults(data.results || []);
@@ -205,7 +205,7 @@ export default function SimilarFragrances({ currentPerfumeId }: Props) {
               userVote: voteType,
             };
           }
-        })
+        }),
       );
 
       try {
@@ -229,7 +229,7 @@ export default function SimilarFragrances({ currentPerfumeId }: Props) {
         fetchSimilarFragrances();
       }
     },
-    [session, open, currentPerfumeId, fetchSimilarFragrances]
+    [session, open, currentPerfumeId, fetchSimilarFragrances],
   );
 
   const handleAddSimilar = useCallback(
@@ -265,7 +265,7 @@ export default function SimilarFragrances({ currentPerfumeId }: Props) {
         console.error("Error adding similar fragrance:", error);
       }
     },
-    [session, open, currentPerfumeId, fetchSimilarFragrances]
+    [session, open, currentPerfumeId, fetchSimilarFragrances],
   );
 
   const scroll = useCallback((direction: "left" | "right") => {
@@ -417,12 +417,31 @@ export default function SimilarFragrances({ currentPerfumeId }: Props) {
                         <div className="flex flex-col gap-6 p-4">
                           {/* Similarity Progress Bar */}
                           <div className="flex items-center gap-3">
-                            <div className="flex-1 h-[10px] bg-[#FDE2B6] rounded-xl overflow-hidden">
+                            {/* <div className="flex-1 h-[10px] bg-[#FDE2B6] rounded-xl overflow-hidden">
                               <div
                                 className="h-full bg-[#B28845] rounded-xl transition-all"
                                 style={{ width: `${frag.similarityScore}%` }}
                               />
+                            </div> */}
+
+                            <div className="relative flex-1 h-[10px] bg-[#FDE2B6] rounded-xl">
+                              {/* Filled bar */}
+                              <div
+                                className="absolute left-0 top-0 h-full bg-[#B28845] rounded-xl"
+                                style={{ width: `${frag.similarityScore}%` }}
+                              />
+
+                              {/* Indicator */}
+                              <div
+                                className="absolute top-1/2 -translate-y-1/2"
+                                style={{
+                                  left: `calc(${frag.similarityScore}% - 8px)`,
+                                }}
+                              >
+                                <div className="w-4 h-4 bg-white border-[3px] border-[#B28845] rounded-full" />
+                              </div>
                             </div>
+
                             <span className="font-inter font-medium text-[16px] leading-[24px] text-[#211F1C] text-right min-w-[40px]">
                               {frag.similarityScore}%
                             </span>

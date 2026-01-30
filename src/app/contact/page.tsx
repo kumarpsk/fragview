@@ -48,7 +48,7 @@ export default function ContactPage() {
       <div className="bg-white text-black">
 
         {/* HERO */}
-        <section className="relative h-[280px] sm:h-[340px] lg:h-[400px]">
+        <section className="relative h-[250px]">
           <Image
             src="/contact.webp"
             alt="Contact Us"
@@ -75,8 +75,8 @@ export default function ContactPage() {
               <p
                 className="
     mt-4
-    text-[20px] sm:text-[24px]   /* responsive font-size: mobile 20px, desktop 24px */
-    leading-[28px] sm:leading-[32px]  /* responsive line-height */
+    text-[20px]   
+    leading-[28px]  
     font-normal
     tracking-normal
     opacity-90

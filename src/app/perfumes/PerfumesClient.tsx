@@ -42,7 +42,6 @@ export default function PerfumesClient({
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-
   const [q, setQ] = useState(query.q);
   const [gender, setGender] = useState(query.gender);
   const [brand, setBrand] = useState(query.brand);
@@ -146,6 +145,17 @@ export default function PerfumesClient({
       else params.delete("gender");
       if (brand) params.set("brand", brand);
       else params.delete("brand");
+      params.set("minRating", String(minRating));
+      params.set("minLongevity", String(minLongevity));
+      params.set("minSillage", String(minSillage));
+      if (perfumerSearch.trim()) params.set("perfumer", perfumerSearch.trim());
+      else params.delete("perfumer");
+
+      if (notesSearch.trim()) params.set("notes", notesSearch.trim());
+      else params.delete("notes");
+
+      if (accordsSearch.trim()) params.set("accords", accordsSearch.trim());
+      else params.delete("accords");
       params.set("sort", sort);
       params.set("page", "1");
       router.replace(`/perfumes?${params.toString()}`);
@@ -156,7 +166,18 @@ export default function PerfumesClient({
       setIsSearching(false);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q, gender, brand, sort]);
+  }, [
+    q,
+    gender,
+    brand,
+    sort,
+    minRating,
+    minLongevity,
+    minSillage,
+    perfumerSearch,
+    notesSearch,
+    accordsSearch,
+  ]);
 
   function gotoPage(newPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -403,7 +424,7 @@ export default function PerfumesClient({
               <div className="flex flex-col gap-3">
                 {[
                   { value: "", label: "All" },
-                  { value: "male", label: "Male" },
+                  { value: "men", label: "Male" },
                   { value: "female", label: "Female" },
                   { value: "unisex", label: "Unisex" },
                 ].map((option) => (
@@ -448,10 +469,10 @@ export default function PerfumesClient({
                   {minRating}
                 </span>
               </div>
-              <div className="flex flex-col gap-3">
-                <div className="relative h-2.5 bg-[#FDE2B6] rounded-full">
+              <div className="flex flex-col gap-3 ">
+                <div className="relative h-2.5 rounded-full bg-[#FDE2B6]">
                   <div
-                    className="absolute h-full bg-[#B28845] rounded-full"
+                    className="absolute top-0 h-2.5 rounded-full bg-[#B28845]"
                     style={{ width: `${((minRating - 1) / 4) * 100}%` }}
                   />
                   <input
@@ -461,7 +482,7 @@ export default function PerfumesClient({
                     step="0.5"
                     value={minRating}
                     onChange={(e) => setMinRating(parseFloat(e.target.value))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="range-slider absolute top-0 w-full h-2.5 bg-transparent cursor-pointer"
                   />
                 </div>
                 <div className="flex justify-between">
@@ -488,7 +509,7 @@ export default function PerfumesClient({
               <div className="flex flex-col gap-3">
                 <div className="relative h-2.5 bg-[#FDE2B6] rounded-full">
                   <div
-                    className="absolute h-full bg-[#B28845] rounded-full"
+                    className="absolute top-0 h-2.5 bg-[#B28845] rounded-full"
                     style={{ width: `${((minLongevity - 1) / 4) * 100}%` }}
                   />
                   <input
@@ -500,7 +521,7 @@ export default function PerfumesClient({
                     onChange={(e) =>
                       setMinLongevity(parseFloat(e.target.value))
                     }
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="range-slider absolute top-0 w-full h-2.5  bg-transparent cursor-pointer"
                   />
                 </div>
                 <div className="flex justify-between">
@@ -527,7 +548,7 @@ export default function PerfumesClient({
               <div className="flex flex-col gap-3">
                 <div className="relative h-2.5 bg-[#FDE2B6] rounded-full">
                   <div
-                    className="absolute h-full bg-[#B28845] rounded-full"
+                    className="absolute top-0 h-2.5 bg-[#B28845] rounded-full"
                     style={{ width: `${((minSillage - 1) / 4) * 100}%` }}
                   />
                   <input
@@ -537,7 +558,7 @@ export default function PerfumesClient({
                     step="0.5"
                     value={minSillage}
                     onChange={(e) => setMinSillage(parseFloat(e.target.value))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="range-slider absolute top-0 w-full h-2.5  bg-transparent cursor-pointer"
                   />
                 </div>
                 <div className="flex justify-between">
@@ -692,7 +713,7 @@ export default function PerfumesClient({
                                     accord as unknown as
                                       | { name?: string }
                                       | undefined
-                                  )?.name || ""
+                                  )?.name || "",
                             )
                             .filter(Boolean)
                             .slice(0, 3)

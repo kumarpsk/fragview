@@ -100,7 +100,7 @@ const NewFooter = () => {
           </div>
         </div>
         {/* Scroller Strip */}
-        <div className="w-full h-[72px] bg-[#211F1C] flex items-center overflow-hidden">
+        <div className="w-full h-[72px] bg-[#211F1C] flex items-center overflow-hidden z-40">
           <div className="flex items-center gap-6 animate-scroll whitespace-nowrap">
             {/* Duplicate texts for seamless loop */}
             {[...scrollerTexts, ...scrollerTexts, ...scrollerTexts].map(

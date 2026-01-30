@@ -7,6 +7,7 @@ import { loadBrands } from './loaders';
 
 import { getMongoDb } from '@/lib/mongodb';
 import prisma from '@/lib/prisma';
+import Image from 'next/image';
 
 type BrandItem = {
   _id: string;
@@ -107,13 +108,16 @@ export default async function BrandsPage({
       {/* Hero Section */}
       <section
         className="relative w-full  flex items-center py-9 "
-        style={{
-          background: `linear-gradient(90deg, rgba(33, 31, 28, 0.6) 20.81%, rgba(33, 31, 28, 0.4) 88.57%), url('/brands-hero.webp')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
+        // style={{
+        //   background: `linear-gradient(90deg, rgba(33, 31, 28, 0.6) 20.81%, rgba(33, 31, 28, 0.4) 88.57%), url('/brands-hero.webp')`,
+        //   backgroundSize: 'cover',
+        //   backgroundPosition: 'center',
+        // }}
       >
-        <div className="mx-auto max-w-[1440px] w-full px-4 sm:px-6 lg:px-[72px]">
+                <Image src="/brands-hero.webp" alt="brands-hero" width={1440} height={853} className="absolute w-full h-full object-cover " />
+             <div className="absolute inset-0 bg-[#211F1C] opacity-50" />
+
+        <div className="mx-auto max-w-[1440px] w-full px-4 sm:px-6 lg:px-[72px] z-20">
           <div className="max-w-[775px] flex flex-col gap-3 lg:gap-4 p-4 lg:p-0">
             <h1 className="font-hedvig font-normal text-[32px] leading-[40px] sm:text-[44px] sm:leading-[52px] lg:text-[56px] lg:leading-[64px] text-white">
               Discover world-class fragrance brands
@@ -202,6 +206,7 @@ export default async function BrandsPage({
               meta={data.meta}
               query={data.query}
               pageSize={data.pageSize}
+              letterTotals={data.letterTotals}
             />
           </div>
         </div>
@@ -222,12 +227,14 @@ export default async function BrandsPage({
           <div className="absolute w-[140px] h-[160px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '3%', top: '-1%' }} />
           <div className="absolute w-[120px] h-[130px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '7%', top: '-5%' }} />
         </div>
-        <img
-          src="/Logo_vector.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute"
-        />
+     <Image
+           width={ 300 }
+           height={ 200 }
+           src="/Logo_vector.webp"
+           alt=""
+           aria-hidden="true"
+           className="absolute"
+         />
 
         <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5 relative">
           <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-6">
@@ -325,13 +332,16 @@ export default async function BrandsPage({
             </div>
 
             {/* Right Image */}
-            <div className="w-full lg:w-[527px] h-[300px] sm:h-[400px] lg:h-[466px] rounded-xl overflow-hidden flex-shrink-0">
-              <img
-                src="/join-team-brand.webp"
-                alt="Suggest a perfume or claim a brand"
-                className="w-full h-full object-cover object-center"
-                loading="lazy"
-              />
+          <div className="relative w-full lg:w-[527px] h-[300px] sm:h-[400px] lg:h-[466px] rounded-xl overflow-hidden flex-shrink-0">
+
+                  <Image
+                            src="/join-team-brand.webp"
+                            alt="Suggest a perfume or claim a brand"
+                            fill
+                            sizes="(max-width: 768px) 100vw, 527px"
+                            className="object-cover object-center"
+                            loading="lazy"
+                          />
             </div>
           </div>
         </div>

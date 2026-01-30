@@ -18,6 +18,8 @@ function mapSort(sort: PerfumeSort) {
 }
 
 export async function loadPerfumes(searchParams: Record<string, string | string[] | undefined>) {
+  
+
   const rawPage = searchParams.page;
   const page = (() => {
     const v = Array.isArray(rawPage) ? parseInt(rawPage[0] || '1', 10) : parseInt((rawPage as string) || '1', 10);
@@ -27,9 +29,26 @@ export async function loadPerfumes(searchParams: Record<string, string | string[
   const q = typeof searchParams.q === 'string' ? searchParams.q.trim() : '';
   const gender = typeof searchParams.gender === 'string' ? searchParams.gender.trim() : '';
   const brand = typeof searchParams.brand === 'string' ? searchParams.brand.trim() : '';
+
   const sortRaw = typeof searchParams.sort === 'string' ? searchParams.sort : 'az';
   const allowed: PerfumeSort[] = ['new', 'rating', 'az', 'za'];
   const sort = allowed.includes(sortRaw as any) ? (sortRaw as PerfumeSort) : 'az';
+
+  const minRating = Number(searchParams.minRating || 1);
+const minLongevity = Number(searchParams.minLongevity || 1);
+const minSillage = Number(searchParams.minSillage || 1);
+
+const perfumer = typeof searchParams.perfumer === 'string'
+  ? searchParams.perfumer.trim()
+  : '';
+
+const notes = typeof searchParams.notes === 'string'
+  ? searchParams.notes.trim()
+  : '';
+
+const accords = typeof searchParams.accords === 'string'
+  ? searchParams.accords.trim()
+  : '';
 
   if (q) {
     const filterParts: string[] = [];
@@ -72,6 +91,12 @@ export async function loadPerfumes(searchParams: Record<string, string | string[
     brand: brand || undefined,
     gender: gender || undefined,
     sort,
+      minRating,
+  minLongevity,
+  minSillage,
+    perfumer: perfumer || undefined,
+  notes: notes || undefined,
+  accords: accords || undefined,
   });
   const sanitized = sanitizePerfumeDocs(items);
   const meta = pageMeta(total, page, PAGE_SIZE);

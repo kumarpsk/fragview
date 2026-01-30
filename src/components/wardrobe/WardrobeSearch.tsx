@@ -73,16 +73,16 @@ export default function WardrobeSearch({ onSelect }: WardrobeSearchProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => query.length >= 2 && setIsOpen(true)}
-          className="w-full rounded-xl border border-green-200 bg-white px-10 py-3 text-sm text-gray-900 shadow-sm transition-all focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+          className="w-full rounded-xl border border-gray-200 bg-white px-10 py-3 text-sm text-gray-900 shadow-sm transition-all focus:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-200"
         />
         {loading && (
-          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-green-600" />
+          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-gray-600" />
         )}
       </div>
 
       {/* Dropdown Results */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-green-100 bg-white py-2 shadow-xl">
+        <div className="absolute top-full left-0 right-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-xl border border-gray-100 bg-white py-2 shadow-xl">
           {results.length > 0 ? (
             <div>
               <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-gray-400">
@@ -92,7 +92,7 @@ export default function WardrobeSearch({ onSelect }: WardrobeSearchProps) {
                 <button
                   key={perfume._id}
                   onClick={() => handleSelection(perfume)}
-                  className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-green-50 transition-colors border-b border-gray-50 last:border-0"
+                  className="w-full text-left flex items-center gap-3 px-4 py-3 hover:bg-gray-100 transition-colors border-b border-gray-50 last:border-0"
                 >
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                      {perfume.image ? (
@@ -109,7 +109,7 @@ export default function WardrobeSearch({ onSelect }: WardrobeSearchProps) {
                       {perfume.brand_name} {perfume.gender ? `• ${perfume.gender}` : ''}
                     </div>
                   </div>
-                  <PlusCircle className="w-4 h-4 text-green-600 ml-auto opacity-0 group-hover:opacity-100" />
+                  <PlusCircle className="w-4 h-4 text-gray-600 ml-auto opacity-0 group-hover:opacity-100" />
                 </button>
               ))}
             </div>

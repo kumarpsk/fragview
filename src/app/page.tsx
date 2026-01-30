@@ -6,9 +6,18 @@ import { getMongoDb } from "@/lib/mongodb";
 import prisma from "@/lib/prisma";
 import { ObjectId } from "mongodb";
 import Image from "next/image";
-import PopularPicksSection from "@/components/home/PopularPicksSection";
-import BrandPerfumesSection from "@/components/home/BrandPerfumesSection";
+import dynamic from "next/dynamic";
 import { getArticles } from "@/app/actions/drydown";
+
+const PopularPicksSection = dynamic(
+  () => import("@/components/home/PopularPicksSection"),
+  { ssr: true, loading: () => <section className="bg-white py-12 lg:py-16" aria-label="Loading popular picks"><div className="mx-auto max-w-[1296px] px-4 sm:px-6 lg:px-[72px]"><div className="h-64 animate-pulse rounded-2xl bg-[#F9F7F5]" /></div></section> }
+);
+
+const BrandPerfumesSection = dynamic(
+  () => import("@/components/home/BrandPerfumesSection"),
+  { ssr: true, loading: () => <section className="bg-white py-12 lg:py-16" aria-label="Loading brands"><div className="mx-auto max-w-[1296px] px-4 sm:px-6 lg:px-[72px]"><div className="h-64 animate-pulse rounded-2xl bg-[#F9F7F5]" /></div></section> }
+);
 
 // Server Component - fetch data at build time
 async function getHomePageData() {
@@ -123,6 +132,57 @@ async function getHomePageData() {
       latestArticles = [];
     }
 
+    // Fetch top 9 highest-rated perfumes for each trending brand
+    const brandNames = trendingBrands.slice(0, 4).map((b: any) => b.name);
+    const brandPerfumesMap: Record<string, any[]> = {};
+
+    if (brandNames.length > 0) {
+      const topBrandPerfumes = await db
+        .collection("perfumes")
+        .aggregate([
+          {
+            $match: {
+              $or: [
+                { brand_name: { $in: brandNames } },
+                { brand: { $in: brandNames } },
+              ],
+            },
+          },
+          { $sort: { rating: -1 } },
+          {
+            $group: {
+              _id: { $ifNull: ["$brand_name", "$brand"] },
+              perfumes: { $push: "$$ROOT" },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              perfumes: { $slice: ["$perfumes", 9] },
+            },
+          },
+        ])
+        .toArray();
+
+      for (const group of topBrandPerfumes) {
+        brandPerfumesMap[group._id.toLowerCase()] = group.perfumes.map(
+          (p: any) => ({
+            _id: p._id.toString(),
+            name: p.variant_name || p.name,
+            brand: p.brand_name || p.brand,
+            slug: p.slug || p._id.toString(),
+            image: p.image || p.perfume_image,
+            rating: p.rating || 0,
+            reviewCount: p.reviewCount || 0,
+            gender: p.gender,
+            accords: (p.accords || [])
+              .slice(0, 3)
+              .map((a: any) => ({ name: a.name || a })),
+          })
+        );
+      }
+    }
+
     return {
       perfumesCount: perfumesCount || 10000,
       brandsCount: brandsCount || 500,
@@ -139,6 +199,7 @@ async function getHomePageData() {
           .slice(0, 3)
           .map((a: any) => ({ name: a.name || a })),
       })),
+      brandPerfumesMap,
       trendingBrands: trendingBrands.map((b: any) => ({
         _id: b._id.toString(),
         name: b.name,
@@ -167,6 +228,7 @@ async function getHomePageData() {
       brandsCount: 500,
       reviewsCount: 0,
       featuredPerfumes: [],
+      brandPerfumesMap: {},
       trendingBrands: [],
       latestArticles: [],
     };
@@ -183,13 +245,18 @@ export default async function HomePage() {
       {/* Hero Section - Figma style */}
       {/* Hero Section */}
       <section className="relative bg-fv-parchment overflow-hidden">
-        <img
-          src="/Logo_vector.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute opacity-[.33]"
-        />
-        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12 lg:px-[72px] py-6">
+        <div className="absolute inset-0" aria-hidden="true">
+          <Image
+            src="/Logo_vector.webp"
+            alt=""
+            fill
+            className="object-cover object-center opacity-[.33] pointer-events-none"
+            sizes="100vw"
+            fetchPriority="low"
+            loading="lazy"
+          />
+        </div>
+        <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12 lg:px-[72px] py-6">
           <div className="mx-auto max-w-[1296px]">
             {/* FLEX LAYOUT */}
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-center justify-center">
@@ -227,7 +294,9 @@ export default async function HomePage() {
                       src="/brands_home.webp"
                       alt="Explore by brands"
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
@@ -249,7 +318,9 @@ export default async function HomePage() {
                       src="/drydown_home.webp"
                       alt="Drydown"
                       fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
                     />
 
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
@@ -284,6 +355,8 @@ export default async function HomePage() {
                   alt="View Perfumes"
                   fill
                   priority
+                  fetchPriority="high"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 570px"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
 
@@ -395,7 +468,7 @@ export default async function HomePage() {
       {/* Perfumes by brand (Figma-style with brand tabs and perfume cards) */}
       <BrandPerfumesSection
         brands={data.trendingBrands}
-        perfumes={data.featuredPerfumes}
+        brandPerfumesMap={data.brandPerfumesMap}
       />
 
       {/* OLD Perfumes by brand section - commented out
@@ -477,10 +550,12 @@ export default async function HomePage() {
                   {/* Image Area */}
                   <div className="relative h-[280px] lg:h-[335px] bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px] overflow-hidden">
                     {a.coverImage ? (
-                      <img
+                      <Image
                         src={a.coverImage}
                         alt={a.title}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
+                        fill
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
                         loading="lazy"
                       />
                     ) : (

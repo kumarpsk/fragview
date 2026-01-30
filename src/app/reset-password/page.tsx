@@ -82,14 +82,14 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden flex items-center justify-center px-4 py-12" style={{ backgroundColor: '#FAFFF5' }}>
+    <div className="min-h-screen relative overflow-hidden flex items-center justify-center px-4 py-12 bg-[#FFF9EF]">
       {/* Animated Background Elements - ADDED */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-green-200/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gray-200/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-200/10 rounded-full blur-3xl animate-pulse animate-delay-2" />
         
         <div className="absolute top-32 right-20 animate-float">
-          <Leaf size={20} className="text-green-300/20" />
+          <Leaf size={20} className="text-gray-300/20" />
         </div>
         <div className="absolute bottom-40 left-32 animate-float animate-delay-3">
           <Flower2 size={18} className="text-orange-300/20" />
@@ -100,22 +100,22 @@ function ResetPasswordForm() {
         {/* Back Button */}
         <Link
           href="/signin"
-          className="inline-flex items-center text-sm text-gray-600 hover:text-green-600 mb-8 transition-colors"
+          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-600 mb-8 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to sign in
         </Link>
 
         {/* Card - BOTANICAL THEME */}
-        <div className="glass-card rounded-2xl shadow-lg p-8 border border-green-100/50 relative overflow-hidden">
+        <div className="glass-card rounded-2xl shadow-lg p-8 border border-gray-100/50 relative overflow-hidden">
           <div className="absolute top-0 right-0 opacity-5">
             <Flower2 size={150} />
           </div>
           <div className="text-center mb-8 relative z-10">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-orange-500 rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-black rounded-full mb-4">
               <Lock className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-orange-500 bg-clip-text text-transparent mb-2">
+            <h1 className="text-2xl font-bold bg-black bg-clip-text text-transparent mb-2">
               Reset Your Password
             </h1>
             <p className="text-gray-600">
@@ -135,7 +135,7 @@ function ResetPasswordForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full px-4 py-3 rounded-lg border border-green-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
                 />
               </div>
 
@@ -150,7 +150,7 @@ function ResetPasswordForm() {
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full px-4 py-3 rounded-lg border border-green-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors text-center font-mono text-lg"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors text-center font-mono text-lg"
                 />
               </div>
 
@@ -165,12 +165,12 @@ function ResetPasswordForm() {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter new password"
-                    className="w-full px-4 py-3 pr-10 rounded-lg border border-green-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+                    className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-green-600 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -187,7 +187,7 @@ function ResetPasswordForm() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
-                  className="w-full px-4 py-3 rounded-lg border border-green-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-white/80 text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 transition-colors"
                 />
               </div>
 
@@ -200,7 +200,7 @@ function ResetPasswordForm() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-green-500 to-orange-500 text-white py-3 rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full bg-black text-white py-3 rounded-lg font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
                 {loading ? (
                   <>
@@ -214,11 +214,11 @@ function ResetPasswordForm() {
             </form>
           ) : (
             <div className="text-center space-y-4 relative z-10">
-              <div className="p-4 rounded-lg bg-green-50 border border-green-200">
-                <p className="text-green-700 font-medium">
+              <div className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                <p className="text-gray-700 font-medium">
                   ✓ Password reset successfully!
                 </p>
-                <p className="text-sm text-green-600 mt-2">
+                <p className="text-sm text-gray-600 mt-2">
                   You can now sign in with your new password
                 </p>
               </div>
@@ -234,7 +234,7 @@ function ResetPasswordForm() {
           Didn&apos;t receive a code?{' '}
           <Link
             href="/forgot-password"
-            className="text-green-600 hover:text-green-700 hover:underline font-medium transition-colors"
+            className="text-gray-600 hover:text-gray-700 hover:underline font-medium transition-colors"
           >
             Resend
           </Link>
@@ -248,7 +248,7 @@ export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFFF5' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-600"></div>
       </div>
     }>
       <ResetPasswordForm />
