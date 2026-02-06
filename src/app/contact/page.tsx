@@ -130,7 +130,7 @@ export default function ContactPage() {
 
                   {/* ANSWER */}
                   {isOpen && (
-                    <div className="mt-3 text-sm text-fv-text-muted max-w-3xl">
+                    <div className="mt-3 text-lg text-fv-text-muted max-w-3xl">
                       {faq.a}
 
                       {/* OPTIONAL LINK (like screenshot) */}
@@ -145,7 +145,7 @@ export default function ContactPage() {
         text-[20px]
         leading-[28px]
         underline
-        underline-offset-1
+        underline-offset-1 cursor-pointer
       "
                         >
                           Submit Perfume →

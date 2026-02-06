@@ -7,7 +7,12 @@ export default withAuth(
     const pathname = req.nextUrl.pathname;
 
     // Admin route protection
-    if (pathname.startsWith('/admin')) {
+    // Allow EDITORs access to the Drydown admin pages, but keep other admin routes ADMIN-only
+    if (pathname.startsWith('/admin/drydown')) {
+      if (token?.role !== 'ADMIN' && token?.role !== 'EDITOR') {
+        return NextResponse.redirect(new URL('/', req.url));
+      }
+    } else if (pathname.startsWith('/admin')) {
       if (token?.role !== 'ADMIN') {
         return NextResponse.redirect(new URL('/', req.url));
       }

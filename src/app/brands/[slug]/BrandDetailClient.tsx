@@ -299,7 +299,7 @@ export default function BrandDetailClient({ brand, perfumes: initialPerfumes, me
 
           {/* RIGHT: Brand Information Card */}
           <div
-            className="w-full lg:w-[415px] p-4 lg:p-6 rounded-xl flex-shrink-0"
+            className="w-full lg:w-[415px] p-4 lg:p-6 rounded-xl flex-shrink-0 h-fit"
             style={{ border: '1px solid #E2E1E1' }}
           >
             {/* Card Title */}

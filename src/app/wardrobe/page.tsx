@@ -271,7 +271,7 @@ const WardrobePage = () => {
   if (loading)
     return (
       <div className="min-h-screen flex justify-center items-center bg-[#FAFFF5]">
-        <Loader2 className="animate-spin text-gray-600" />
+        <Loader2 className="animate-spin text-gray-600 w-10 h-10" />
       </div>
     );
 
@@ -449,7 +449,7 @@ const WardrobePage = () => {
             )}
 
             <div
-              className={`${viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-6"}`}
+              className={`${viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-14 gap-5" : "flex flex-col gap-6"}`}
             >
               {processedData.items.map((item) => (
                 <div
@@ -458,7 +458,7 @@ const WardrobePage = () => {
                 >
                   {/* IMAGE SECTION */}
                   <div
-                    className={`${viewMode === "grid" ? "h-[280px]" : "w-[15rem] h-[15rem] max-sm:w-[7rem] max-sm:h-[9rem]"} relative   bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px] group-hover:scale-105 transition-all duration-300 ease-in-out overflow-hidden`}
+                    className={`${viewMode === "grid" ? "h-[230px]" : "w-[13rem] h-[13rem] max-sm:w-[7rem] max-sm:h-[9rem]"} relative   bg-white border-t border-l border-r border-[#EFEFEF] rounded-t-[16px] group-hover:scale-105 transition-all duration-300 ease-in-out overflow-hidden`}
                   >
                     {item.image ? (
                       viewMode === "grid" ? (
@@ -493,7 +493,7 @@ const WardrobePage = () => {
                   {/* Content Area */}
                   <div
                     className={`flex flex-col justify-between flex-1  
-                  ${viewMode === "grid" ? "p-6 gap-6" : "max-sm:p-0 gap-6 max-sm:gap-3"} `}
+                  ${viewMode === "grid" ? "p-5 gap-4" : "max-sm:p-0 gap-5 max-sm:gap-3"} `}
                   >
                     <div className="flex flex-col gap-3 ">
                       {/* Rating Row */}

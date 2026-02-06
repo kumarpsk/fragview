@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/admin/permissions';
+import { requireAdmin, requireAdminOrEditor } from '@/lib/admin/permissions';
 import { getArticles } from '@/lib/admin/articles';
 import ArticlesList from '@/components/admin/ArticlesList';
 import { FileText, Plus } from 'lucide-react';
@@ -13,7 +13,7 @@ export default async function DrydownPage({
 }: {
   searchParams: Promise<{ published?: string; category?: string }>;
 }) {
-  const session = await requireAdmin();
+  const session = await requireAdminOrEditor();
   
   // Check if user is ADMIN or EDITOR
   if (session. role !== 'ADMIN' && session.role !== 'EDITOR') {
@@ -49,7 +49,7 @@ export default async function DrydownPage({
 
         <Link
           href="/admin/drydown/new"
-          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors"
         >
           <Plus className="w-5 h-5" />
           New Article

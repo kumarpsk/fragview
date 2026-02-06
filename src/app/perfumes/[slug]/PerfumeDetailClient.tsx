@@ -575,7 +575,6 @@ export default function PerfumeDetailClient({
       }
     });
   }
-
   const addPhoto = (url: string) => {
     setUploadedPhotos((prev) => [...prev, url]);
   };
@@ -602,7 +601,7 @@ export default function PerfumeDetailClient({
     });
   }, [perfume.reminds_me]);
 
-  const shortDescription = perfume.perfume_overview?.slice(0, 400)  || '';
+  const shortDescription = perfume.perfume_overview?.slice(0, 400) || "";
   const shouldShowViewMore = (perfume.perfume_overview?.length || 0) > 400;
   return (
     <div className="text-gray-900">
@@ -1139,11 +1138,14 @@ export default function PerfumeDetailClient({
               </div>
             </div>
           </div>
-        </div>
+        </div>{" "}
+      </div>
 
-        {/* About This Fragrance Section */}
-        {perfume.perfume_overview && (
-          <section className="bg-[#FFF9EF] -mx-4 sm:-mx-6 lg:-mx-[72px] px-4 sm:px-6 lg:px-[72px] py-5">
+      {/* About This Fragrance Section */}
+      {perfume.perfume_overview && (
+        <section className="bg-[#FFF9EF] ">
+          <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12 lg:px-[72px] py-6">
+            {" "}
             <div className="flex flex-col gap-5">
               {/* Header */}
               <div className="flex flex-col gap-1">
@@ -1156,27 +1158,40 @@ export default function PerfumeDetailClient({
               </div>
 
               {/* Description */}
-              <p
-              
-                className='font-inter font-normal text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#211F1C]'
-              >
+              <p className="font-inter font-normal text-[16px] lg:text-[18px] leading-[24px] lg:leading-[26px] text-[#211F1C]">
                 <span className="font-semibold">{perfume.variant_name}</span> by{" "}
                 <span className="font-semibold">{perfume.brand_name}</span>{" "}
                 {expanded ? perfume.perfume_overview : shortDescription}.
-                  {!expanded && shouldShowViewMore && '...'}
-
+                {!expanded && shouldShowViewMore && "..."}
               </p>
-           
-               {shouldShowViewMore && ( <button
-                type="button"
-                onClick={() => setExpanded(!expanded)}
-                className="self-start font-inter font-medium text-[16px] text-[#8A6A35] hover:underline flex items-center gap-1"
-              >
-                {expanded ? "Read less" : "Read more"}{" "}
-                      <svg className="w-4 h-4 lg:w-6 lg:h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
-                        <path d="M6 9L12 15L18 9" stroke="#8A6A35" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-              </button> )}
+
+              {shouldShowViewMore && (
+                <button
+                  type="button"
+                  onClick={() => setExpanded(!expanded)}
+                  className="self-start font-inter font-medium text-[16px] text-[#8A6A35] hover:underline flex items-center gap-1"
+                >
+                  {expanded ? "Read less" : "Read more"}{" "}
+                  <svg
+                    className="w-4 h-4 lg:w-6 lg:h-6"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.2s",
+                    }}
+                  >
+                    <path
+                      d="M6 9L12 15L18 9"
+                      stroke="#8A6A35"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )}
 
               {/* Divider */}
               <div className="w-full h-px bg-[#E2E1E1]" />
@@ -1189,9 +1204,7 @@ export default function PerfumeDetailClient({
                     Launch Year
                   </span>
                   <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
-                    {(perfume as any).launch_year ||
-                      (perfume as any).year ||
-                      "—"}
+                    {(perfume as any).release_year || "—"}
                   </span>
                 </div>
 
@@ -1215,186 +1228,233 @@ export default function PerfumeDetailClient({
                   </span>
                 </div>
               </div>
-            </div>
-          </section>
-        )}
+            </div>{" "}
+          </div>
+        </section>
+      )}
 
-        <div
-          style={{
-            contentVisibility: "auto",
-            containIntrinsicSize: "1px 1000px",
-          }}
-          className="-mx-4 sm:-mx-6 lg:-mx-[72px] px-4 sm:px-6 lg:px-[72px] py-5"
-        >
-          <SimilarFragrances currentPerfumeId={perfume._id.toString()} />
-
-          {/* AI-Powered Summary Section */}
-          {perfume.ai_summary?.summary && (
-            <section className="bg-[#FFF9EF] -mx-4 sm:-mx-6 lg:-mx-[72px] px-4 sm:px-6 lg:px-[72px] py-5 mt-2">
-              <div className="flex flex-col gap-5">
-                {/* Header Row */}
-                <div className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-10">
-                  <div className="flex flex-col gap-1 flex-1">
-                    <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
-                      Based on community talks
-                    </span>
-                    <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
-                      AI-Powered summary
-                    </h2>
-                  </div>
-
-                  {/* Sentiment Badge */}
-                  <div className="flex items-center justify-center px-4 py-2 bg-[#FDE2B6] rounded-full w-fit">
-                    <span className="font-inter font-medium text-[16px]  leading-[24px] lg:leading-[26px] text-[#695129] capitalize">
-                      {perfume.ai_summary.summary.overall_sentiment || "Mixed"}{" "}
-                      Reviews
-                    </span>
-                  </div>
-                </div>
-
-                {/* Summary Text */}
-                <p className="font-inter font-semibold text-[18px] lg:text-[20px] leading-[26px] lg:leading-[32px] text-[#211F1C]">
-                  {perfume.ai_summary.summary.summary_text}
-                </p>
-
-                {/* Divider */}
-                <div className="w-full h-px bg-[#E2E1E1]" />
-
-                {/* Likes & Dislikes */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-5">
-                  {/* What people love */}
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-1">
-                      <svg
-                        width="30"
-                        height="30"
-                        viewBox="0 0 32 32"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M9.33333 14.6667V26.6667M4 17.3333V24C4 25.4728 5.19391 26.6667 6.66667 26.6667H22.7387C24.7792 26.6667 26.4888 25.1587 26.7413 23.1333L27.808 14.4667C28.1147 12.0107 26.2029 9.86667 23.7287 9.86667H19.3333V6.13333C19.3333 4.95493 18.3784 4 17.2 4C16.6107 4 16.0867 4.36267 15.8827 4.91467L12.4693 13.3333H6.66667C5.19391 13.3333 4 14.5272 4 16V17.3333Z"
-                          stroke="#047857"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="font-inter font-semibold text-[20px]  leading-[28px] lg:leading-[32px] text-[#047857]">
-                        What people love
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      {perfume.ai_summary.summary.common_likes?.map(
-                        (like, idx) => (
-                          <span
-                            key={idx}
-                            className="font-inter font-normal text-[16px] lg:text-[20px] leading-[24px] lg:leading-[28px] text-[#211F1C]"
-                          >
-                            {like}
-                          </span>
-                        ),
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Common Concerns */}
-                  <div className="flex flex-col gap-4">
-                    <div className="flex items-center gap-1">
-                      <svg
-                        width="30"
-                        height="30"
-                        viewBox="0 0 32 32"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M9.33333 17.3333V5.33333M4 14.6667V8C4 6.52724 5.19391 5.33333 6.66667 5.33333H22.7387C24.7792 5.33333 26.4888 6.84133 26.7413 8.86667L27.808 17.5333C28.1147 19.9893 26.2029 22.1333 23.7287 22.1333H19.3333V25.8667C19.3333 27.0451 18.3784 28 17.2 28C16.6107 28 16.0867 27.6373 15.8827 27.0853L12.4693 18.6667H6.66667C5.19391 18.6667 4 17.4728 4 16V14.6667Z"
-                          stroke="#BE133D"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="font-inter font-semibold text-[20px] leading-[28px] lg:leading-[32px] text-[#BE133D]">
-                        Common Concerns
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      {perfume.ai_summary.summary.common_dislikes?.map(
-                        (dislike, idx) => (
-                          <span
-                            key={idx}
-                            className="font-inter font-normal text-[16px] lg:text-[20px] leading-[24px] lg:leading-[28px] text-[#211F1C]"
-                          >
-                            {dislike}
-                          </span>
-                        ),
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Footer */}
-                <div className="flex flex-col gap-3">
-                  <div className="w-full h-px bg-[#E2E1E1]" />
-                  <p className="font-inter font-normal text-[14px] lg:text-[18px] leading-[20px] lg:leading-[26px] text-[#4A4946] text-center">
-                    AI-generated summary based on{" "}
-                    {perfume.ai_summary.review_count || reviewCount} user
-                    reviews · May not reflect all opinions
-                  </p>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Community Reviews Section */}
-          <section className="bg-white py-5">
-            <div className="flex flex-col gap-8">
+      <div
+        style={{
+          contentVisibility: "auto",
+          containIntrinsicSize: "1px 1000px",
+        }}
+        className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12 lg:px-[72px] py-6"
+      >
+        <SimilarFragrances currentPerfumeId={perfume._id.toString()} />
+      </div>
+      {/* AI-Powered Summary Section */}
+      {perfume.ai_summary?.summary && (
+        <section className="bg-[#FFF9EF] ">
+          <div className="mx-auto max-w-[1440px] w-full px-4 sm:px-8 md:px-12 lg:px-[72px] py-6">
+            <div className="flex flex-col gap-5">
               {/* Header Row */}
-              <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-                {/* Title Block */}
-                <div className="flex flex-col gap-1">
+              <div className="flex flex-col lg:flex-row lg:items-end gap-6 lg:gap-10">
+                <div className="flex flex-col gap-1 flex-1">
                   <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
-                    Customer insights
+                    Based on community talks
                   </span>
                   <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
-                    Community Reviews
+                    AI-Powered summary
                   </h2>
                 </div>
 
-                {/* Controls */}
-                <div className="flex flex-wrap items-center gap-4 lg:gap-6">
-                  {/* Sort Dropdown */}
-                  <button className="inline-flex items-center justify-between h-[40px] px-4 gap-3 border border-[#C4C4C3] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-[#211F1C] bg-white hover:bg-[#F5F0E8] transition-colors min-w-[170px]">
-                    <span>Most Recent</span>
+                {/* Sentiment Badge */}
+                <div className="flex items-center justify-center px-4 py-2 bg-[#FDE2B6] rounded-full w-fit">
+                  <span className="font-inter font-medium text-[16px]  leading-[24px] lg:leading-[26px] text-[#695129] capitalize">
+                    {perfume.ai_summary.summary.overall_sentiment || "Mixed"}{" "}
+                    Reviews
+                  </span>
+                </div>
+              </div>
+
+              {/* Summary Text */}
+              <p className="font-inter font-semibold text-[18px] lg:text-[20px] leading-[26px] lg:leading-[32px] text-[#211F1C]">
+                {perfume.ai_summary.summary.summary_text}
+              </p>
+
+              {/* Divider */}
+              <div className="w-full h-px bg-[#E2E1E1]" />
+
+              {/* Likes & Dislikes */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-5">
+                {/* What people love */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-1">
                     <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
+                      width="30"
+                      height="30"
+                      viewBox="0 0 32 32"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M6 9L12 15L18 9"
-                        stroke="#211F1C"
+                        d="M9.33333 14.6667V26.6667M4 17.3333V24C4 25.4728 5.19391 26.6667 6.66667 26.6667H22.7387C24.7792 26.6667 26.4888 25.1587 26.7413 23.1333L27.808 14.4667C28.1147 12.0107 26.2029 9.86667 23.7287 9.86667H19.3333V6.13333C19.3333 4.95493 18.3784 4 17.2 4C16.6107 4 16.0867 4.36267 15.8827 4.91467L12.4693 13.3333H6.66667C5.19391 13.3333 4 14.5272 4 16V17.3333Z"
+                        stroke="#047857"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                     </svg>
-                  </button>
+                    <span className="font-inter font-semibold text-[20px]  leading-[28px] lg:leading-[32px] text-[#047857]">
+                      What people love
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {perfume.ai_summary.summary.common_likes?.map(
+                      (like, idx) => (
+                        <span
+                          key={idx}
+                          className="font-inter font-normal text-[16px] lg:text-[20px] leading-[24px] lg:leading-[28px] text-[#211F1C]"
+                        >
+                          {like}
+                        </span>
+                      ),
+                    )}
+                  </div>
+                </div>
 
-                  {/* Follow Button */}
-                  <button
-                    onClick={toggleFollowThread}
-                    className={`inline-flex items-center justify-center h-[40px] px-6 gap-2 border rounded-lg font-inter font-medium text-[16px] leading-[26px] transition-colors ${
-                      isFollowing
-                        ? "bg-[#ECE0CF] border-[#8A6A35] text-[#695129]"
-                        : "bg-white border-[#C4C4C3] text-[#211F1C] hover:bg-[#F5F0E8]"
-                    }`}
+                {/* Common Concerns */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-1">
+                    <svg
+                      width="30"
+                      height="30"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9.33333 17.3333V5.33333M4 14.6667V8C4 6.52724 5.19391 5.33333 6.66667 5.33333H22.7387C24.7792 5.33333 26.4888 6.84133 26.7413 8.86667L27.808 17.5333C28.1147 19.9893 26.2029 22.1333 23.7287 22.1333H19.3333V25.8667C19.3333 27.0451 18.3784 28 17.2 28C16.6107 28 16.0867 27.6373 15.8827 27.0853L12.4693 18.6667H6.66667C5.19391 18.6667 4 17.4728 4 16V14.6667Z"
+                        stroke="#BE133D"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span className="font-inter font-semibold text-[20px] leading-[28px] lg:leading-[32px] text-[#BE133D]">
+                      Common Concerns
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    {perfume.ai_summary.summary.common_dislikes?.map(
+                      (dislike, idx) => (
+                        <span
+                          key={idx}
+                          className="font-inter font-normal text-[16px] lg:text-[20px] leading-[24px] lg:leading-[28px] text-[#211F1C]"
+                        >
+                          {dislike}
+                        </span>
+                      ),
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="flex flex-col gap-3">
+                <div className="w-full h-px bg-[#E2E1E1]" />
+                <p className="font-inter font-normal text-[14px] lg:text-[18px] leading-[20px] lg:leading-[26px] text-[#4A4946] text-center">
+                  AI-generated summary based on{" "}
+                  {perfume.ai_summary.review_count || reviewCount} user reviews
+                  · May not reflect all opinions
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Community Reviews Section */}
+      <section className="bg-white ">
+        <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-8 md:px-12 lg:px-[72px] py-6">
+          <div className="flex flex-col gap-8">
+            {/* Header Row */}
+            <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+              {/* Title Block */}
+              <div className="flex flex-col gap-1">
+                <span className="font-hedvig text-[20px] leading-[28px] lg:text-[24px] lg:leading-[32px] text-[#8A6A35]">
+                  Customer insights
+                </span>
+                <h2 className="font-hedvig font-normal text-[32px] leading-[40px] lg:text-[40px] lg:leading-[56px] text-[#211F1C]">
+                  Community Reviews
+                </h2>
+              </div>
+
+              {/* Controls */}
+              <div className="flex flex-wrap items-center gap-4 lg:gap-6">
+                {/* Sort Dropdown */}
+                <button className="inline-flex items-center justify-between h-[40px] px-4 gap-3 border border-[#C4C4C3] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-[#211F1C] bg-white hover:bg-[#F5F0E8] transition-colors min-w-[170px]">
+                  <span>Most Recent</span>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <span>Follow</span>
+                    <path
+                      d="M6 9L12 15L18 9"
+                      stroke="#211F1C"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                {/* Follow Button */}
+                <button
+                  onClick={toggleFollowThread}
+                  className={`inline-flex items-center justify-center h-[40px] px-6 gap-2 border rounded-lg font-inter font-medium text-[16px] leading-[26px] transition-colors ${
+                    isFollowing
+                      ? "bg-[#ECE0CF] border-[#8A6A35] text-[#695129]"
+                      : "bg-white border-[#C4C4C3] text-[#211F1C] hover:bg-[#F5F0E8]"
+                  }`}
+                >
+                  <span>Follow</span>
+                  <svg
+                    width="21"
+                    height="21"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+
+                {/* Write a Review Button */}
+                <button
+                  onClick={() => {
+                    if (!isSignedIn) {
+                      open({
+                        mode: "signin",
+                        reason: "Sign in to write a review",
+                        callbackUrl: `/perfumes/${slug}#review-section`,
+                      });
+                    } else {
+                      document
+                        .getElementById("review-form")
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                  className="inline-flex items-center justify-between h-[40px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                >
+                  Write a review
+                  <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg">
                     <svg
                       width="21"
                       height="21"
@@ -1403,329 +1463,173 @@ export default function PerfumeDetailClient({
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"
-                        stroke="currentColor"
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="#211F1C"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
                     </svg>
-                  </button>
-
-                  {/* Write a Review Button */}
-                  <button
-                    onClick={() => {
-                      if (!isSignedIn) {
-                        open({
-                          mode: "signin",
-                          reason: "Sign in to write a review",
-                          callbackUrl: `/perfumes/${slug}#review-section`,
-                        });
-                      } else {
-                        document
-                          .getElementById("review-form")
-                          ?.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }}
-                    className="inline-flex items-center justify-between h-[40px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
-                  >
-                    Write a review
-                    <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg">
-                      <svg
-                        width="21"
-                        height="21"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M7 17L17 7M17 7H7M17 7V17"
-                          stroke="#211F1C"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Cooling Period Overlay */}
-              {isCoolingPeriodActive && (
-                <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-8 text-center">
-                  <div className="w-16 h-16 bg-[#FEEBCE] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Clock className="w-8 h-8 text-[#8A6A35]" />
-                  </div>
-                  <h3 className="font-hedvig font-normal text-[24px] leading-[32px] text-[#211F1C] mb-2">
-                    Reviews are Cooling Down
-                  </h3>
-                  <p className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946] max-w-md mx-auto mb-4">
-                    To ensure authentic experiences, reviews for this new
-                    fragrance will open in {remainingDays} days.
-                  </p>
-                  <span className="inline-flex items-center justify-center px-4 py-2 bg-[#ECE0CF] rounded-full font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
-                    Coming Soon
                   </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Cooling Period Overlay */}
+            {isCoolingPeriodActive && (
+              <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-8 text-center">
+                <div className="w-16 h-16 bg-[#FEEBCE] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-8 h-8 text-[#8A6A35]" />
                 </div>
-              )}
+                <h3 className="font-hedvig font-normal text-[24px] leading-[32px] text-[#211F1C] mb-2">
+                  Reviews are Cooling Down
+                </h3>
+                <p className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946] max-w-md mx-auto mb-4">
+                  To ensure authentic experiences, reviews for this new
+                  fragrance will open in {remainingDays} days.
+                </p>
+                <span className="inline-flex items-center justify-center px-4 py-2 bg-[#ECE0CF] rounded-full font-inter font-medium text-[14px] leading-[20px] text-[#695129]">
+                  Coming Soon
+                </span>
+              </div>
+            )}
 
-              {/* Reviews List */}
-              <div
-                className={`flex flex-col gap-10 ${isCoolingPeriodActive ? "opacity-50 pointer-events-none filter grayscale" : ""}`}
-              >
-                {reviews.length === 0 ? (
-                  <div className="bg-white border border-[#C4C4C3] rounded-xl p-12 text-center">
-                    <p className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
-                      No reviews yet. Be the first to review!
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    {reviews.map((r) => (
-                      <div
-                        key={r.id}
-                        className="bg-white border border-[#C4C4C3] rounded-xl p-6 flex flex-col gap-8"
-                      >
-                        {/* Review Content */}
-                        <div className="flex flex-col gap-4">
-                          {/* Stars & Date Row */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <svg
-                                  key={star}
-                                  width="30"
-                                  height="30"
-                                  viewBox="0 0 30 30"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M15 2.5L18.8625 10.3375L27.5 11.5875L21.25 17.6625L22.725 26.25L15 22.2125L7.275 26.25L8.75 17.6625L2.5 11.5875L11.1375 10.3375L15 2.5Z"
-                                    fill={
-                                      star <= Math.round(r.rating)
-                                        ? "#FBC061"
-                                        : "none"
-                                    }
-                                    stroke={
-                                      star <= Math.round(r.rating)
-                                        ? "none"
-                                        : "#FBC061"
-                                    }
-                                    strokeWidth="1.5"
-                                  />
-                                </svg>
-                              ))}
-                            </div>
-                            <span className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
-                              {new Date(r.createdAt)
-                                .toLocaleDateString("en-GB", {
-                                  day: "2-digit",
-                                  month: "2-digit",
-                                  year: "numeric",
-                                })
-                                .replace(/\//g, "-")}
-                            </span>
-                          </div>
-
-                          {/* Title - Use first sentence or first 50 chars as title */}
-                          {r.text && (
-                            <h4 className="font-inter font-medium text-[24px] lg:text-[28px] leading-[32px] lg:leading-[36px] text-[#211F1C]">
-                              {r.text.split(".")[0].length > 60
-                                ? r.text.substring(0, 60) + "..."
-                                : r.text.split(".")[0]}
-                            </h4>
-                          )}
-
-                          {/* Review Body */}
-                          {r.isDeleted ? (
-                            <p className="font-inter font-normal text-[20px] lg:text-[24px] leading-[36px] lg:leading-[42px] text-[#737270] italic">
-                              [This review has been deleted]
-                            </p>
-                          ) : (
-                            <div
-                              className="font-inter font-normal text-[18px] lg:text-[24px] leading-[32px] lg:leading-[42px] text-[#4A4946]"
-                              dangerouslySetInnerHTML={{
-                                __html: parseReviewMentions(r.text || ""),
-                              }}
-                            />
-                          )}
-
-                          {/* Review Photos */}
-                          {r.photos && r.photos.length > 0 && !r.isDeleted && (
-                            <div className="flex gap-3 mt-2">
-                              {r.photos.map((p, idx) => (
-                                <div
-                                  key={idx}
-                                  className="relative w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] shrink-0"
-                                >
-                                  <Image
-                                    src={p}
-                                    alt={`Photo ${idx + 1}`}
-                                    fill
-                                    className="object-cover rounded-xl border border-[#E2E1E1] cursor-pointer hover:scale-105 transition-transform"
-                                    sizes="150px"
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Divider */}
-                        <div className="w-full h-px bg-[#E2E1E1]" />
-
-                        {/* Footer Row */}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                          {/* Author */}
-                          <a
-                            href={`/u/${r.user.username}`}
-                            className="font-inter font-normal text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] text-[#211F1C] hover:text-[#8A6A35] transition-colors"
-                          >
-                            {r.user.username}
-                          </a>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-4">
-                            {/* Helpful Actions */}
-                            <div className="flex items-center gap-4">
-                              <span className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
-                                Helpful?
-                              </span>
-                              <ReviewActionButtons
-                                reviewId={r.id}
-                                initialHelpfulCount={r.helpfulCount || 0}
-                                userVote={r.userVote}
-                                isLoggedIn={isSignedIn}
-                              />
-                            </div>
-
-                            {/* Divider */}
-                            <div className="w-px h-6 bg-[#E2E1E1]" />
-
-                            {/* Report */}
-                            <button className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-[#211F1C] transition-colors">
+            {/* Reviews List */}
+            <div
+              className={`flex flex-col gap-10 ${isCoolingPeriodActive ? "opacity-50 pointer-events-none filter grayscale" : ""}`}
+            >
+              {reviews.length === 0 ? (
+                <div className="bg-white border border-[#C4C4C3] rounded-xl p-12 text-center">
+                  <p className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
+                    No reviews yet. Be the first to review!
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {reviews.map((r) => (
+                    <div
+                      key={r.id}
+                      className="bg-white border border-[#C4C4C3] rounded-xl p-6 flex flex-col gap-8"
+                    >
+                      {/* Review Content */}
+                      <div className="flex flex-col gap-4">
+                        {/* Stars & Date Row */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
                               <svg
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
+                                key={star}
+                                width="30"
+                                height="30"
+                                viewBox="0 0 30 30"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
                               >
                                 <path
-                                  d="M4 15V21M4 15L12 9L14.5 11L21 5M4 15V6C4 5.44772 4.44772 5 5 5H7"
-                                  stroke="currentColor"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
+                                  d="M15 2.5L18.8625 10.3375L27.5 11.5875L21.25 17.6625L22.725 26.25L15 22.2125L7.275 26.25L8.75 17.6625L2.5 11.5875L11.1375 10.3375L15 2.5Z"
+                                  fill={
+                                    star <= Math.round(r.rating)
+                                      ? "#FBC061"
+                                      : "none"
+                                  }
+                                  stroke={
+                                    star <= Math.round(r.rating)
+                                      ? "none"
+                                      : "#FBC061"
+                                  }
+                                  strokeWidth="1.5"
                                 />
                               </svg>
-                              Report
-                            </button>
-
-                            {/* Edit/Delete for own reviews */}
-                            {isSignedIn &&
-                              session?.user?.id === r.user.id &&
-                              !r.isDeleted && (
-                                <>
-                                  <div className="w-px h-6 bg-[#E2E1E1]" />
-                                  <button
-                                    onClick={() => {
-                                      setEditingReviewId(r.id);
-                                      setEditingReviewText(r.text || "");
-                                    }}
-                                    className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-[#211F1C] transition-colors"
-                                  >
-                                    <svg
-                                      width="24"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      />
-                                      <path
-                                        d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      />
-                                    </svg>
-                                    Edit
-                                  </button>
-                                  <button
-                                    onClick={async () => {
-                                      if (
-                                        !confirm(
-                                          "Are you sure you want to delete this review? This action cannot be undone.",
-                                        )
-                                      )
-                                        return;
-                                      try {
-                                        const res = await fetch(
-                                          `/api/reviews/actions?reviewId=${r.id}`,
-                                          { method: "DELETE" },
-                                        );
-                                        if (res.ok) window.location.reload();
-                                        else alert("Failed to delete review");
-                                      } catch {
-                                        alert("Network error");
-                                      }
-                                    }}
-                                    className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-red-600 transition-colors"
-                                  >
-                                    <svg
-                                      width="24"
-                                      height="24"
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M3 6H5H21"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      />
-                                      <path
-                                        d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      />
-                                    </svg>
-                                    Delete
-                                  </button>
-                                </>
-                              )}
+                            ))}
                           </div>
+                          <span className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
+                            {new Date(r.createdAt)
+                              .toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                              })
+                              .replace(/\//g, "-")}
+                          </span>
                         </div>
-                      </div>
-                    ))}
 
-                    {/* Load More Button */}
-                    {reviews.length >= 4 && (
-                      <div className="flex justify-center">
-                        <button className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors">
-                          Load More
-                          <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                        {/* Title - Use first sentence or first 50 chars as title */}
+                        {r.text && (
+                          <h4 className="font-inter font-medium text-[24px] lg:text-[28px] leading-[32px] lg:leading-[36px] text-[#211F1C]">
+                            {r.text.split(".")[0].length > 60
+                              ? r.text.substring(0, 60) + "..."
+                              : r.text.split(".")[0]}
+                          </h4>
+                        )}
+
+                        {/* Review Body */}
+                        {r.isDeleted ? (
+                          <p className="font-inter font-normal text-[20px] lg:text-[24px] leading-[36px] lg:leading-[42px] text-[#737270] italic">
+                            [This review has been deleted]
+                          </p>
+                        ) : (
+                          <div
+                            className="font-inter font-normal text-[18px] lg:text-[24px] leading-[32px] lg:leading-[42px] text-[#4A4946]"
+                            dangerouslySetInnerHTML={{
+                              __html: parseReviewMentions(r.text || ""),
+                            }}
+                          />
+                        )}
+
+                        {/* Review Photos */}
+                        {r.photos && r.photos.length > 0 && !r.isDeleted && (
+                          <div className="flex gap-3 mt-2">
+                            {r.photos.map((p, idx) => (
+                              <div
+                                key={idx}
+                                className="relative w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] shrink-0"
+                              >
+                                <Image
+                                  src={p}
+                                  alt={`Photo ${idx + 1}`}
+                                  fill
+                                  className="object-cover rounded-xl border border-[#E2E1E1] cursor-pointer hover:scale-105 transition-transform"
+                                  sizes="150px"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Divider */}
+                      <div className="w-full h-px bg-[#E2E1E1]" />
+
+                      {/* Footer Row */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        {/* Author */}
+                        <a
+                          href={`/u/${r.user.username}`}
+                          className="font-inter font-normal text-[20px] lg:text-[24px] leading-[28px] lg:leading-[32px] text-[#211F1C] hover:text-[#8A6A35] transition-colors"
+                        >
+                          {r.user.username}
+                        </a>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-4">
+                          {/* Helpful Actions */}
+                          <div className="flex items-center gap-4">
+                            <span className="font-inter font-normal text-[18px] leading-[26px] text-[#737270]">
+                              Helpful?
+                            </span>
+                            <ReviewActionButtons
+                              reviewId={r.id}
+                              initialHelpfulCount={r.helpfulCount || 0}
+                              userVote={r.userVote}
+                              isLoggedIn={isSignedIn}
+                            />
+                          </div>
+
+                          {/* Divider */}
+                          <div className="w-px h-6 bg-[#E2E1E1]" />
+
+                          {/* Report */}
+                          <button className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-[#211F1C] transition-colors">
                             <svg
                               width="24"
                               height="24"
@@ -1734,138 +1638,110 @@ export default function PerfumeDetailClient({
                               xmlns="http://www.w3.org/2000/svg"
                             >
                               <path
-                                d="M5 12H19M19 12L12 5M19 12L12 19"
-                                stroke="#211F1C"
+                                d="M4 15V21M4 15L12 9L14.5 11L21 5M4 15V6C4 5.44772 4.44772 5 5 5H7"
+                                stroke="currentColor"
                                 strokeWidth="2"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                               />
                             </svg>
-                          </span>
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
+                            Report
+                          </button>
 
-              {/* Write Review Form */}
-              <div
-                id="review-form"
-                className={`bg-white border border-[#C4C4C3] rounded-xl p-6 ${isCoolingPeriodActive ? "opacity-50 pointer-events-none filter grayscale" : ""}`}
-              >
-                <h3 className="font-inter font-medium text-[24px] leading-[32px] text-[#211F1C] mb-6">
-                  Leave Your Review
-                </h3>
-
-                {!isSignedIn ? (
-                  <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-8 text-center">
-                    <p className="font-inter font-normal text-[18px] leading-[26px] text-[#4A4946] mb-4">
-                      Please sign in to leave a review
-                    </p>
-                    <button
-                      onClick={() =>
-                        open({
-                          mode: "signin",
-                          reason: "Sign in to leave a review",
-                          callbackUrl: `/perfumes/${slug}#review-form`,
-                        })
-                      }
-                      className="inline-flex items-center justify-between h-[40px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
-                    >
-                      Sign in to continue
-                      <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg">
-                        <LogIn className="w-5 h-5 text-[#211F1C]" />
-                      </span>
-                    </button>
-                  </div>
-                ) : !canRate ? (
-                  <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-6">
-                    <p className="font-inter font-normal text-[16px] leading-[24px] text-[#695129]">
-                      Your account cannot leave reviews yet.
-                    </p>
-                  </div>
-                ) : (
-                  <form
-                    action={(fd) => handleSubmitReview(fd)}
-                    className="flex flex-col gap-6"
-                  >
-                    <p className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
-                      Use the sliders above to rate. Write your review below:
-                    </p>
-
-                    <MentionTextarea
-                      value={reviewText}
-                      onChange={setReviewText}
-                      placeholder="Share your experience... Type @ to mention users and # to reference perfumes."
-                      className="w-full min-h-[176px] rounded-xl border border-[#C4C4C3] px-4 py-4 focus:ring-2 focus:ring-[#8A6A35] focus:border-transparent outline-none bg-white font-inter text-[16px] leading-[24px] text-[#211F1C] placeholder:text-[#737270]"
-                    />
-
-                    <div className="flex flex-col gap-3">
-                      <label className="font-inter font-medium text-[16px] leading-[24px] text-[#211F1C]">
-                        Add Photos
-                      </label>
-                      <div className="flex flex-wrap gap-3 items-start">
-                        {uploadedPhotos.map((url, i) => (
-                          <div
-                            key={i}
-                            className="relative w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] rounded-xl overflow-hidden border border-[#E2E1E1] shrink-0"
-                          >
-                            <Image
-                              src={url}
-                              alt="Review"
-                              fill
-                              className="object-cover"
-                              sizes="150px"
-                            />
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setUploadedPhotos((p) =>
-                                  p.filter((_, idx) => idx !== i),
-                                )
-                              }
-                              className="absolute top-2 right-2 bg-[#211F1C]/80 text-white rounded-full p-1 hover:bg-[#211F1C] transition-colors"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                        {uploadedPhotos.length < 3 && (
-                          <div className="w-full sm:w-auto min-w-[160px] max-w-xs">
-                            <ImageUpload
-                              onUploadComplete={addPhoto}
-                              folder="reviews"
-                              label="Upload"
-                              maxSizeMB={5}
-                            />
-                          </div>
-                        )}
+                          {/* Edit/Delete for own reviews */}
+                          {isSignedIn &&
+                            session?.user?.id === r.user.id &&
+                            !r.isDeleted && (
+                              <>
+                                <div className="w-px h-6 bg-[#E2E1E1]" />
+                                <button
+                                  onClick={() => {
+                                    setEditingReviewId(r.id);
+                                    setEditingReviewText(r.text || "");
+                                  }}
+                                  className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-[#211F1C] transition-colors"
+                                >
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M11 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V13"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                    <path
+                                      d="M18.5 2.50001C18.8978 2.10219 19.4374 1.87869 20 1.87869C20.5626 1.87869 21.1022 2.10219 21.5 2.50001C21.8978 2.89784 22.1213 3.4374 22.1213 4.00001C22.1213 4.56262 21.8978 5.10219 21.5 5.50001L12 15L8 16L9 12L18.5 2.50001Z"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    if (
+                                      !confirm(
+                                        "Are you sure you want to delete this review? This action cannot be undone.",
+                                      )
+                                    )
+                                      return;
+                                    try {
+                                      const res = await fetch(
+                                        `/api/reviews/actions?reviewId=${r.id}`,
+                                        { method: "DELETE" },
+                                      );
+                                      if (res.ok) window.location.reload();
+                                      else alert("Failed to delete review");
+                                    } catch {
+                                      alert("Network error");
+                                    }
+                                  }}
+                                  className="flex items-center gap-2 font-inter font-normal text-[18px] leading-[26px] text-[#737270] hover:text-red-600 transition-colors"
+                                >
+                                  <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M3 6H5H21"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                    <path
+                                      d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    />
+                                  </svg>
+                                  Delete
+                                </button>
+                              </>
+                            )}
+                        </div>
                       </div>
                     </div>
+                  ))}
 
-                    {errorMessage && (
-                      <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                        <p className="font-inter font-normal text-[14px] leading-[20px] text-red-600">
-                          {errorMessage}
-                        </p>
-                      </div>
-                    )}
-                    {successMessage && (
-                      <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                        <p className="font-inter font-normal text-[14px] leading-[20px] text-green-600">
-                          {successMessage}
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="flex justify-end">
-                      <button
-                        type="submit"
-                        disabled={pending || !reviewText.trim()}
-                        className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white disabled:opacity-50 hover:bg-[#211F1C]/90 transition-colors"
-                      >
-                        {pending ? "Submitting..." : "Submit Review"}
+                  {/* Load More Button */}
+                  {reviews.length >= 4 && (
+                    <div className="flex justify-center">
+                      <button className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors">
+                        Load More
                         <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
                           <svg
                             width="24"
@@ -1875,7 +1751,7 @@ export default function PerfumeDetailClient({
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
-                              d="M7 17L17 7M17 7H7M17 7V17"
+                              d="M5 12H19M19 12L12 5M19 12L12 19"
                               stroke="#211F1C"
                               strokeWidth="2"
                               strokeLinecap="round"
@@ -1885,45 +1761,185 @@ export default function PerfumeDetailClient({
                         </span>
                       </button>
                     </div>
-                  </form>
-                )}
-              </div>
+                  )}
+                </>
+              )}
             </div>
-          </section>
+
+            {/* Write Review Form */}
+            <div
+              id="review-form"
+              className={`bg-white border border-[#C4C4C3] rounded-xl p-6 ${isCoolingPeriodActive ? "opacity-50 pointer-events-none filter grayscale" : ""}`}
+            >
+              <h3 className="font-inter font-medium text-[24px] leading-[32px] text-[#211F1C] mb-6">
+                Leave Your Review
+              </h3>
+
+              {!isSignedIn ? (
+                <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-8 text-center">
+                  <p className="font-inter font-normal text-[18px] leading-[26px] text-[#4A4946] mb-4">
+                    Please sign in to leave a review
+                  </p>
+                  <button
+                    onClick={() =>
+                      open({
+                        mode: "signin",
+                        reason: "Sign in to leave a review",
+                        callbackUrl: `/perfumes/${slug}#review-form`,
+                      })
+                    }
+                    className="inline-flex items-center justify-between h-[40px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
+                  >
+                    Sign in to continue
+                    <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg">
+                      <LogIn className="w-5 h-5 text-[#211F1C]" />
+                    </span>
+                  </button>
+                </div>
+              ) : !canRate ? (
+                <div className="bg-[#FFF9EF] border border-[#E2E1E1] rounded-xl p-6">
+                  <p className="font-inter font-normal text-[16px] leading-[24px] text-[#695129]">
+                    Your account cannot leave reviews yet.
+                  </p>
+                </div>
+              ) : (
+                <form
+                  action={(fd) => handleSubmitReview(fd)}
+                  className="flex flex-col gap-6"
+                >
+                  <p className="font-inter font-normal text-[16px] leading-[24px] text-[#4A4946]">
+                    Use the sliders above to rate. Write your review below:
+                  </p>
+
+                  <MentionTextarea
+                    value={reviewText}
+                    onChange={setReviewText}
+                    placeholder="Share your experience... Type @ to mention users and # to reference perfumes."
+                    className="w-full min-h-[176px] rounded-xl border border-[#C4C4C3] px-4 py-4 focus:ring-2 focus:ring-[#8A6A35] focus:border-transparent outline-none bg-white font-inter text-[16px] leading-[24px] text-[#211F1C] placeholder:text-[#737270]"
+                  />
+
+                  <div className="flex flex-col gap-3">
+                    <label className="font-inter font-medium text-[16px] leading-[24px] text-[#211F1C]">
+                      Add Photos
+                    </label>
+                    <div className="flex flex-wrap gap-3 items-start">
+                      {uploadedPhotos.map((url, i) => (
+                        <div
+                          key={i}
+                          className="relative w-[100px] h-[100px] lg:w-[150px] lg:h-[150px] rounded-xl overflow-hidden border border-[#E2E1E1] shrink-0"
+                        >
+                          <Image
+                            src={url}
+                            alt="Review"
+                            fill
+                            className="object-cover"
+                            sizes="150px"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setUploadedPhotos((p) =>
+                                p.filter((_, idx) => idx !== i),
+                              )
+                            }
+                            className="absolute top-2 right-2 bg-[#211F1C]/80 text-white rounded-full p-1 hover:bg-[#211F1C] transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      {uploadedPhotos.length < 3 && (
+                        <div className="w-full sm:w-auto min-w-[160px] max-w-xs">
+                          <ImageUpload
+                            onUploadComplete={addPhoto}
+                            folder="reviews"
+                            label="Upload"
+                            maxSizeMB={5}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {errorMessage && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                      <p className="font-inter font-normal text-[14px] leading-[20px] text-red-600">
+                        {errorMessage}
+                      </p>
+                    </div>
+                  )}
+                  {successMessage && (
+                    <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                      <p className="font-inter font-normal text-[14px] leading-[20px] text-green-600">
+                        {successMessage}
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={pending || !reviewText.trim()}
+                      className="inline-flex items-center justify-between h-[50px] pl-4 pr-1 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[18px] leading-[26px] text-white disabled:opacity-50 hover:bg-[#211F1C]/90 transition-colors"
+                    >
+                      {pending ? "Submitting..." : "Submit Review"}
+                      <span className="flex items-center justify-center w-10 h-10 bg-white rounded-lg">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M7 17L17 7M17 7H7M17 7V17"
+                            stroke="#211F1C"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Edit Modal */}
-        {editingReviewId && (
-          <EditReviewModal
-            reviewId={editingReviewId}
-            currentText={editingReviewText}
-            onClose={() => {
-              setEditingReviewId(null);
-              setEditingReviewText("");
-            }}
-            onSuccess={() => {
-              setEditingReviewId(null);
-              setEditingReviewText("");
-              window.location.reload();
-            }}
-          />
-        )}
+      {/* Edit Modal */}
+      {editingReviewId && (
+        <EditReviewModal
+          reviewId={editingReviewId}
+          currentText={editingReviewText}
+          onClose={() => {
+            setEditingReviewId(null);
+            setEditingReviewText("");
+          }}
+          onSuccess={() => {
+            setEditingReviewId(null);
+            setEditingReviewText("");
+            window.location.reload();
+          }}
+        />
+      )}
 
-        {/* ✅ ADD TO WARDROBE MODAL - ADD THIS ENTIRE BLOCK */}
-        {showWardrobeModal && (
-          <AddToWardrobeModal
-            perfumeId={perfume._id.toString()}
-            perfumeName={perfume.variant_name}
-            perfumeBrand={perfume.brand_name}
-            perfumeImage={perfume.image}
-            onClose={() => setShowWardrobeModal(false)}
-            onSuccess={() => {
-              setWardrobeSuccess(true);
-              setTimeout(() => setWardrobeSuccess(false), 3000);
-            }}
-          />
-        )}
-      </div>
+      {/* ✅ ADD TO WARDROBE MODAL - ADD THIS ENTIRE BLOCK */}
+      {showWardrobeModal && (
+        <AddToWardrobeModal
+          perfumeId={perfume._id.toString()}
+          perfumeName={perfume.variant_name}
+          perfumeBrand={perfume.brand_name}
+          perfumeImage={perfume.image}
+          onClose={() => setShowWardrobeModal(false)}
+          onSuccess={() => {
+            setWardrobeSuccess(true);
+            setTimeout(() => setWardrobeSuccess(false), 3000);
+          }}
+        />
+      )}
     </div>
   );
 }

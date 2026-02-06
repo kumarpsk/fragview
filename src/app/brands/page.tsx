@@ -1,13 +1,13 @@
-import Link from 'next/link';
-import { ArrowRight, Droplets, MapPin } from 'lucide-react';
-import { ObjectId } from 'mongodb';
+import Link from "next/link";
+import { ArrowRight, Droplets, MapPin } from "lucide-react";
+import { ObjectId } from "mongodb";
 
-import BrandsClient from './BrandsClient';
-import { loadBrands } from './loaders';
+import BrandsClient from "./BrandsClient";
+import { loadBrands } from "./loaders";
 
-import { getMongoDb } from '@/lib/mongodb';
-import prisma from '@/lib/prisma';
-import Image from 'next/image';
+import { getMongoDb } from "@/lib/mongodb";
+import prisma from "@/lib/prisma";
+import Image from "next/image";
 
 type BrandItem = {
   _id: string;
@@ -33,7 +33,7 @@ async function getTrendingBrands(): Promise<TrendingBrandItem[]> {
 
     // Get MANUALLY SELECTED trending brands from PostgreSQL
     const manualTrending = await prisma.trendingBrand.findMany({
-      orderBy: { position: 'asc' },
+      orderBy: { position: "asc" },
       take: 12,
     });
 
@@ -52,7 +52,7 @@ async function getTrendingBrands(): Promise<TrendingBrandItem[]> {
 
       if (brandIds.length > 0) {
         trendingBrands = await db
-          .collection('brands')
+          .collection("brands")
           .find({ _id: { $in: brandIds } })
           .toArray();
       }
@@ -61,12 +61,15 @@ async function getTrendingBrands(): Promise<TrendingBrandItem[]> {
     // Fallback to random if no manual selections
     if (trendingBrands.length === 0) {
       trendingBrands = await db
-        .collection('brands')
+        .collection("brands")
         .aggregate([
           {
             $addFields: {
               perfumes_count: {
-                $ifNull: ['$perfumes_count', { $size: { $ifNull: ['$perfumes', []] } }],
+                $ifNull: [
+                  "$perfumes_count",
+                  { $size: { $ifNull: ["$perfumes", []] } },
+                ],
               },
             },
           },
@@ -88,7 +91,7 @@ async function getTrendingBrands(): Promise<TrendingBrandItem[]> {
       perfumesCount: b.perfumes_count || b.perfumes?.length || 0,
     }));
   } catch (error) {
-    console.error('Error fetching trending brands for /brands:', error);
+    console.error("Error fetching trending brands for /brands:", error);
     return [];
   }
 }
@@ -114,8 +117,14 @@ export default async function BrandsPage({
         //   backgroundPosition: 'center',
         // }}
       >
-                <Image src="/brands-hero.webp" alt="brands-hero" width={1440} height={853} className="absolute w-full h-full object-cover " />
-             <div className="absolute inset-0 bg-[#211F1C] opacity-50" />
+        <Image
+          src="/brands-hero.webp"
+          alt="brands-hero"
+          width={1440}
+          height={853}
+          className="absolute w-full h-full object-cover "
+        />
+        <div className="absolute inset-0 bg-[#211F1C] opacity-50" />
 
         <div className="mx-auto max-w-[1440px] w-full px-4 sm:px-6 lg:px-[72px] z-20">
           <div className="max-w-[775px] flex flex-col gap-3 lg:gap-4 p-4 lg:p-0">
@@ -123,7 +132,8 @@ export default async function BrandsPage({
               Discover world-class fragrance brands
             </h1>
             <p className="font-inter font-normal text-[16px] leading-[24px] sm:text-[20px] sm:leading-[28px] lg:text-[24px] lg:leading-[32px] text-white">
-              Browse through thousands of fragrances from the world&apos;s most renowned perfume houses
+              Browse through thousands of fragrances from the world&apos;s most
+              renowned perfume houses
             </p>
           </div>
         </div>
@@ -158,7 +168,7 @@ export default async function BrandsPage({
                     <div className="flex flex-col gap-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FEEBCE]">
                         <span className="font-hedvig text-[24px] leading-[32px] text-[#211F1C]">
-                          {(brand.name?.trim()?.[0] ?? 'B').toUpperCase()}
+                          {(brand.name?.trim()?.[0] ?? "B").toUpperCase()}
                         </span>
                       </div>
 
@@ -169,16 +179,25 @@ export default async function BrandsPage({
 
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-1 min-w-0">
-                            <MapPin className="h-5 w-5 text-[#737270]" aria-hidden="true" />
+                            <MapPin
+                              className="h-5 w-5 text-[#737270]"
+                              aria-hidden="true"
+                            />
                             <span className="font-inter text-[14px] leading-[20px] text-[#737270] truncate">
-                              {brand.country || 'Unknown'}
+                              {brand.country || "Unknown"}
                             </span>
                           </div>
 
                           <div className="flex items-center gap-1 flex-shrink-0">
-                            <Droplets className="h-5 w-5 text-[#737270]" aria-hidden="true" />
+                            <Droplets
+                              className="h-5 w-5 text-[#737270]"
+                              aria-hidden="true"
+                            />
                             <span className="font-inter text-[14px] leading-[20px] text-[#737270] text-right">
-                              {brand.perfumesCount} {brand.perfumesCount === 1 ? 'Fragrance' : 'Fragrances'}
+                              {brand.perfumesCount}{" "}
+                              {brand.perfumesCount === 1
+                                ? "Fragrance"
+                                : "Fragrances"}
                             </span>
                           </div>
                         </div>
@@ -197,9 +216,11 @@ export default async function BrandsPage({
                 </div>
               )}
             </div>
-          </div>
+          </div>{" "}
+        </div>
 
-          <div className="px-4 sm:px-6 lg:px-[72px] p-2 bg-fv-parchment">
+        <div className=" bg-[#FFFCF7]">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5">
             <BrandsClient
               initialItems={data.items as BrandItem[]}
               total={data.total}
@@ -215,26 +236,100 @@ export default async function BrandsPage({
       {/* Your voice matters here - CTA Section */}
       <section className="relative overflow-hidden bg-white isolate">
         {/* Decorative background pattern */}
-        <div className="absolute -left-[338px] -top-[398px] w-[567px] h-[651px] pointer-events-none -z-10" aria-hidden="true" style={{ transform: 'rotate(-42.21deg)' }}>
-          <div className="absolute w-[200px] h-[330px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '2%', top: '-1%' }} />
-          <div className="absolute w-[230px] h-[270px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '7%', top: '-31%' }} />
-          <div className="absolute w-[200px] h-[270px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '-10%', top: '8%' }} />
-          <div className="absolute w-[220px] h-[280px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '-14%', top: '-47%' }} />
-          <div className="absolute w-[190px] h-[210px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '2%', top: '-51%' }} />
-          <div className="absolute w-[210px] h-[220px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '-18%', top: '-8%' }} />
-          <div className="absolute w-[160px] h-[200px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '-1%', top: '-27%' }} />
-          <div className="absolute w-[170px] h-[180px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '-7%', top: '-15%' }} />
-          <div className="absolute w-[140px] h-[160px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '3%', top: '-1%' }} />
-          <div className="absolute w-[120px] h-[130px] border border-[#ECE0CF] rounded-full" style={{ transform: 'matrix(0.77, -0.64, 0.7, 0.71, 0, 0)', left: '7%', top: '-5%' }} />
+        <div
+          className="absolute -left-[338px] -top-[398px] w-[567px] h-[651px] pointer-events-none -z-10"
+          aria-hidden="true"
+          style={{ transform: "rotate(-42.21deg)" }}
+        >
+          <div
+            className="absolute w-[200px] h-[330px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "2%",
+              top: "-1%",
+            }}
+          />
+          <div
+            className="absolute w-[230px] h-[270px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "7%",
+              top: "-31%",
+            }}
+          />
+          <div
+            className="absolute w-[200px] h-[270px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "-10%",
+              top: "8%",
+            }}
+          />
+          <div
+            className="absolute w-[220px] h-[280px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "-14%",
+              top: "-47%",
+            }}
+          />
+          <div
+            className="absolute w-[190px] h-[210px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "2%",
+              top: "-51%",
+            }}
+          />
+          <div
+            className="absolute w-[210px] h-[220px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "-18%",
+              top: "-8%",
+            }}
+          />
+          <div
+            className="absolute w-[160px] h-[200px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "-1%",
+              top: "-27%",
+            }}
+          />
+          <div
+            className="absolute w-[170px] h-[180px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "-7%",
+              top: "-15%",
+            }}
+          />
+          <div
+            className="absolute w-[140px] h-[160px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "3%",
+              top: "-1%",
+            }}
+          />
+          <div
+            className="absolute w-[120px] h-[130px] border border-[#ECE0CF] rounded-full"
+            style={{
+              transform: "matrix(0.77, -0.64, 0.7, 0.71, 0, 0)",
+              left: "7%",
+              top: "-5%",
+            }}
+          />
         </div>
-     <Image
-           width={ 300 }
-           height={ 200 }
-           src="/Logo_vector.webp"
-           alt=""
-           aria-hidden="true"
-           className="absolute"
-         />
+        <Image
+          width={300}
+          height={200}
+          src="/Logo_vector.webp"
+          alt=""
+          aria-hidden="true"
+          className="absolute"
+        />
 
         <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-[72px] py-5 relative">
           <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-6">
@@ -252,7 +347,8 @@ export default async function BrandsPage({
                       Suggest a missing perfume or claim a brand
                     </h2>
                     <p className="font-inter font-normal text-[18px] leading-[26px] lg:text-[24px] lg:leading-[32px] text-[#4A4946]">
-                      Found a missing perfume or own a brand? Submit suggestions or claim your profile for verification.
+                      Found a missing perfume or own a brand? Submit suggestions
+                      or claim your profile for verification.
                     </p>
                   </div>
                 </div>
@@ -264,11 +360,42 @@ export default async function BrandsPage({
                     <div className="flex items-center gap-3">
                       {/* Users Icon */}
                       <div className="flex items-center justify-center w-10 h-10 bg-[#FDE2B6] rounded-lg flex-shrink-0">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <circle cx="9" cy="7" r="4" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
-                          <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
-                          <circle cx="17" cy="7" r="3" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
-                          <path d="M21 21v-2a3 3 0 0 0-3-3h-1" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                        >
+                          <circle
+                            cx="9"
+                            cy="7"
+                            r="4"
+                            stroke="#695129"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"
+                            stroke="#695129"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <circle
+                            cx="17"
+                            cy="7"
+                            r="3"
+                            stroke="#695129"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M21 21v-2a3 3 0 0 0-3-3h-1"
+                            stroke="#695129"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
                         </svg>
                       </div>
                       <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
@@ -276,7 +403,8 @@ export default async function BrandsPage({
                       </span>
                     </div>
                     <p className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#4A4946]">
-                      Did you find a missing perfume or brand? Let us know! You&apos;ll earn +5 XP if your suggestion is approved.
+                      Did you find a missing perfume or brand? Let us know!
+                      You&apos;ll earn +5 XP if your suggestion is approved.
                     </p>
                   </div>
 
@@ -285,9 +413,28 @@ export default async function BrandsPage({
                     <div className="flex items-center gap-3">
                       {/* User Icon */}
                       <div className="flex items-center justify-center w-10 h-10 bg-[#FDE2B6] rounded-lg flex-shrink-0">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                          <circle cx="12" cy="8" r="4" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
-                          <path d="M6 21v-2a6 6 0 0 1 6-6 6 6 0 0 1 6 6v2" stroke="#695129" strokeWidth="2" strokeLinecap="round" />
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          aria-hidden="true"
+                        >
+                          <circle
+                            cx="12"
+                            cy="8"
+                            r="4"
+                            stroke="#695129"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M6 21v-2a6 6 0 0 1 6-6 6 6 0 0 1 6 6v2"
+                            stroke="#695129"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
                         </svg>
                       </div>
                       <span className="font-inter font-medium text-[18px] lg:text-[20px] leading-[26px] lg:leading-[28px] text-[#211F1C]">
@@ -295,7 +442,9 @@ export default async function BrandsPage({
                       </span>
                     </div>
                     <p className="font-inter font-normal text-[14px] lg:text-[16px] leading-[22px] lg:leading-[24px] text-[#4A4946]">
-                      Are you the owner or representative of a fragrance brand? Claim your profile and get the &quot;Verified Brand&quot; badge.
+                      Are you the owner or representative of a fragrance brand?
+                      Claim your profile and get the &quot;Verified Brand&quot;
+                      badge.
                     </p>
                   </div>
                 </div>
@@ -309,8 +458,21 @@ export default async function BrandsPage({
                 >
                   Suggest a missing item
                   <span className="flex items-center justify-center w-8 h-8 bg-white rounded-lg shrink-0">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                      <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="#211F1C"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </span>
                 </Link>
@@ -320,11 +482,39 @@ export default async function BrandsPage({
                 >
                   Apply for brand account
                   <span className="flex items-center justify-center w-8 h-8 bg-[#211F1C] rounded-lg shrink-0 group-hover:bg-white">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="group-hover:hidden">
-                      <path d="M7 17L17 7M17 7H7M17 7V17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      className="group-hover:hidden"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className="hidden group-hover:block">
-                      <path d="M7 17L17 7M17 7H7M17 7V17" stroke="#211F1C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      className="hidden group-hover:block"
+                    >
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="#211F1C"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </span>
                 </Link>
@@ -332,16 +522,15 @@ export default async function BrandsPage({
             </div>
 
             {/* Right Image */}
-          <div className="relative w-full lg:w-[527px] h-[300px] sm:h-[400px] lg:h-[466px] rounded-xl overflow-hidden flex-shrink-0">
-
-                  <Image
-                            src="/join-team-brand.webp"
-                            alt="Suggest a perfume or claim a brand"
-                            fill
-                            sizes="(max-width: 768px) 100vw, 527px"
-                            className="object-cover object-center"
-                            loading="lazy"
-                          />
+            <div className="relative w-full lg:w-[527px] h-[300px] sm:h-[400px] lg:h-[466px] rounded-xl overflow-hidden flex-shrink-0">
+              <Image
+                src="/join-team-brand.webp"
+                alt="Suggest a perfume or claim a brand"
+                fill
+                sizes="(max-width: 768px) 100vw, 527px"
+                className="object-cover object-center"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>

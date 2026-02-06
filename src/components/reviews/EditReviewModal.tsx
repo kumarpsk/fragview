@@ -109,7 +109,7 @@ export default function EditReviewModal({
               <button
                 type="submit"
                 disabled={isPending || text.trim().length < 10}
-                className="px-6 py-2.5 bg-gradient-to-r from-green-500 to-orange-500 text-white font-medium rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2.5 bg-black text-white font-medium rounded-lg hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isPending ?  (
                   <>

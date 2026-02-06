@@ -104,7 +104,9 @@ const ProfilePage = () => {
   };
 
   // --- LOADING ---
-  if (status === 'loading' || loading) return <div className="min-h-screen flex items-center justify-center bg-[#FAFFF5]"><Loader2 className="w-8 h-8 text-green-600 animate-spin" /></div>;
+  if (status === 'loading' || loading) return <div className="min-h-screen flex justify-center items-center bg-[#FAFFF5]">
+          <Loader2 className="animate-spin text-gray-600 w-10 h-10" />
+        </div>;
   if (! session || ! profile) return <div className="min-h-screen bg-[#FAFFF5]" />;
 
   const { user, stats, gamification, nudge, recentActivity, signatureScents } = profile;
@@ -193,7 +195,7 @@ const ProfilePage = () => {
           <div className="mb-4 mx-auto max-w-3xl">
             <div className="bg-white/80 backdrop-blur-sm border border-green-100 rounded-full p-1.5 pl-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-green-500 animate-spin" style={{ animationDuration: '3s' }}></div>
+                <div className="w-5 h-5 rounded-full border-2 border-gray-200 border-t-gray-500 animate-spin" style={{ animationDuration: '3s' }}></div>
                 <span className="text-sm text-gray-600">
                   Profile <span className="font-bold text-gray-900">{nudge.completionPercentage}%</span> complete.  
                   <span className="hidden sm:inline"> Missing: {nudge.missingFields.slice(0, 2).join(', ')}...</span>

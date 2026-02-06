@@ -195,7 +195,7 @@ export default function BrandEnrichmentClient({ brand }: Props) {
             <button
               onClick={handleSave}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ?  (
                 <Loader2 className="w-5 h-5 animate-spin" />

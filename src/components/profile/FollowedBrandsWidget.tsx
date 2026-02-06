@@ -62,9 +62,9 @@ export default function FollowedBrandsWidget() {
 
   if (loading) {
     return (
-      <div className="glass-card rounded-2xl p-6">
+      <div className=" p-6">
         <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
+        <Loader2 className="animate-spin text-gray-600 w-10 h-10" />
         </div>
       </div>
     );

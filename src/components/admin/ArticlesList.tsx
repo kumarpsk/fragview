@@ -77,8 +77,8 @@ export default function ArticlesList({ articles }: Props) {
                 onClick={() => setFilter('published')}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                   filter === 'published'
-                    ?  'bg-green-500 text-white'
-                    : 'bg-green-50 text-green-700 hover:bg-green-100'
+                    ?  'bg-gray-500 text-white'
+                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                 }`}
               >
                 Published ({articles.filter(a => a.published).length})
@@ -102,7 +102,7 @@ export default function ArticlesList({ articles }: Props) {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 bg-gray-700 text-white focus:ring-gray-500 focus:border-transparent"
             >
               <option value="all">All Categories</option>
               {categories.map((cat) => (
@@ -185,7 +185,7 @@ export default function ArticlesList({ articles }: Props) {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {article.published ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                           Published
                         </span>
                       ) : (

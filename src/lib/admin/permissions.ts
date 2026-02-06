@@ -50,13 +50,13 @@ export async function getAdminUser() {
     },
   });
 
-  if (user?.role !== 'ADMIN') return null;
+if (user?.role !== 'ADMIN') return null;
   return user;
 }
 
-/**
- * Require admin access (throws error if not admin)
- */
+// /**
+//  * Require admin access (throws error if not admin)
+//  */
 export async function requireAdmin() {
   const admin = await getAdminUser();
   if (!admin) {
@@ -64,3 +64,32 @@ export async function requireAdmin() {
   }
   return admin;
 }
+
+
+export async function getAdminOrEditorUser() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      role: true,
+      image: true,
+    },
+  });
+
+  if (!["ADMIN", "EDITOR"].includes(user?.role)) return null;
+  return user;
+}
+
+export async function requireAdminOrEditor() {
+  const user = await getAdminOrEditorUser();
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+  return user;
+}
+

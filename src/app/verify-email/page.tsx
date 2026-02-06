@@ -136,7 +136,7 @@ export default function VerifyEmailPage() {
         <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: '#FAFFF5' }}>
           <div className="glass-card rounded-2xl p-8 max-w-md w-full">
             <div className="mb-4 flex items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+              <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
             </div>
             <p className="text-center text-sm text-gray-600">Loading…</p>
           </div>

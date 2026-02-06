@@ -67,9 +67,9 @@ export default function FollowRequestsWidget() {
 
   if (loading) {
     return (
-      <div className="glass-card rounded-2xl p-6 mb-8">
+      <div className=" p-6 mb-8">
         <div className="flex items-center justify-center py-4">
-          <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
+          <Loader2 className="w-6 h-6  text-gray-600 animate-spin" />
         </div>
       </div>
     );

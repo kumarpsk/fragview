@@ -310,7 +310,7 @@ export default function PerfumesClient({
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search by perfume name"
-          className="w-full pl-14 pr-10 py-3 rounded-xl border border-[#D9CDB9] bg-white text-[#211F1C] font-averia font-light text-lg placeholder:text-[#D9CDB9] placeholder:text-center focus:outline-none focus:ring-2 focus:ring-[#8A6A35] focus:border-transparent transition-all"
+          className="w-full pl-14 pr-10 py-3 rounded-xl border border-[#D9CDB9] bg-white text-[#211F1C] font-averia font-light text-lg placeholder:text-[#D9CDB9] placeholder:text-left focus:outline-none focus:ring-2 focus:ring-[#8A6A35] focus:border-transparent transition-all"
         />
         {isSearching && (
           <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-[#9E7127]" />

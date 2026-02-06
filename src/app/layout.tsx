@@ -65,7 +65,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <RootProviders session={session}>
           <div className="min-h-screen bg-gradient-to-br from-pastel-blue/10 to-pastel-purple/10 dark:from-gray-900 dark:to-gray-800 transition-colors duration-300">
             <Navbar />
-            <main className="pt-[108px] lg:pt-[122px]">{children}</main>
+            <main className="pt-[108px] lg:pt-[119px]">{children}</main>
             <NewFooter />
           </div>
         </RootProviders>

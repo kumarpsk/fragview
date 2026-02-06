@@ -697,7 +697,7 @@ const SearchPage = () => {
                 <p className="text-gray-600">
                   {loading ? (
                     <span className="flex items-center">
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin text-green-600" />
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin text-gray-600" />
                       Searching...
                     </span>
                   ) : (
@@ -720,7 +720,7 @@ const SearchPage = () => {
 
             {loading ? (
               <div className="flex justify-center items-center py-20">
-                <Loader2 className="w-8 h-8 animate-spin text-green-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-gray-600" />
               </div>
             ) : perfumes.length === 0 ? (
               <div className="text-center py-20">

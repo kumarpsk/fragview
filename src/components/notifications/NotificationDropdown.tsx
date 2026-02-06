@@ -150,7 +150,7 @@ export default function NotificationDropdown({ onClose, onCountChange }: Props) 
           <button
             onClick={markAllAsRead}
             disabled={marking || notifications.every(n => n.read)}
-            className="text-xs text-green-600 hover:text-green-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+            className="text-xs text-gray-600 hover:text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
           >
             {marking ? (
               <>
@@ -171,7 +171,7 @@ export default function NotificationDropdown({ onClose, onCountChange }: Props) 
       <div className="max-h-96 overflow-y-auto">
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-6 h-6 text-green-600 animate-spin" />
+            <Loader2 className="w-6 h-6 text-gray-600 animate-spin" />
           </div>
         ) : notifications.length === 0 ? (
           <div className="text-center py-8 text-gray-400">

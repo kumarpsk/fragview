@@ -421,7 +421,7 @@ export default function SubmissionReviewClient({ submission }: Props) {
               <button
                 onClick={handleApprove}
                 disabled={loading || checkingDuplicate || duplicateCheck?.exists}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white font-medium rounded-lg hover:bg-black/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ?  (
                   <Loader2 className="w-5 h-5 animate-spin" />
