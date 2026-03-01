@@ -72,7 +72,7 @@ export default function ImageUpload({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 ">
       {label && (
         <label className="block text-sm font-medium text-gray-700">
           {label}
@@ -89,7 +89,7 @@ export default function ImageUpload({
       />
 
       <div
-        className={`relative flex w-full flex-col items-center justify-center overflow-hidden rounded-xl border ${
+        className={`relative bg-[#fff9ef] flex w-full flex-col items-center justify-center overflow-hidden rounded-xl border ${
           preview ? "border-gray-200" : "border-dashed border-gray-300"
         } bg-white/80 p-4 shadow-sm transition-colors duration-300`}
       >
@@ -131,22 +131,21 @@ export default function ImageUpload({
             </div>
           </div>
         ) : (
-          <div className="flex w-full flex-col items-center justify-center space-y-4 py-6">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+          <div className="flex w-full flex-col items-center justify-center space-y-2 py-6">
+            <div className="flex h-16 w-16 items-center justify-center ">
               <Upload className="h-8 w-8 text-gray-600" />
             </div>
-            <p className="text-sm text-gray-600">
-              Upload an image (JPEG, PNG, WebP)
-            </p>
+            <p className="text-sm text-gray-600">Supports JPEG, PNG, WebP</p>
+            <p className="text-xs text-gray-500">Max size {maxSizeMB}MB</p>
+
             <button
               type="button"
               onClick={pick}
               disabled={isUploading}
               className="w-full inline-flex items-center justify-center h-[40px] px-4 gap-3 bg-[#211F1C] rounded-xl font-inter font-medium text-[16px] leading-[26px] text-white hover:bg-[#211F1C]/90 transition-colors"
             >
-              {isUploading ? "Uploading…" : "Select File"}
+              {isUploading ? "Uploading…" : "Browse"}
             </button>
-            <p className="text-xs text-gray-500">Max size {maxSizeMB}MB</p>
           </div>
         )}
       </div>

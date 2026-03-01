@@ -34,7 +34,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFFF5] py-8">
+    <div className="min-h-screen ">
       <PublicProfileClient 
         profileData={data}
         isSignedIn={!!session?. user}

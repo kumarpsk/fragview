@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/admin/permissions';
+import { requireAdmin, requireAdminOrEditor } from '@/lib/admin/permissions';
 import { getArticleById } from '@/lib/admin/articles';
 import ArticleEditor from '@/components/admin/ArticleEditor';
 import { notFound } from 'next/navigation';
@@ -14,7 +14,7 @@ export default async function EditArticlePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await requireAdmin();
+  const session = await requireAdminOrEditor();
   
   // Check if user is ADMIN or EDITOR
   if (session.role !== 'ADMIN' && session.role !== 'EDITOR') {

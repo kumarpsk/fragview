@@ -9,15 +9,23 @@ interface Props {
   selected: string[];
   onChange: (tags: string[]) => void;
   placeholder?: string;
+  autoFocus?: boolean; // New prop to control auto-focus
 }
 
-export default function AsyncTagInput({ label, field, selected, onChange, placeholder }: Props) {
+export default function AsyncTagInput({ label, field, selected, onChange, placeholder,autoFocus }: Props) {
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
+const inputRef = useRef<HTMLInputElement>(null);
+useEffect(() => {
+  if (autoFocus && inputRef.current) {
+    inputRef.current.focus();
+    setIsOpen(true);      // 👈 open dropdown automatically
+    fetchTags(input);     // 👈 load suggestions immediately
+  }
+}, [autoFocus]);
   // Close dropdown if clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -77,9 +85,9 @@ export default function AsyncTagInput({ label, field, selected, onChange, placeh
       {/* Selected Tags Area */}
       <div className="flex flex-wrap gap-2 mb-2">
         {selected.map(tag => (
-          <span key={tag} className="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full flex items-center gap-1 font-medium shadow-sm animate-fadeIn">
+          <span key={tag} className="bg-[#ece0cf] text-[#897452] text-xs px-3 py-1 rounded-full flex items-center gap-1 font-medium shadow-sm animate-fadeIn">
             {tag}
-            <button onClick={() => removeTag(tag)} className="hover:text-green-900 bg-green-200 rounded-full p-0.5 ml-1">
+            <button onClick={() => removeTag(tag)} className="text-[#897452] p-0.5 ml-1">
               <X size={10} />
             </button>
           </span>
@@ -89,7 +97,9 @@ export default function AsyncTagInput({ label, field, selected, onChange, placeh
       {/* Input Area */}
       <div className="relative">
         <input
-          className="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 outline-none transition-all"
+          ref={inputRef}
+
+          className="w-full p-3 border border-gray-200 rounded-xl text-sm focus:ring-1 focus:ring-gray-500 outline-none transition-all bg-white text-black"
           placeholder={placeholder || `Search or click to see ${label}...`}
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -111,7 +121,7 @@ export default function AsyncTagInput({ label, field, selected, onChange, placeh
                   onClick={() => addTag(s)}
                   className="w-full text-left px-4 py-3 text-sm hover:bg-green-50 text-gray-700 flex items-center gap-2 border-b border-gray-50 last:border-0 transition-colors"
                 >
-                  <Plus size={14} className="text-green-500" /> {s}
+                  <Plus size={14} className="text-gray-500" /> {s}
                 </button>
               ))
             ) : (

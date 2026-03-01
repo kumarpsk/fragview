@@ -78,9 +78,9 @@ export default function FollowRequestsWidget() {
   if (requests.length === 0) return null;
 
   return (
-    <div className="glass-card rounded-2xl p-6 mb-8 border-2 border-green-200">
+    <div className=" p-6 mb-8 border-2 border-gray-200 rounded-md max-sm:p-2">
       <div className="flex items-center gap-2 mb-4">
-        <UserPlus className="w-5 h-5 text-green-600" />
+        <UserPlus className="w-5 h-5 text-gray-600" />
         <h2 className="text-lg font-bold text-gray-900">
           Follow Requests ({requests.length})
         </h2>
@@ -90,7 +90,7 @@ export default function FollowRequestsWidget() {
         {requests.map((request) => (
           <div
             key={request.id}
-            className="flex items-center justify-between p-4 bg-white/60 rounded-xl border border-green-100"
+            className="flex items-center justify-between p-4  rounded-xl border border-gray-200 max-sm:p-2"
           >
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <Link href={`/u/${request.follower.username}`}>
@@ -101,7 +101,7 @@ export default function FollowRequestsWidget() {
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-orange-400 flex items-center justify-center text-white font-bold">
+                  <div className="w-12 h-12 rounded-full bg-[#feebce] flex items-center justify-center text-black font-bold">
                     {request.follower.username[0].toUpperCase()}
                   </div>
                 )}
@@ -110,12 +110,12 @@ export default function FollowRequestsWidget() {
               <div className="flex-1 min-w-0">
                 <Link 
                   href={`/u/${request.follower.username}`}
-                  className="font-semibold text-gray-900 hover:text-green-600"
+                  className="font-semibold text-gray-900 hover:text-gray-600"
                 >
                   @{request.follower.username}
                 </Link>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">
+                  <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full font-medium">
                     {getLevel(request.follower.experiencePoints)}
                   </span>
                 </div>
