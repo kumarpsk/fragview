@@ -1,4 +1,4 @@
-import { requireAdmin } from '@/lib/admin/permissions';
+import {  requireAdminOrEditor } from '@/lib/admin/permissions';
 import ArticleEditor from '@/components/admin/ArticleEditor';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 export default async function NewArticlePage() {
-  const session = await requireAdmin();
+  const session = await requireAdminOrEditor();
   
   // Check if user is ADMIN or EDITOR
   if (session.role !== 'ADMIN' && session.role !== 'EDITOR') {

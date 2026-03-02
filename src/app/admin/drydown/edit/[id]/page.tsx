@@ -1,4 +1,4 @@
-import { requireAdmin, requireAdminOrEditor } from '@/lib/admin/permissions';
+import { requireAdminOrEditor } from '@/lib/admin/permissions';
 import { getArticleById } from '@/lib/admin/articles';
 import ArticleEditor from '@/components/admin/ArticleEditor';
 import { notFound } from 'next/navigation';

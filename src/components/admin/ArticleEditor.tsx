@@ -172,7 +172,7 @@ export default function ArticleEditor({ mode, article }: Props) {
                   type="text"
                   value={formData. title}
                   onChange={(e) => setFormData({ ...formData, title: e. target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                   placeholder="Enter article title..."
                 />
               </div>
@@ -185,7 +185,7 @@ export default function ArticleEditor({ mode, article }: Props) {
                   type="text"
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono text-sm"
+                  className="w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent font-mono text-sm"
                   placeholder="article-slug"
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -201,7 +201,7 @@ export default function ArticleEditor({ mode, article }: Props) {
                   value={formData.excerpt}
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                   placeholder="Short description of the article..."
                 />
               </div>
@@ -213,7 +213,7 @@ export default function ArticleEditor({ mode, article }: Props) {
                 <select
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e. target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 >
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
@@ -263,12 +263,12 @@ export default function ArticleEditor({ mode, article }: Props) {
                   onChange={(e) => setPerfumeSearch(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handlePerfumeSearch()}
                   placeholder="Search perfumes..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="flex-1 px-3 py-2 bg-white text-black border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-500 focus:border-transparent"
                 />
                 <button
                   onClick={handlePerfumeSearch}
                   disabled={searchingPerfumes}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50"
                 >
                   {searchingPerfumes ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
@@ -300,7 +300,7 @@ export default function ArticleEditor({ mode, article }: Props) {
                         </p>
                         <p className="text-xs text-gray-500 truncate">{perfume.brand}</p>
                       </div>
-                      <Plus className="w-4 h-4 text-purple-600" />
+                      <Plus className="w-4 h-4 text-gray-600" />
                     </div>
                   ))}
                 </div>
@@ -361,7 +361,7 @@ export default function ArticleEditor({ mode, article }: Props) {
               {mode === 'edit' && (
                 <button
                   onClick={() => router.push(`/drydown/${article.slug}`)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 transition-colors"
                 >
                   <Eye className="w-5 h-5" />
                   View Live Article
