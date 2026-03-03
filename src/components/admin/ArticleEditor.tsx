@@ -86,8 +86,8 @@ export default function ArticleEditor({ mode, article }: Props) {
   };
 
   const handleSave = async (publish: boolean) => {
-    if (! formData.title || !formData.slug || !formData.excerpt || !formData.content) {
-      alert('Please fill in all required fields');
+    if (!formData.title || !formData.slug || !formData.excerpt || !formData.content || !formData.coverImage) {
+      alert('Please fill in all required fields (Title, Slug, Excerpt, Content, and Cover Image)');
       return;
     }
 
@@ -240,7 +240,7 @@ export default function ArticleEditor({ mode, article }: Props) {
           <div className="space-y-6">
             {/* Cover Image */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Cover Image</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Cover Image *</h3>
               <ImageUploadComponent
                 currentImage={formData.coverImage}
                 onImageUpload={(url) => setFormData({ ...formData, coverImage: url })}

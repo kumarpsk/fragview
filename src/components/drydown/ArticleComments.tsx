@@ -114,13 +114,13 @@ export default function ArticleComments({ articleId, initialComments }: Props) {
             placeholder="Share your thoughts"
             rows={4}
             maxLength={1000}
-            className="w-full p-4 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-[#8A6A35]"
+            className="w-full p-4 rounded-xl bg-white text-black resize-none focus:outline-none focus:ring-2 focus:ring-[#8A6A35]"
             style={{ 
               border: '1px solid #C4C4C3',
               fontFamily: "'Inter', sans-serif",
               fontSize: '18px',
               lineHeight: '28px',
-              color: '#211F1C'
+          
             }}
           />
           <div className="flex justify-end gap-4 lg:gap-6">

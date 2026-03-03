@@ -25,9 +25,11 @@ interface Article {
 
 interface Props {
   articles: Article[];
+  currentUserId?: string;
+  currentUserRole?: string;
 }
 
-export default function ArticlesList({ articles }: Props) {
+export default function ArticlesList({ articles, currentUserId, currentUserRole }: Props) {
   const router = useRouter();
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
@@ -211,13 +213,15 @@ export default function ArticlesList({ articles }: Props) {
                         >
                           <Edit className="w-4 h-4" />
                         </Link>
-                        <button
-                          onClick={() => handleDelete(article.id, article.title)}
-                          className="text-red-600 hover:text-red-700"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        {(currentUserRole === 'ADMIN' || article.author.id === currentUserId) && (
+                          <button
+                            onClick={() => handleDelete(article.id, article.title)}
+                            className="text-red-600 hover:text-red-700"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

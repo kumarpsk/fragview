@@ -1,4 +1,4 @@
-import { requireAdmin, requireAdminOrEditor } from '@/lib/admin/permissions';
+import { requireAdminOrEditor } from '@/lib/admin/permissions';
 import { getArticles } from '@/lib/admin/articles';
 import ArticlesList from '@/components/admin/ArticlesList';
 import { FileText, Plus } from 'lucide-react';
@@ -56,7 +56,7 @@ export default async function DrydownPage({
         </Link>
       </div>
 
-      <ArticlesList articles={articles} />
+      <ArticlesList articles={articles} currentUserId={session.id} currentUserRole={session.role} />
     </div>
   );
 }

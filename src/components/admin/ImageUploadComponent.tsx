@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Upload, X, Loader2, Image as ImageIcon } from 'lucide-react';
-import { put } from '@vercel/blob';
 
 interface Props {
   currentImage: string | null;
@@ -24,19 +23,19 @@ export default function ImageUploadComponent({
   const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target. files?.[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     // Validate file type
-    if (! acceptedTypes.split(',').includes(file.type)) {
+    if (!acceptedTypes.split(',').includes(file.type)) {
       setError(`Please upload a valid image file (${acceptedTypes})`);
       return;
     }
 
-    // Validate file size
-    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    // Validate file size (API has 3MB limit)
+    const maxSizeBytes = Math.min(maxSizeMB * 1024 * 1024, 3 * 1024 * 1024);
     if (file.size > maxSizeBytes) {
-      setError(`File size must be less than ${maxSizeMB}MB`);
+      setError(`File size must be less than ${Math.min(maxSizeMB, 3)}MB`);
       return;
     }
 
@@ -44,20 +43,30 @@ export default function ImageUploadComponent({
     setUploading(true);
 
     try {
-      // Upload to Vercel Blob
-      const blob = await put(file.name, file, {
-        access: 'public',
-        token: process.env.NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN,
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
       });
 
-      // Set preview and call callback
-      setPreview(blob.url);
-      onImageUpload(blob.url);
-      
-      console.log('✅ Image uploaded:', blob.url);
-    } catch (error) {
-      console.error('❌ Upload failed:', error);
-      setError('Failed to upload image. Please try again.');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Upload failed');
+      }
+
+      if (!data.success || !data.url) {
+        throw new Error('Invalid response from server');
+      }
+
+      setPreview(data.url);
+      onImageUpload(data.url);
+    } catch (err) {
+      console.error('❌ Upload failed:', err);
+      setError(err instanceof Error ? err.message : 'Failed to upload image. Please try again.');
     } finally {
       setUploading(false);
     }
